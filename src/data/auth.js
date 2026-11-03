@@ -1,3 +1,4 @@
+import { finishKakaoSignIn, startKakaoSignIn } from './kakao.js';
 import { db, requireDatabase } from './client.js';
 
 const PROVIDERS = Object.freeze(new Set(['kakao', 'google']));
@@ -17,6 +18,10 @@ export async function signIn(provider) {
   if (!PROVIDERS.has(provider)) {
     throw new Error('INVALID_PROVIDER');
   }
+  if (provider === 'kakao') {
+    startKakaoSignIn();
+    return;
+  }
   const client = requireDatabase();
   const redirectTo = new URL('/auth/callback', window.location.origin).href;
   const { error } = await client.auth.signInWithOAuth({
@@ -28,7 +33,10 @@ export async function signIn(provider) {
   }
 }
 
-export async function finishSignIn(code) {
+export async function finishSignIn(code, url = new URL(window.location.href)) {
+  if (url.searchParams.has('state')) {
+    return finishKakaoSignIn(url);
+  }
   if (!code || typeof code !== 'string') {
     throw new Error('MISSING_AUTH_CODE');
   }
