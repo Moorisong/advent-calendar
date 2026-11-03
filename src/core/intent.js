@@ -1,6 +1,7 @@
 import { PROTECTED_SCREENS } from '../config/constants.js';
-import { readRoute, routeUrl } from './routes.js';
 import { clearSession, readSession, writeSession } from '../utils/storage.js';
+
+import { readRoute, routeUrl } from './routes.js';
 
 const INTENT_STORAGE_KEY = 'return';
 
