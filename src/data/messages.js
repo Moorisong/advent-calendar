@@ -29,7 +29,8 @@ export async function getMessages(calendarId, date) {
     .select('id,chocolate_type,body,created_at')
     .eq('calendar_id', calendarId)
     .eq('gift_date', date)
-    .order('created_at', { ascending: true });
+    .order('created_at', { ascending: true })
+    .order('id', { ascending: true });
   if (error) {
     throw error;
   }
