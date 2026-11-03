@@ -14,6 +14,7 @@ export const state = {
   message: '',
   nicknameDraft: '',
   notes: [],
+  lastSent: null,
   readIndex: 0,
   loading: false,
   writing: false,
