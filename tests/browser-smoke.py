@@ -62,7 +62,7 @@ def main():
     with Server(('127.0.0.1', PORT), Handler) as server:
         threading.Thread(target=server.serve_forever, daemon=True).start()
         with sync_playwright() as playwright:
-            browser = playwright.chromium.launch(executable_path='/usr/bin/chromium', headless=True)
+            browser = playwright.chromium.launch(headless=True)
             context = browser.new_context(viewport={'width': 390, 'height': 844})
             page = context.new_page()
             page.clock.install(time=datetime(2026, 12, 12, 8, 30, tzinfo=timezone(timedelta(hours=9))))
