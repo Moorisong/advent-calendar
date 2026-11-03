@@ -30,6 +30,22 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(content)
             return
+        if path == '/src/data/kakao.js':
+            content = (
+                "export async function startKakaoSignIn() {"
+                "localStorage.setItem('mock-user', JSON.stringify({id:'owner-123'}));"
+                "location.assign('/auth/callback?state=mock-kakao&code=mock-code');"
+                "}"
+                "export async function finishKakaoSignIn() {"
+                "return JSON.parse(localStorage.getItem('mock-user') ?? 'null');"
+                "}"
+            ).encode()
+            self.send_response(200)
+            self.send_header('Content-Type', 'text/javascript; charset=utf-8')
+            self.send_header('Content-Length', str(len(content)))
+            self.end_headers()
+            self.wfile.write(content)
+            return
         if not path.startswith(('/src/', '/tests/')):
             self.path = '/tests/browser.html'
         super().do_GET()
@@ -56,6 +72,10 @@ def main():
             page.goto(url + '/')
             page.locator('[data-screen=landing]').wait_for()
             page.screenshot(path=str(ROOT / 'tests/landing-current.png'))
+            page.locator('[data-action=lang]').click()
+            assert page.locator('html').get_attribute('lang') == 'en'
+            page.locator('[data-action=lang]').click()
+            assert page.locator('html').get_attribute('lang') == 'ko'
             page.get_by_role('button', name='내 캘린더 만들기').click()
             page.locator('[data-screen=login]').wait_for()
             page.screenshot(path=str(ROOT / 'tests/login-current.png'))
@@ -82,6 +102,8 @@ def main():
             page.locator('[data-screen=tutorial]').wait_for()
             page.get_by_role('button', name='알겠어!').click()
             page.locator('[data-screen=visitor]').wait_for()
+            page.goto(public_link + '/sent?date=2026-12-12')
+            page.locator('[data-screen=visitor]').wait_for()
             page.locator('[data-month="12"]').click()
             page.locator('[data-day="12"][data-role="visitor"]').click()
             page.locator('[data-screen=login]').wait_for()
@@ -89,6 +111,14 @@ def main():
             page.locator('[data-screen=write]').wait_for()
             page.locator('textarea[name=message]').fill('달콤한 하루!')
             assert page.locator('#count').inner_text() == '7'
+            page.get_by_role('button', name='초콜릿 남기기').click()
+            page.locator('[data-screen=sent]').wait_for()
+            page.get_by_role('button', name='캘린더로 돌아가기').click()
+            page.locator('[data-screen=visitor]').wait_for()
+            page.locator('[data-month="12"]').click()
+            page.locator('[data-day="12"][data-role="visitor"]').click()
+            page.locator('[data-screen=write]').wait_for()
+            page.locator('textarea[name=message]').fill('두 번째 선물!')
             page.get_by_role('button', name='초콜릿 남기기').click()
             page.locator('[data-screen=sent]').wait_for()
             page.get_by_role('button', name='로그아웃').click()
@@ -105,6 +135,9 @@ def main():
             page.locator('[data-day="12"][data-role="owner"]').click()
             page.locator('[data-screen=read]').wait_for()
             assert '달콤한 하루!' in page.locator('.note').inner_text()
+            assert '1 / 2' in page.locator('.paging').inner_text()
+            page.locator('[data-action=next]').click()
+            assert '두 번째 선물!' in page.locator('.note').inner_text()
             if errors:
                 raise AssertionError('; '.join(errors))
             print('브라우저 모의 통합 테스트: 생성/로그인/작성/잠금/열람 성공, 오류 0개')
