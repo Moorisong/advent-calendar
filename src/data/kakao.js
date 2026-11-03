@@ -14,7 +14,13 @@ function callbackUrl() {
   return new URL('/auth/callback', window.location.origin).href;
 }
 
-export function startKakaoSignIn() {
+async function hashNonce(value) {
+  const bytes = new TextEncoder().encode(value);
+  const digest = await crypto.subtle.digest('SHA-256', bytes);
+  return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, '0')).join('');
+}
+
+export async function startKakaoSignIn() {
   const clientId = import.meta.env.VITE_KAKAO_REST_API_KEY?.trim();
   if (!clientId) {
     throw new Error('KAKAO_CLIENT_ID_NOT_CONFIGURED');
@@ -33,7 +39,7 @@ export function startKakaoSignIn() {
   url.searchParams.set('response_type', 'code');
   url.searchParams.set('scope', 'openid,profile_nickname,profile_image');
   url.searchParams.set('state', state);
-  url.searchParams.set('nonce', nonce);
+  url.searchParams.set('nonce', await hashNonce(nonce));
   window.location.assign(url.href);
 }
 
