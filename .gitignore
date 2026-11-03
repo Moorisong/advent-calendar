@@ -1,8 +1,7 @@
-
-
-# AI agent working rules
-docs/
-.antigravity/
+node_modules
+dist
+.DS_Store
+*.log
 
 .antigravity
 
