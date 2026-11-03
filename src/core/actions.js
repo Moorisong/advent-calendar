@@ -60,6 +60,7 @@ export async function submitMessage(form) {
   try {
     await writeMessage(state.calendar.id, state.route.date, state.selected, note);
     state.message = '';
+    state.lastSent = { slug: state.calendar.slug, date: state.route.date };
     await navigate({ page: SCREEN.sent, slug: state.calendar.slug, date: state.route.date });
   } catch (error) {
     console.error('Submit message failed:', error);
