@@ -5,7 +5,9 @@ import { extname, join, relative, resolve } from 'node:path';
 const ROOT = resolve(import.meta.dirname, '..');
 const CHECKED_FOLDERS = ['src', 'supabase', 'tests', 'scripts', 'spec'];
 const CHECKED_FILES = ['index.html', 'package.json', '.env.example', '.gitignore', 'README.md'];
-const ALLOWED_SUFFIXES = new Set(['.js', '.css', '.sql', '.html', '.mjs', '.json', '.md', '.example']);
+const ALLOWED_SUFFIXES = new Set([
+  '.js', '.mjs', '.ts', '.py', '.css', '.sql', '.html', '.json', '.md', '.example',
+]);
 const issues = [];
 
 function getFiles(directory) {
