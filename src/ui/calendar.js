@@ -20,9 +20,12 @@ export function renderBox(state, role = 'visitor', mini = false) {
       ? state.t('서랍 열기', 'Open drawer')
       : state.t('초콜릿 남기기', 'Leave a chocolate');
     const ariaLabel = `${state.month}${state.t('월 ', ' / ')}${day}${state.t('일', '')} · ${actionLabel}`;
+    if (mini) {
+      return `<span class="drawer" aria-hidden="true">${day}</span>`;
+    }
     return [
       `<button class="drawer ${drawerClass}" data-day="${day}" data-role="${role}"`,
-      ` aria-label="${escapeHtml(ariaLabel)}"${mini ? ' tabindex="-1"' : ''}>`,
+      ` aria-label="${escapeHtml(ariaLabel)}">`,
       String(day),
       todayLabel,
       '</button>',
