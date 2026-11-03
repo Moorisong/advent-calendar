@@ -1,12 +1,12 @@
 import { APP, SCREEN } from '../config/constants.js';
-import { isSeasonEnded } from '../utils/date.js';
-
-import { getViewState, state } from './state.js';
 import { head } from '../ui/chrome.js';
 import { renderAuthLoading, renderError, renderLogin } from '../ui/pages/auth.js';
 import { renderEnded, renderLocked, renderOwner, renderTutorial, renderVisitor } from '../ui/pages/calendar-states.js';
 import { renderCreate, renderCreated, renderLanding } from '../ui/pages/intro.js';
 import { renderEmpty, renderRead, renderSent, renderWrite } from '../ui/pages/messages.js';
+import { isSeasonEnded } from '../utils/date.js';
+
+import { getViewState, state } from './state.js';
 
 const PAGES = Object.freeze({
   [SCREEN.callback]: renderAuthLoading,
