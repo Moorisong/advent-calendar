@@ -1,0 +1,113 @@
+import { APP, SCREEN } from '../config/constants.js';
+import { createCalendar } from '../data/calendars.js';
+import { writeMessage } from '../data/messages.js';
+import { canWriteDate } from '../utils/date.js';
+
+import { navigate } from './navigation.js';
+import { render, toast } from './render.js';
+import { state, translate } from './state.js';
+
+export async function submitCalendar(form) {
+  if (!state.user || state.writing) {
+    return;
+  }
+  const input = form.elements.namedItem('nickname');
+  const nickname = String(input?.value ?? '').trim();
+  if (!nickname || Array.from(nickname).length > APP.maximumNicknameLength) {
+    toast(translate('닉네임을 다시 확인해 줘.', 'Please check the nickname.'));
+    return;
+  }
+  state.writing = true;
+  const button = form.querySelector('button[type="submit"],button[data-action="submit-create"]');
+  if (button) {
+    button.disabled = true;
+  }
+  try {
+    const calendar = await createCalendar(nickname, state.user.id);
+    state.calendar = calendar;
+    state.nicknameDraft = '';
+    await navigate({ page: SCREEN.created, slug: calendar.slug });
+  } catch (error) {
+    console.error('Create calendar failed:', error);
+    toast(translate('캘린더를 만들지 못했어요. 다시 시도해 줘.', 'Could not create the calendar. Try again.'));
+    if (button) {
+      button.disabled = false;
+    }
+  } finally {
+    state.writing = false;
+  }
+}
+
+export async function submitMessage(form) {
+  if (!state.user || !state.calendar || state.writing) {
+    return;
+  }
+  if (!canWriteDate(state.today)) {
+    toast(translate('지금은 초콜릿을 남길 수 없어요.', 'Chocolate deliveries are closed right now.'));
+    return;
+  }
+  const input = form.elements.namedItem('message');
+  const note = String(input?.value ?? '').trim();
+  if (!note || note.length > APP.maximumMessageLength) {
+    toast(translate('메시지를 다시 확인해 줘.', 'Please check your message.'));
+    return;
+  }
+  state.writing = true;
+  const button = form.querySelector('button[data-action="send"]');
+  if (button) {
+    button.disabled = true;
+  }
+  try {
+    await writeMessage(state.calendar.id, state.route.date, state.selected, note);
+    state.message = '';
+    await navigate({ page: SCREEN.sent, slug: state.calendar.slug, date: state.route.date });
+  } catch (error) {
+    console.error('Submit message failed:', error);
+    toast(translate('메시지를 보내지 못했어요. 다시 시도해 줘.', 'Could not send the message. Try again.'));
+    if (button) {
+      button.disabled = false;
+    }
+  } finally {
+    state.writing = false;
+  }
+}
+
+async function copyUrl(url, message) {
+  try {
+    await navigator.clipboard.writeText(url);
+    toast(message);
+  } catch (error) {
+    console.error('Link copy failed:', error);
+    toast(translate('링크를 복사하지 못했어요.', 'Could not copy the link.'));
+  }
+}
+
+export async function shareCalendar(action) {
+  const slug = state.calendar?.slug;
+  if (!slug) {
+    return;
+  }
+  const publicUrl = `${window.location.origin}/c/${slug}`;
+  const ownerUrl = `${publicUrl}/owner`;
+  if (action === 'private') {
+    await copyUrl(ownerUrl, translate('관리 링크를 복사했어요.', 'Owner link copied.'));
+    return;
+  }
+  if (action === 'share' && navigator.share) {
+    try {
+      await navigator.share({ title: APP.title, url: publicUrl });
+      return;
+    } catch (error) {
+      if (error?.name === 'AbortError') {
+        return;
+      }
+      console.warn('Native sharing unavailable:', error);
+    }
+  }
+  await copyUrl(publicUrl, translate('친구용 링크를 복사했어요.', 'Friend link copied.'));
+}
+
+export function changeSelectedChocolate(index) {
+  state.selected = index;
+  render();
+}

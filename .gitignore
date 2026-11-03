@@ -5,7 +5,6 @@ dist
 .env
 .env.*
 !.env.example
-
 .antigravity
-
 docs
+coverage/

@@ -1,0 +1,194 @@
+.private p {
+  font-size: 11px;
+  margin-top: 8px;
+}
+
+.solo {
+  padding: 25px 3vw 65px;
+}
+
+.solo .screen {
+  max-width: 1140px;
+  margin: auto;
+  min-height: 790px;
+}
+
+.solo.mobile .screen {
+  max-width: 390px;
+}
+
+.desktop-layout {
+  display: block;
+}
+
+.spec {
+  padding: 40px 5vw 70px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.spec h2 {
+  font-size: 28px;
+  margin: 30px 0 20px;
+}
+
+.swatches {
+  display: grid;
+  grid-template-columns: repeat(6,1fr);
+  gap: 12px;
+}
+
+.swatch {
+  height: 100px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  border: 1px solid #4b2d2522;
+  font: 11px monospace;
+}
+
+.spec table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.spec td,.spec th {
+  padding: 14px 10px;
+  border-bottom: 1px solid #4b2d2522;
+  text-align: left;
+}
+
+.spec .icons {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.toast {
+  position: fixed;
+  bottom: 25px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--brown);
+  color: var(--cream);
+  padding: 14px 24px;
+  z-index: 20;
+  font-size: 13px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+@container (min-width:700px) {
+  .desktop-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 80px;
+    max-width: 960px;
+    margin: 65px auto;
+    padding: 0 30px;
+  }
+  .desktop-layout .content {
+    padding: 0;
+    width: 100%;
+  }
+  .desktop-layout .mini {
+    width: 360px;
+  }
+  .desktop-layout h2 {
+    font-size: 40px;
+  }
+  .apphead {
+    padding: 22px 42px;
+    height: 90px;
+  }
+  .desktop-layout .hero-copy {
+    text-align: left;
+  }
+  .desktop-layout .primary {
+    max-width: 320px;
+  }
+  .solo .screen .calendar-layout {
+    display: grid;
+    grid-template-columns: 280px 440px;
+    gap: 70px;
+    max-width: 850px;
+    margin: 50px auto;
+    text-align: left;
+  }
+  .calendar-layout .content {
+    padding: 0;
+    width: 100%;
+  }
+  .calendar-layout .calendar-intro {
+    padding-top: 60px;
+  }
+  .calendar-layout h2 {
+    font-size: 34px;
+  }
+}
+
+@media (max-width:1100px) {
+  .gallery {
+    grid-template-columns: repeat(2,minmax(0,1fr));
+  }
+}
+
+@media (max-width:650px) {
+  .gallery {
+    grid-template-columns: 1fr;
+    padding: 0 14px 40px;
+    max-width: 430px;
+  }
+  .intro {
+    padding: 30px 20px;
+  }
+  .review {
+    padding: 16px;
+  }
+  .screen {
+    min-height: 720px;
+  }
+  .swatches {
+    grid-template-columns: repeat(2,1fr);
+  }
+  .spec {
+    padding: 20px;
+  }
+  .spec td {
+    padding: 10px 5px;
+  }
+  .solo {
+    padding: 16px 0;
+  }
+  .tools {
+    gap: 4px;
+  }
+  .tools button,.tools select {
+    font-size: 12px;
+    padding: 8px;
+  }
+  .intro h1 {
+    letter-spacing: -1px;
+  }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  * {
+    transition: none !important;
+  }
+}
+
+/* V2 — snowy pixel post office */
+
+body {
+  background: #284C40;
+  background-image: radial-gradient(#fff4de30 1px,transparent 1px);
+  background-size: 24px 24px;
+}
+

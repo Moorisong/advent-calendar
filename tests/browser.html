@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link rel="stylesheet" href="/src/styles/index.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "@supabase/supabase-js": "/tests/mock-supabase-browser.js"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <div id="toast" class="toast hidden" role="status"></div>
+    <script type="module" src="/tests/browser-main.js"></script>
+  </body>
+</html>

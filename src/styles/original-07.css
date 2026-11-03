@@ -1,0 +1,195 @@
+.mini .snow-scene {
+  height: 90px;
+}
+
+.hero-copy .fine {
+  margin-top: 12px;
+}
+
+.desktop-layout {
+  display: flex;
+  flex-direction: column;
+}
+
+.desktop-layout .hero-copy {
+  order: 2;
+}
+
+.desktop-layout>.content:last-child {
+  order: 1;
+  padding-bottom: 0;
+}
+
+.desktop-layout .hero-copy h2 {
+  margin-top: 0;
+}
+
+.desktop-layout>.content:last-child>.sprig,.desktop-layout>.content:last-child>.fine {
+  display: none;
+}
+
+.desktop-layout .hero-copy {
+  padding-top: 0;
+}
+
+.content .sprig {
+  margin: 20px;
+}
+
+.empty,.success {
+  padding-top: 58px;
+}
+
+.content:has(>.form) {
+  padding-top: 26px;
+}
+
+.snow-help {
+  font: 10px monospace;
+  text-align: center;
+  position: absolute;
+  top: 12px;
+  left: 0;
+  right: 0;
+  color: var(--cream);
+  z-index: 2;
+  letter-spacing: 2px;
+}
+
+@keyframes snowfall {
+  from {
+    transform: translate(0,-8px);
+  }
+  to {
+    transform: translate(24px,130px);
+  }
+}
+
+@keyframes ambientSnow {
+  from {
+    transform: translate(0,-10px);
+  }
+  to {
+    transform: translate(60px,110vh);
+  }
+}
+
+@keyframes giftHop {
+  0%,75%,100% {
+    transform: translateY(0);
+  }
+  85% {
+    transform: translateY(-8px);
+  }
+}
+
+@container (min-width:700px) {
+  .apphead {
+    height: 56px;
+    padding: 8px 22px;
+  }
+  .desktop-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    margin: 65px auto;
+  }
+  .desktop-layout .hero-copy {
+    order: 0;
+  }
+  .desktop-layout>.content:last-child {
+    order: 1;
+  }
+  .desktop-layout .mini {
+    width: 350px;
+  }
+  .desktop-layout .mini .snow-scene {
+    height: 120px;
+  }
+  .solo .screen .calendar-layout {
+    grid-template-columns: 270px 420px;
+    gap: 60px;
+    margin: 45px auto;
+  }
+  .calendar-layout .calendar-intro {
+    padding-top: 110px;
+  }
+  .calendar-layout h2 {
+    font-size: 35px;
+  }
+  .desktop-layout h2 {
+    font-size: 36px;
+  }
+}
+
+@media (max-width:650px) {
+  .intro h1 {
+    font-size: 29px;
+  }
+  .screen {
+    min-height: 740px;
+  }
+  .gallery {
+    padding-left: 12px;
+    padding-right: 18px;
+  }
+  .content {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+  .grid {
+    gap: 6px;
+  }
+  .drawer {
+    min-height: 44px;
+  }
+  .spec {
+    margin: 20px 12px;
+  }
+  .solo {
+    padding: 16px 10px;
+  }
+  .review .tools {
+    gap: 5px;
+  }
+  .mini {
+    width: 250px;
+  }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  * {
+    animation: none !important;
+  }
+}
+
+.drawer,.mini .drawer {
+  font-family: ChocoPixel,monospace;
+  font-size: 21px;
+  font-weight: normal;
+}
+
+.drawer small {
+  font-family: Arial,sans-serif;
+}
+
+/* Auth screen — matches the original 6-color pixel UI, buttons & scene. */
+
+.head-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.auth-wrap {
+  max-width: 430px;
+  margin: 36px auto 50px;
+  padding: 0 18px;
+  text-align: center;
+}
+
+.auth-wrap>.snow-scene {
+  height: 118px;
+  max-width: 430px;
+}
+

@@ -1,61 +1,64 @@
-# Dear Choco — Pixel Advent Calendar
+# Dear Choco — 2026 초콜릿 어드벤트 캘린더
 
-This is the **design-faithful UI prototype** with Korean / English UI and social sign-in integration points for **Kakao** and **Google**.
+**범위:** 2026년 11월 5일~12월 25일, 한국 시간(KST) 기준. 51개 날짜 서랍, 국문·영문,
+카카오·구글 로그인, 캘린더 생성 및 링크 공유, 로그인 필수 익명 메시지 작성,
+소유자 전용 날짜별 열람을 구현합니다.
 
-The original, unaltered twelve-screen prototype is kept in `public/design-reference.html`.
-
-## Local development
-
-Requires Node.js 22+.
+## 실행
 
 ```bash
 cp .env.example .env.local
-# Fill in your own Supabase project's URL and publishable key.
+# .env.local에 본인 전용 Supabase URL과 공개 키 설정
 npm install
 npm run dev
 ```
 
-```bash
-npm run build
-npm run preview
-```
+검증: `npm run lint`, `npm test`, `npm run build`.
 
-## Configure social sign-in (required)
+**중요:** 전용 Supabase 프로젝트 생성, `supabase/schema.sql` 실행,
+Google·Kakao 공급자 설정이 끝나기 전에는 로그인과 DB 작업이 동작하지 않습니다.
+세팅 상세는 [설정 가이드](spec/SETUP.md)를 확인하세요.
 
-Use a dedicated Supabase project for Dear Choco. Do **not** copy another app's service-role token into the client.
+## 화면 및 데이터 흐름
 
-1. In the Supabase dashboard, open **Authentication → Sign In / Providers**, enable **Google** and **Kakao**.
-2. Create a Google Cloud OAuth web client. Register the **Supabase callback** `https://<project-ref>.supabase.co/auth/v1/callback` as an authorized redirect URI. Enter the Google client ID and secret in Supabase, not in this repository.
-3. Create a Kakao Developers application, enable Kakao Login, obtain its REST API key (client ID) and client secret, and register the **same Supabase callback** in Kakao Developers. Enter those credentials into Supabase.
-4. In Supabase **Authentication → URL Configuration**, set the production Site URL and allow the exact frontend callback `https://YOUR-SITE.example/auth/callback`. For local development also allow `http://localhost:5173/auth/callback`.
-5. Put only these **public** values into local or deployment environment:
-   - `VITE_SUPABASE_URL`
-   - `VITE_SUPABASE_PUBLISHABLE_KEY` (or legacy `VITE_SUPABASE_ANON_KEY`).
-6. Production hosting needs SPA rewrite to `index.html`, including `/auth/callback`.
+- `/`: 랜딩
+- `/login`: 카카오·구글 OAuth 로그인
+- `/auth/callback`: OAuth PKCE 코드 교환 및 원래 작업 복귀
+- `/create`: 닉네임 입력 후 로그인 계정 소유의 캘린더 생성
+- `/c/:slug/created`: 생성 완료, 친구용·관리자용 링크
+- `/c/:slug`: 친구가 방문하는 공개 캘린더
+- `/c/:slug/write?date=YYYY-MM-DD`: 초콜릿 및 익명 메시지 작성
+- `/c/:slug/sent?date=YYYY-MM-DD`: 작성 완료
+- `/c/:slug/owner`: 캘린더 소유자 화면
+- `/c/:slug/read?date=YYYY-MM-DD`: 해당 날짜 메시지 열람(소유자 전용)
+- `/c/:slug/empty?date=YYYY-MM-DD`: 메시지가 없는 날짜(소유자 전용)
+- `/c/:slug/locked?date=YYYY-MM-DD`: 미래 날짜 잠금(소유자 전용)
+- `/c/:slug/tutorial`: 방문자 안내 오버레이
 
-See the official [Google guide](https://supabase.com/docs/guides/auth/social-sign-in/auth-google) and [Kakao guide](https://supabase.com/docs/guides/auth/social-sign-in/auth-kakao).
+## 저장 및 접근 정책
 
-**Without the provider application credentials and allowed callbacks, the buttons display an unavailable/error state and cannot complete real OAuth.** Both providers must be configured before live testing.
+- 누구나 공개 URL에서 캘린더 이름·서랍을 볼 수 있습니다.
+- 캘린더 생성과 메시지 등록은 카카오·구글로 로그인해야 합니다.
+- 메시지 작성자의 계정 ID는 저장하지 않습니다. 익명성이 유지됩니다.
+- 주인만 날짜가 된 메시지를 읽고, 미래 메시지의 존재·개수는 알 수 없습니다.
+- 서버(DB) RLS가 주인 검사와 날짜 잠금을 적용합니다.
+- 종료 후에는 메시지를 추가할 수 없지만, 과거 메시지를 열 수 있습니다.
+- 한 날짜에 여러 메시지를 남길 수 있습니다.
 
-## UX / access rules
+## 코드 구조
 
-- Public: landing `/`, friend calendar `/c/demo`, first-visit tutorial, finished-season preview.
-- Sign-in page: `/login`; return callback: `/auth/callback`.
-- Login required for `/create`, `/created`, `/c/demo/write`, `/c/demo/sent`, and owner/read/empty/locked preview pages.
-- Visitors can **view** a friend's calendar without login, but must sign in to **leave a chocolate**.
-- Sign-in intent is stored in sessionStorage on the same origin so the app returns to the selected action, month and day after OAuth.
-- Header includes sign-out when signed in.
-- Owner view contains both **Share with friends** and **Create another calendar** actions.
-- Korean/English labels and all original pixel SVGs, drawer UI, motion, snow and responsive design are preserved.
+| 디렉터리 | 역할 |
+| --- | --- |
+| `src/ui` | 원본 시안에 맞춘 재사용 HTML/SVG 화면 및 애니메이션 |
+| `src/styles` | 원본 스타일을 순서대로 분리한 CSS |
+| `src/core` | 화면 상태, 라우팅, 이벤트, 인증 복귀 |
+| `src/data` | Supabase OAuth, 캘린더·메시지 저장소 |
+| `src/config` | 운영 날짜·최대 글자 수·초콜릿 목록 |
+| `src/utils` | 한국 시간 날짜, 출력 이스케이프, 세션 저장 |
+| `supabase/schema.sql` | 테이블, 제약조건, 인덱스, 접근 정책 |
+| `tests` | 날짜·URL·HTML 출력·RLS 정의 정적 테스트 |
 
-## Important scope limitation
+보안 및 QA 한계는 [보안·검증 가이드](spec/SECURITY.md)를 확인하세요.
+원본 참고 시안은 사용자가 제공한 `dear-choco-design(1).html`입니다.
 
-**The calendar itself is still a UI prototype.** Its sample nickname, owner route, messages, secret link, dates and share-toasts are placeholders inherited from the original design. Calendar creation and note submission do **not** persist anything yet. OAuth wiring is real **only after provider setup**, but the availability of a user session is currently used for frontend UI routing, not for data authorization.
-
-When backend implementation starts, **verify the authenticated user on the server** and enforce calendar ownership with RLS or equivalent server-side checks. Do not trust frontend guards, owner URLs, or user-editable profile metadata as authorization.
-
-The original date examples still show December 12, 2026, not a live time check.
-
-## Verification
-
-Static JavaScript syntax check and offline browser preview of login screens and route guards were performed. Google/Kakao end-to-end OAuth and package build could not be verified here because no dedicated Supabase project/provider credentials or installed npm dependencies were available. Dependencies are pinned in package.json; generate/commit a lockfile on a connected development machine after installing.
+**작업 방침:** 임의 Git 커밋이나 배포는 수행하지 않습니다.
