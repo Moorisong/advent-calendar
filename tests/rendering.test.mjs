@@ -49,3 +49,10 @@ test('메시지 본문과 닉네임에 HTML 출력 인젝션이 일어나지 않
   const input = renderWrite({ ...base, nickname: '<img src=x>' });
   assert.doesNotMatch(input, /FOR <img src=x>/);
 });
+
+test('랜딩 미리보기 서랍은 클릭 가능한 실제 캘린더로 오인하지 않음', () => {
+  const html = renderBox(base, 'visitor', true);
+  assert.equal((html.match(/<span class="drawer"/g) ?? []).length, 15);
+  assert.doesNotMatch(html, /data-day=/);
+  assert.doesNotMatch(html, /<button class="drawer/);
+});
