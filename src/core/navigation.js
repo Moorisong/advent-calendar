@@ -47,7 +47,11 @@ async function hydrateCalendar(route, version) {
 export async function navigate(requested, { replace = false, scroll = true } = {}) {
   const version = ++navigationVersion;
   state.today = todayInKorea();
-  let route = { page: requested.page, slug: requested.slug ?? null, date: requested.date ?? null };
+  let route = resolvePage(
+    { page: requested.page, slug: requested.slug ?? null, date: requested.date ?? null },
+    state.today,
+    state.lastSent,
+  );
   if (PROTECTED_SCREENS.has(route.page) && !state.user) {
     saveIntent(route);
     route = { page: SCREEN.login, slug: null, date: null };
@@ -101,7 +105,6 @@ export async function navigate(requested, { replace = false, scroll = true } = {
     showError();
     return;
   }
-  route = resolvePage(route, state.today, state.lastSent);
   if (route.page === SCREEN.read) {
     try {
       state.notes = await getMessages(state.calendar.id, route.date);
