@@ -1,10 +1,11 @@
 import { PROTECTED_SCREENS, SCREEN } from '../config/constants.js';
 import { findCalendar } from '../data/calendars.js';
 import { getMessages } from '../data/messages.js';
-import { calendarDate, canReadDate, todayInKorea, validCalendarDate } from '../utils/date.js';
+import { calendarDate, canReadDate, isSeasonEnded, todayInKorea, validCalendarDate } from '../utils/date.js';
 import { readLocal, writeLocal } from '../utils/storage.js';
 
 import { saveIntent } from './intent.js';
+import { resolvePage } from './page-policy.js';
 import { render } from './render.js';
 import { isOwnerScreen, routeUrl } from './routes.js';
 import { state, translate } from './state.js';
@@ -20,9 +21,9 @@ function updateHistory(route, replace) {
   }
 }
 
-function showError() {
+function showError(message = translate('캘린더를 찾을 수 없어요.', 'Could not find this calendar.')) {
   state.route = { page: SCREEN.error, slug: null, date: null };
-  state.error = translate('캘린더를 찾을 수 없어요.', 'Could not find this calendar.');
+  state.error = message;
   render();
 }
 
@@ -41,23 +42,6 @@ async function hydrateCalendar(route, version) {
     state.calendar = loaded;
   }
   return true;
-}
-
-function chooseDisplayPage(route) {
-  if ([SCREEN.write, SCREEN.sent].includes(route.page) && !validCalendarDate(route.date)) {
-    return { ...route, page: SCREEN.visitor };
-  }
-  if (route.page !== SCREEN.read && route.page !== SCREEN.empty && route.page !== SCREEN.locked) {
-    return route;
-  }
-  const date = route.date;
-  if (!date || !validCalendarDate(date)) {
-    return { ...route, page: SCREEN.owner };
-  }
-  if (!canReadDate(date, state.today)) {
-    return { ...route, page: SCREEN.locked };
-  }
-  return { ...route, page: SCREEN.read };
 }
 
 export async function navigate(requested, { replace = false, scroll = true } = {}) {
@@ -92,12 +76,16 @@ export async function navigate(requested, { replace = false, scroll = true } = {
         return;
       }
     } catch (error) {
+      if (navigationVersion !== version) {
+        return;
+      }
       console.error('Calendar fetch failed:', error);
-      state.error = translate('캘린더를 불러오지 못했어요.', 'Unable to load the calendar.');
-      showError();
+      showError(translate('캘린더를 불러오지 못했어요.', 'Unable to load the calendar.'));
       return;
     } finally {
-      state.loading = false;
+      if (navigationVersion === version) {
+        state.loading = false;
+      }
     }
   }
   if (navigationVersion !== version) {
@@ -113,7 +101,7 @@ export async function navigate(requested, { replace = false, scroll = true } = {
     showError();
     return;
   }
-  route = chooseDisplayPage(route);
+  route = resolvePage(route, state.today, state.lastSent);
   if (route.page === SCREEN.read) {
     try {
       state.notes = await getMessages(state.calendar.id, route.date);
@@ -122,14 +110,16 @@ export async function navigate(requested, { replace = false, scroll = true } = {
       }
       route = { ...route, page: state.notes.length ? SCREEN.read : SCREEN.empty };
     } catch (error) {
+      if (navigationVersion !== version) {
+        return;
+      }
       console.error('Message read failed:', error);
-      state.error = translate('메시지를 불러오지 못했어요.', 'Could not read messages.');
-      showError();
+      showError(translate('메시지를 불러오지 못했어요.', 'Could not read messages.'));
       return;
     }
   }
   state.route = route;
-  if (route.slug && route.page === SCREEN.visitor) {
+  if (route.slug && route.page === SCREEN.visitor && !isSeasonEnded(state.today)) {
     const tutorialKey = `tutorial:${route.slug}`;
     const visited = readLocal(tutorialKey) === 'seen';
     if (!visited) {
