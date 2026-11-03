@@ -15,8 +15,8 @@ npm run dev
 
 검증: `npm run lint`, `npm test`, `npm run build`.
 
-**중요:** 전용 Supabase 프로젝트 생성, `supabase/schema.sql` 실행,
-Google·Kakao 공급자 설정이 끝나기 전에는 로그인과 DB 작업이 동작하지 않습니다.
+**중요:** Dear Choco 전용 Supabase 프로젝트에는 2026-11-03에 초기 DB 스키마를 적용했습니다.
+다른 프로젝트에 배포할 때는 스키마, Google OAuth, 카카오 OIDC 및 환경변수 설정이 필요합니다.
 세팅 상세는 [설정 가이드](spec/SETUP.md)를 확인하세요.
 
 ## 화면 및 데이터 흐름
@@ -61,4 +61,6 @@ Google·Kakao 공급자 설정이 끝나기 전에는 로그인과 DB 작업이 
 보안 및 QA 한계는 [보안·검증 가이드](spec/SECURITY.md)를 확인하세요.
 원본 참고 시안은 사용자가 제공한 `dear-choco-design(1).html`입니다.
 
-**작업 방침:** 임의 Git 커밋이나 배포는 수행하지 않습니다.
+**개발 규칙:** 파일당 최대 300줄, 2칸 들여쓰기, 작은 모듈과 명확한 책임 분리,
+설정 상수화, 중복 코드 제거, 문서·테스트 동기화 원칙을 따릅니다.
+`dev` 브랜치의 변경 사항은 `npm run lint`, `npm test`, `npm run build`로 확인합니다.
