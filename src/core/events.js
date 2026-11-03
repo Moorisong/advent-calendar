@@ -54,7 +54,9 @@ async function handleAction(action) {
   if (action === 'logout') {
     try {
       await logout();
+      clearIntent();
       state.user = null;
+      state.lastSent = null;
       await navigate({ page: SCREEN.landing });
     } catch (error) {
       console.error('Sign out failed:', error);
