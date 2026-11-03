@@ -1,5 +1,7 @@
 import { PROTECTED_SCREENS, SCREEN } from '../config/constants.js';
 import { finishSignIn, getUser, subscribeToAuth } from '../data/auth.js';
+import { installPixelFont } from '../ui/pixel-font.js';
+import { snow } from '../ui/sprites.js';
 import { todayInKorea } from '../utils/date.js';
 
 import { attachEvents } from './events.js';
@@ -8,8 +10,6 @@ import { navigate } from './navigation.js';
 import { render } from './render.js';
 import { readRoute } from './routes.js';
 import { state, translate } from './state.js';
-import { installPixelFont } from '../ui/pixel-font.js';
-import { snow } from '../ui/sprites.js';
 
 function handleSessionChange(event, user) {
   if (event === 'SIGNED_OUT') {
