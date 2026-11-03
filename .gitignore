@@ -2,7 +2,6 @@ node_modules
 dist
 .DS_Store
 *.log
-
-.antigravity
-
-docs
+.env
+.env.*
+!.env.example

@@ -1,14 +1,28 @@
-let lang='ko',view='desktop',page='landing',month=12,nickname='수진',selected=0,message='',day=15,readIndex=0;const $=s=>document.querySelector(s),t=(k,e)=>lang==='ko'?k:e;const names=[['밀크','Milk'],['하트','Heart'],['트리','Tree'],['리본','Ribbon'],['별','Star'],['트러플','Truffle']];
+import {authConfigured, getAuthenticatedUser, signInWithProvider, signOut, listenForAuth} from './auth.js';
+
+let lang='ko',view='desktop',page='landing',month=12,nickname='수진',selected=0,message='',day=15,readIndex=0;
+let user=null,authReady=false,signingIn=false,loginError='';
+try { if(sessionStorage.getItem('dearchoco:lang')==='en') lang='en'; } catch {}const $=s=>document.querySelector(s),t=(k,e)=>lang==='ko'?k:e;const names=[['밀크','Milk'],['하트','Heart'],['트리','Tree'],['리본','Ribbon'],['별','Star'],['트러플','Truffle']];
 
 function snow(n=16){return '<div class="pixel-snow" aria-hidden="true">'+Array.from({length:n},(_,i)=>'<i style="--left:'+((i*37)%100)+'%;--speed:'+(3+i%5)+'s;--delay:-'+(i*.71)+'s"></i>').join('')+'</div>'}
 function scene(){return `<div class="snow-scene">${snow()}<svg viewBox="0 0 320 100" aria-hidden="true" shape-rendering="crispEdges"><path d="M0 89h320v11H0z" fill="#FFF4DE"/><path d="M25 64h8v-8h8V45h8v11h8v8h8v8h8v13H17V72h8zM254 66h8V55h8V43h8v12h8v11h8v10h8v10h-56V76h8z" fill="#B78258"/><path d="M41 45h8v11h8v8H33v-8h8zM270 43h8v12h8v8h-24v-8h8z" fill="#FFF4DE"/><path d="M104 51h112v39H104z" fill="#A93238"/><path d="M96 44h16v-8h16v-8h64v8h16v8h16v9H96z" fill="#A93238"/><path d="M96 44h16v-8h16v-8h64v8h16v8h16v6H96z" fill="#FFF4DE"/><path d="M184 17h12v20h-12zM144 59h32v31h-32z" fill="#4B2D25"/><path d="M114 60h16v16h-16zM190 60h16v16h-16zM156 61h8v8h-8z" fill="#E9C776"/><path d="M177 9h6V3h6v6h-6v6h-6z" fill="#FFF4DE"/><path d="M231 10h6v6h6v6h-6v6h-6v-6h-6v-6h6z" fill="#E9C776"/></svg></div>`}
 function icon(i=0){let shapes=[`<path d="M5 3h14v18H5z" fill="#4B2D25"/><path d="M7 5h4v5H7zm6 0h4v5h-4zM7 12h4v6H7zm6 0h4v6h-4z" fill="#B78258"/>`,`<path d="M3 6h3V3h4v3h4V3h4v3h3v8h-3v3h-3v3H9v-3H6v-3H3z" fill="#A93238"/><path d="M6 6h3v3H6z" fill="#E9C776"/>`,`<path d="M10 2h4v4h3v4h3v4h3v4H1v-4h3v-4h3V6h3z" fill="#284C40"/><path d="M10 18h4v4h-4zM7 10h3v3H7zm7 4h3v3h-3z" fill="#B78258"/>`,`<path d="M3 7h18v14H3z" fill="#4B2D25"/><path d="M10 7h4v14h-4zM3 11h18v3H3zM5 2h5v3h4V2h5v5H5z" fill="#E9C776"/>`,`<path d="M10 1h4v6h7v6h-4v4h2v5h-5v-4h-4v4H5v-5h2v-4H3V7h7z" fill="#E9C776"/>`,`<path d="M7 3h10v3h4v12h-4v3H7v-3H3V6h4z" fill="#4B2D25"/><path d="M7 7h3v3H7zm7 4h3v3h-3zM8 15h3v3H8z" fill="#B78258"/>`];return `<svg class="icon" viewBox="0 0 24 24" aria-hidden="true" shape-rendering="crispEdges">${shapes[i]}<\/svg>`}
-function btn(label,action,secondary=false){return `<button class="${secondary?'secondary':'primary'}" data-action="${action}">${label}</button>`}function head(){return `<div class="apphead"><div class="brand">${icon(3)} dear-choco.exe</div><button class="language" data-action="lang" aria-label="Change language">${lang==='ko'?'EN':'한국어'}</button></div>`}function footer(){return `<p class="fine">2026. 11. 05 — 12. 25<br>${t('모든 날짜는 한국 시간(KST) 기준이에요.','All dates follow Korea Standard Time (KST).')}</p>`}
+function btn(label,action,secondary=false){return `<button class="${secondary?'secondary':'primary'}" data-action="${action}">${label}</button>`}function head(){return `<div class="apphead"><div class="brand">${icon(3)} dear-choco.exe</div><div class="head-actions">${user?`<button class="language" data-action="logout">${t('로그아웃','Sign out')}</button>`:''}<button class="language" data-action="lang" aria-label="Change language">${lang==='ko'?'EN':'한국어'}</button></div></div>`}function footer(){return `<p class="fine">2026. 11. 05 — 12. 25<br>${t('모든 날짜는 한국 시간(KST) 기준이에요.','All dates follow Korea Standard Time (KST).')}</p>`}
 function box(role='visitor',mini=false){let start=month===11?5:1,end=month===11?30:25;let days=mini?[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]:Array.from({length:end-start+1},(_,i)=>start+i);return `<div class="${mini?'mini':''}">${scene()}<div class="box"><div class="ribbon"><i class="star"></i> MERRY CHRISTMAS <i class="star"></i></div><div class="grid">${days.map(d=>`<button class="drawer ${!mini&&role==='owner'?(month===12&&d===12?'today':month===11||d<12?'past':''):''}" data-day="${d}" data-role="${role}" ${mini?'tabindex="-1"':''} aria-label="${month}${t('월 ',' / ')}${d}${t('일','')} · ${role==='owner'?t('서랍 열기','Open drawer'):t('초콜릿 남기기','Leave a chocolate')}">${d}${!mini&&role==='owner'&&month===12&&d===12?`<small>${t('오늘','TODAY')}</small>`:''}</button>`).join('')}</div><div class="base">${mini?'WITH LOVE, FOR YOU':month===11?'NOVEMBER · 2026':'DECEMBER · 2026'}</div></div></div>`}
-function calendar(role='visitor',end=false){return `<div class="calendar-layout"><div class="content calendar-intro"><div class="kicker">${role==='owner'?t('나만의 초콜릿 우체국','YOUR CHOCOLATE POST OFFICE'):t('초콜릿으로 전하는 마음','A LITTLE CHOCOLATE, A LITTLE LOVE')}</div><h2>${lang==='ko'?nickname+'의 초콜릿 캘린더':(nickname==='수진'?'Sujin':nickname)+"’s chocolate calendar"}</h2><p class="sub">${end?t('올해의 초콜릿 배달이 끝났어요.','This year’s chocolate deliveries have ended.'):role==='owner'?t('오늘의 서랍을 열어볼까?','Shall we open today’s drawer?'):t('날짜를 골라 초콜릿과 메시지를 남겨줘!','Pick a date. Leave a chocolate and a note!')}</p>${role==='owner'?`<span class="stamp">${t('오늘','TODAY')} · DEC 12 · KST</span>`:''}</div><div class="content"><div class="tabs"><button data-month="11" class="${month===11?'on':''}" aria-pressed="${month===11}">${t('11월','November')}</button><button data-month="12" class="${month===12?'on':''}" aria-pressed="${month===12}">${t('12월','December')}</button></div>${box(end?'ended':role)}${role==='owner'?btn(t('친구에게 링크 공유','Share with friends'),'share'):btn(t('나도 캘린더 만들기','Make my own calendar'),'create',true)}${footer()}<div class="ad">${t('광고 영역','ADVERTISEMENT')}</div></div></div>`}
-function content(p){switch(p){case 'landing':return `<div class="desktop-layout"><div class="content hero-copy"><div class="kicker">A SWEET LITTLE CHRISTMAS</div><h2>${t('친구들이 남긴 초콜릿,<br>매일 하나씩 열어봐!','A little chocolate.<br>A little love.<br>Open a new day.')}</h2><p class="sub">${t('나만의 달력을 만들고 친구들에게 공유해봐.','Create your calendar. Let friends fill it with anonymous notes.')}</p>${btn(t('내 캘린더 만들기','Create my calendar'),'create')}<p class="fine">${t('가입 없이, 닉네임 하나로 시작해요.','No sign-up. Just a nickname to get started.')}</p></div><div class="content">${box('visitor',true)}<div class="sprig"><i class="star"></i>${icon(0)}<i class="star"></i></div>${footer()}</div></div>`;
-case 'create':return `<div class="content"><div class="sprig">${icon(3)}</div><div class="kicker">MADE JUST FOR YOU</div><h2>${t('누구의 캘린더를<br>만들까요?','Who is this<br>calendar for?')}</h2><p class="sub">${t('친구들이 알아볼 이름을 적어줘.','Pick a name your friends will recognize.')}</p><form class="form" data-create><label>${t('닉네임','Nickname')}<input name="nickname" maxlength="12" required placeholder="${t('예: 수진','e.g. Sujin')}" autocomplete="off"></label><p class="counter">${t('최대 12자','Up to 12 characters')}</p>${btn(t('캘린더 만들기','Create calendar'),'submit-create')}</form><p class="fine">${t('만든 뒤, 나만의 관리 링크를 꼭 저장해줘.','Save your private owner link after creating your calendar.')}</p></div>`;
-case 'created':return `<div class="content"><div class="sprig largeicon">${icon(3)}</div><h2>${t('작은 우체국, 준비 완료!','Your little post office is ready!')}</h2><p class="sub">${t('친구들에게 초콜릿을 부탁해봐.','Invite your friends to leave a little sweetness.')}</p><div class="url">dearchoco.example/c/sujin</div>${btn(t('친구용 링크 복사','Copy friend link'),'copy')}${btn(t('친구에게 공유','Share with friends'),'share',true)}<div class="private"><h3>${t('나만의 관리 링크','Your private owner link')}</h3><p>${t('메시지를 읽을 수 있는 비밀 열쇠예요.<br>나만 보관하고, 친구에게 보내지 마세요.','This is your key to reading messages.<br>Keep it safe. Never share it with friends.')}</p>${btn(t('관리 링크 저장','Save owner link'),'private',true)}</div><button class="textbtn" data-action="owner">${t('내 캘린더로 가기','Go to my calendar')}</button></div>`;
+function calendar(role='visitor',end=false){return `<div class="calendar-layout"><div class="content calendar-intro"><div class="kicker">${role==='owner'?t('나만의 초콜릿 우체국','YOUR CHOCOLATE POST OFFICE'):t('초콜릿으로 전하는 마음','A LITTLE CHOCOLATE, A LITTLE LOVE')}</div><h2>${lang==='ko'?nickname+'의 초콜릿 캘린더':(nickname==='수진'?'Sujin':nickname)+"’s chocolate calendar"}</h2><p class="sub">${end?t('올해의 초콜릿 배달이 끝났어요.','This year’s chocolate deliveries have ended.'):role==='owner'?t('오늘의 서랍을 열어볼까?','Shall we open today’s drawer?'):t('날짜를 골라 초콜릿과 메시지를 남겨줘!','Pick a date. Leave a chocolate and a note!')}</p>${role==='owner'?`<span class="stamp">${t('오늘','TODAY')} · DEC 12 · KST</span>`:''}</div><div class="content"><div class="tabs"><button data-month="11" class="${month===11?'on':''}" aria-pressed="${month===11}">${t('11월','November')}</button><button data-month="12" class="${month===12?'on':''}" aria-pressed="${month===12}">${t('12월','December')}</button></div>${box(end?'ended':role)}${role==='owner'?btn(t('친구에게 링크 공유','Share with friends'),'share')+btn(t('새 캘린더 만들기','Create another calendar'),'create',true):btn(t('나도 캘린더 만들기','Make my own calendar'),'create',true)}${footer()}<div class="ad">${t('광고 영역','ADVERTISEMENT')}</div></div></div>`}
+function googleMark(){return `<svg viewBox="0 0 24 24" width="23" height="23" aria-hidden="true"><path fill="#4285F4" d="M21.5 12.2c0-.7-.1-1.3-.2-1.9H12v3.8h5.3c-.2 1.2-.9 2.2-1.9 2.9v2.5h3.2c1.9-1.7 2.9-4.2 2.9-7.3z"/><path fill="#34A853" d="M12 22c2.7 0 4.9-.9 6.6-2.5l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.8-5.6-4.1H3.1v2.6A10 10 0 0 0 12 22z"/><path fill="#FBBC05" d="M6.4 13.9a6 6 0 0 1 0-3.8V7.5H3.1a10 10 0 0 0 0 9l3.3-2.6z"/><path fill="#EA4335" d="M12 6c1.5 0 2.8.5 3.8 1.5l2.9-2.9A9.6 9.6 0 0 0 12 2a10 10 0 0 0-8.9 5.5l3.3 2.6C7.2 7.8 9.4 6 12 6z"/></svg>`}
+function kakaoMark(){return `<svg viewBox="0 0 24 24" width="23" height="23" aria-hidden="true"><path fill="#3B2521" d="M12 3C5.9 3 1 6.8 1 11.4c0 3 2 5.6 5.1 7.1l-.9 3.4c-.1.4.3.7.7.5l4.3-2.7c.6.1 1.2.1 1.8.1 6.1 0 11-3.8 11-8.4S18.1 3 12 3z"/></svg>`}
+function escapeText(value){return String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function loginPage(){
+  const intent=readIntent();
+  const creating=intent?.page==='create';
+  return `<div class="auth-wrap">${scene()}<div class="auth-panel"><div class="auth-gift">${icon(3)}<span class="auth-spark">✦</span></div><p class="auth-tag">A LITTLE SWEETNESS FOR YOU</p><h2>${creating?t('나만의 달콤한 달력을 만들어요','Create your own sweet calendar'):t('달콤한 마음을 전하러 왔나요?','Ready to share a little sweetness?')}</h2><p class="sub">${t('캘린더를 만들거나 초콜릿을 남기려면 로그인해줘.','Sign in to create a calendar or leave a chocolate.')}</p><div class="auth-buttons"><button class="oauth-button oauth-kakao" data-oauth="kakao" ${signingIn?'disabled':''}>${kakaoMark()}<span>${t('카카오로 계속하기','Continue with Kakao')}</span></button><button class="oauth-button oauth-google" data-oauth="google" ${signingIn?'disabled':''}>${googleMark()}<span>${t('Google로 계속하기','Continue with Google')}</span></button></div>${loginError?`<p class="auth-error" role="alert">${escapeText(loginError)}</p>`:''}${!authConfigured?`<p class="auth-hint">${t('로그인 연결 준비 중이에요.','Social sign-in is being configured.')}</p>`:''}<p class="auth-fine">${t('로그인하면 원래 보던 화면으로 돌아가요.','You’ll return to where you left off after signing in.')}</p><button class="textbtn" data-action="leave-login">${t('돌아가기','Go back')}</button></div>${footer()}</div>`;
+}
+function content(p){switch(p){case 'auth-loading':return `<div class="content auth-loading" role="status"><div class="largeicon">${icon(3)}</div><p>${t('로그인을 확인하고 있어요…','Checking your sign-in…')}</p></div>`;
+case 'login':return loginPage();
+case 'landing':return `<div class="desktop-layout"><div class="content hero-copy"><div class="kicker">A SWEET LITTLE CHRISTMAS</div><h2>${t('친구들이 남긴 초콜릿,<br>매일 하나씩 열어봐!','A little chocolate.<br>A little love.<br>Open a new day.')}</h2><p class="sub">${t('나만의 달력을 만들고 친구들에게 공유해봐.','Create your calendar. Let friends fill it with anonymous notes.')}</p>${btn(t('내 캘린더 만들기','Create my calendar'),'create')}<p class="fine">${t('카카오 또는 구글 로그인으로 시작해요.','Get started with Kakao or Google.')}</p></div><div class="content">${box('visitor',true)}<div class="sprig"><i class="star"></i>${icon(0)}<i class="star"></i></div>${footer()}</div></div>`;
+case 'create':return `<div class="content"><div class="sprig">${icon(3)}</div><div class="kicker">MADE JUST FOR YOU</div><h2>${t('누구의 캘린더를<br>만들까요?','Who is this<br>calendar for?')}</h2><p class="sub">${t('친구들이 알아볼 이름을 적어줘.','Pick a name your friends will recognize.')}</p><form class="form" data-create><label>${t('닉네임','Nickname')}<input name="nickname" maxlength="12" required placeholder="${t('예: 수진','e.g. Sujin')}" autocomplete="off"></label><p class="counter">${t('최대 12자','Up to 12 characters')}</p>${btn(t('캘린더 만들기','Create calendar'),'submit-create')}</form><p class="fine">${t('로그인한 계정으로 내 캘린더를 관리할 수 있어요.','Manage your calendar with your signed-in account.')}</p></div>`;
+case 'created':return `<div class="content"><div class="sprig largeicon">${icon(3)}</div><h2>${t('작은 우체국, 준비 완료!','Your little post office is ready!')}</h2><p class="sub">${t('친구들에게 초콜릿을 부탁해봐.','Invite your friends to leave a little sweetness.')}</p><div class="url">dearchoco.example/c/sujin</div>${btn(t('친구용 링크 복사','Copy friend link'),'copy')}${btn(t('친구에게 공유','Share with friends'),'share',true)}<div class="private"><h3>${t('나만의 관리 링크','Your private owner link')}</h3><p>${t('주인 화면으로 가는 바로가기예요.<br>로그인한 계정에서만 확인할 수 있어요.','A shortcut to your owner calendar.<br>Only your signed-in account can access it.')}</p>${btn(t('관리 링크 저장','Save owner link'),'private',true)}</div><button class="textbtn" data-action="owner">${t('내 캘린더로 가기','Go to my calendar')}</button></div>`;
 case 'visitor':return calendar();case 'owner':return calendar('owner');case 'ended':return calendar('visitor',true);
 case 'write':return `<div class="content"><div class="kicker">FOR ${lang==='ko'?nickname.toUpperCase():'SUJIN'}</div><h2>${month}${t('월 ',' / ')}${day}${t('일의 작은 선물',' · A little gift')}</h2><p class="sub">${t('초콜릿 하나에 마음을 담아줘.','Pick a chocolate. Add a little heart.')}</p><form class="form" data-write><label>${t('초콜릿 고르기','Choose a chocolate')}</label><div class="choices">${names.map((n,i)=>`<button type="button" class="choice ${selected===i?'selected':''}" aria-pressed="${selected===i}" data-choco="${i}">${icon(i)}${n[lang==='ko'?0:1]}</button>`).join('')}</div><label>${t('익명 메시지','Anonymous note')}<textarea maxlength="200" required name="message" placeholder="${t('추운 날에 생각나는 따뜻한 말을 남겨줘.','A little note to warm a winter day.')}" id="message"></textarea></label><div class="counter"><span id="count">0</span> / 200</div><p class="fine">${t('주인만 읽을 수 있어요. 선택한 날짜에 열려요.','Only the owner can read this, from the selected date.')}<br>${t('지난 날짜의 메시지는 바로 열려요.','Past-date notes can be opened right away.')}</p>${btn(t('초콜릿 남기기','Leave a chocolate'),'send')}<button type="button" class="textbtn" data-action="visitor">${t('캘린더로 돌아가기','Back to calendar')}</button></form></div>`;
 case 'sent':return `<div class="content success"><div class="largeicon">${icon(selected)}</div><div class="kicker">SEALED WITH SWEETNESS</div><h2>${t('마음을 넣어두었어요!','A little love, tucked away!')}</h2><p class="sub">${t('선택한 날, 친구에게 달콤한 선물이 될 거예요.','A sweet surprise for your friend, on the day you picked.')}</p>${btn(t('나도 캘린더 만들기','Make my own calendar'),'create')}${btn(t('캘린더로 돌아가기','Back to calendar'),'visitor',true)}</div>`;
@@ -32,7 +46,9 @@ const pagePaths = {
   tutorial: '/c/demo/tutorial',
   locked: '/c/demo/locked',
   empty: '/c/demo/empty',
-  ended: '/c/demo/ended'
+  ended: '/c/demo/ended',
+  login: '/login',
+  'auth-callback': '/auth/callback'
 };
 function routePage(pathname) {
   const path = pathname.replace(/\/+$/, '') || '/';
@@ -47,12 +63,83 @@ function render(){
     $('#count').textContent=message.length;
   }
 }
-function go(p){page=p;history.pushState({page:p},'',pagePaths[p]||'/');window.scrollTo(0,0);render()}function toast(s){$('#toast').textContent=s;$('#toast').classList.remove('hidden');setTimeout(()=>$('#toast').classList.add('hidden'),3000)}
-document.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.view){view=b.dataset.view;render();return}if(b.dataset.month){month=+b.dataset.month;render();return}if(b.dataset.choco){selected=+b.dataset.choco;document.querySelectorAll('.choice').forEach(c=>{c.classList.toggle('selected',c===b);c.setAttribute('aria-pressed',c===b?'true':'false')});return}if(b.dataset.day){day=+b.dataset.day;let role=b.dataset.role;if(role==='ended'){toast(t('올해의 메시지 작성이 종료되었어요.','Messages are closed for this season.'));return}if(role==='owner')go(month===12&&day>12?'locked':month===12&&day===12?'read':'empty');else go('write');return}let a=b.dataset.action;if(a==='motion'){document.body.classList.toggle('no-motion');b.setAttribute('aria-pressed',document.body.classList.contains('no-motion')?'false':'true')}else if(a==='lang'){lang=lang==='ko'?'en':'ko';render()}else if(a==='prev'||a==='next'){readIndex=1-readIndex;go('read')}else if(['copy','share','private'].includes(a)){toast(t(a==='private'?'시안: 비밀 관리 링크를 저장하는 동작이에요.':'시안: 친구용 링크를 복사·공유하는 동작이에요.',a==='private'?'Preview: save your private owner link.':'Preview: copy or share your public friend link.'))}else if(pages.some(p=>p[0]===a))go(a)});
-document.addEventListener('submit',e=>{e.preventDefault();if(e.target.matches('[data-create]')){const n=e.target.elements.nickname.value.trim();if(!n)return;nickname=n.replace(/[<>&"']/g,'');go('created')}else if(e.target.matches('[data-write]')){if(!e.target.elements.message.value.trim())return;go('sent')}});document.addEventListener('input',e=>{if(e.target.name==='message'){message=e.target.value;e.target.closest('form').querySelector('#count').textContent=message.length}});document.addEventListener('change',e=>{if(e.target.id==='page-select'){page=e.target.value;render()}});page=routePage(location.pathname);
-window.addEventListener('popstate',()=>{page=routePage(location.pathname);render()});
+const protectedScreens=new Set(['create','created','write','sent','owner','read','locked','empty']);
+function saveIntent(target){try{sessionStorage.setItem('dearchoco:intent',JSON.stringify({page:target,month,day}));}catch{}}
+function readIntent(){try{const value=JSON.parse(sessionStorage.getItem('dearchoco:intent')||'null');return value&&protectedScreens.has(value.page)?value:null;}catch{return null;}}
+function takeIntent(){const item=readIntent();try{sessionStorage.removeItem('dearchoco:intent')}catch{}return item;}
+function go(p,{replace=false}={}){
+  if(protectedScreens.has(p)&&!user){saveIntent(p);p='login'}
+  if(p==='login'&&user){const previous=takeIntent();if(previous){month=previous.month;day=previous.day;p=previous.page}else p='landing'}
+  page=p;
+  const path=pagePaths[p]||'/';
+  if(replace)history.replaceState({page:p},'',path);else history.pushState({page:p},'',path);
+  window.scrollTo(0,0);render();
+}
+function toast(s){$('#toast').textContent=s;$('#toast').classList.remove('hidden');setTimeout(()=>$('#toast').classList.add('hidden'),3000)}
+document.addEventListener('click',async e=>{
+  const b=e.target.closest('button');if(!b)return;
+  if(b.dataset.view){view=b.dataset.view;render();return}
+  if(b.dataset.month){month=+b.dataset.month;render();return}
+  if(b.dataset.choco!==undefined){selected=+b.dataset.choco;document.querySelectorAll('.choice').forEach(c=>{c.classList.toggle('selected',c===b);c.setAttribute('aria-pressed',c===b?'true':'false')});return}
+  if(b.dataset.oauth){
+    if(signingIn)return;
+    signingIn=true;loginError='';render();
+    try{await signInWithProvider(b.dataset.oauth)}catch(err){
+      console.error('Social sign-in failed:',err);
+      loginError=t('로그인 연결에 실패했어요. 설정을 확인한 후 다시 시도해 주세요.','Sign-in could not start. Please check the connection and try again.');
+      signingIn=false;render();
+    }
+    return;
+  }
+  if(b.dataset.day){
+    day=+b.dataset.day;
+    const role=b.dataset.role;
+    if(role==='ended'){toast(t('올해의 메시지 작성이 종료되었어요.','Messages are closed for this season.'));return}
+    if(role==='owner')go(month===12&&day>12?'locked':month===12&&day===12?'read':'empty');else go('write');
+    return;
+  }
+  const a=b.dataset.action;
+  if(a==='motion'){document.body.classList.toggle('no-motion');b.setAttribute('aria-pressed',document.body.classList.contains('no-motion')?'false':'true')}
+  else if(a==='lang'){lang=lang==='ko'?'en':'ko';try{sessionStorage.setItem('dearchoco:lang',lang)}catch{}render()}
+  else if(a==='logout'){
+    try{await signOut();user=null;go('landing',{replace:protectedScreens.has(page)})}catch(err){console.error('Sign-out failed:',err);toast(t('로그아웃에 실패했어요.','Could not sign out.'))}
+  }
+  else if(a==='leave-login'){takeIntent();go('visitor',{replace:true})}
+  else if(a==='prev'||a==='next'){readIndex=1-readIndex;go('read')}
+  else if(['copy','share','private'].includes(a)){toast(t(a==='private'?'시안: 비밀 관리 링크를 저장하는 동작이에요.':'시안: 친구용 링크를 복사·공유하는 동작이에요.',a==='private'?'Preview: save your private owner link.':'Preview: copy or share your public friend link.'))}
+  else if(pages.some(p=>p[0]===a))go(a);
+});
+document.addEventListener('submit',e=>{e.preventDefault();if(e.target.matches('[data-create]')){if(!user){go('create');return;}const n=e.target.elements.nickname.value.trim();if(!n)return;nickname=n.replace(/[<>&"']/g,'');go('created')}else if(e.target.matches('[data-write]')){if(!user){go('write');return;}if(!e.target.elements.message.value.trim())return;go('sent')}});document.addEventListener('input',e=>{if(e.target.name==='message'){message=e.target.value;e.target.closest('form').querySelector('#count').textContent=message.length}});document.addEventListener('change',e=>{if(e.target.id==='page-select'){page=e.target.value;render()}});async function startApp(){
+  const initial=routePage(location.pathname);
+  page=protectedScreens.has(initial)||initial==='auth-callback'?'auth-loading':initial;
+  render();
+  try{user=await getAuthenticatedUser()}catch(err){console.error('Auth session check failed:',err);user=null}
+  authReady=true;
+  if(initial==='auth-callback'){
+    if(user){const intent=takeIntent();if(intent){month=intent.month;day=intent.day}go(intent?.page||'landing',{replace:true})}
+    else{loginError=t('로그인이 완료되지 않았어요. 다시 시도해 주세요.','Sign-in was not completed. Please try again.');go('login',{replace:true})}
+  }else if(protectedScreens.has(initial)&&!user){go(initial,{replace:true})}
+  else if(initial==='login'&&user){const intent=takeIntent();if(intent){month=intent.month;day=intent.day}go(intent?.page||'landing',{replace:true})}
+  else{page=initial;render()}
+  listenForAuth((event,session)=>{
+    if(event==='SIGNED_OUT'){
+      user=null;
+      if(protectedScreens.has(page)){saveIntent(page);go('login',{replace:true})}else render();
+    }else if(event==='SIGNED_IN'||event==='USER_UPDATED'){
+      user=session?.user??null;
+      if(page==='login'&&user){const intent=takeIntent();if(intent){month=intent.month;day=intent.day}go(intent?.page||'landing',{replace:true})}
+      else render();
+    }
+  });
+}
+window.addEventListener('popstate',()=>{
+  const next=routePage(location.pathname);
+  if(protectedScreens.has(next)&&!user)go(next,{replace:true});
+  else{page=next;render()}
+});
 window.addEventListener('resize',()=>{
   const expected=window.matchMedia('(max-width:650px)').matches?'mobile':'desktop';
   if(!$('#root .solo')||!$('#root .solo').classList.contains(expected))render();
 });
-document.body.insertAdjacentHTML('afterbegin','<div class="ambient">'+snow(28)+'</div>');render();
+document.body.insertAdjacentHTML('afterbegin','<div class="ambient">'+snow(28)+'</div>');
+startApp();
