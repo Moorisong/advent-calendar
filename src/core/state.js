@@ -7,6 +7,7 @@ export const state = {
   route: { page: SCREEN.loading, slug: null, date: null },
   user: null,
   calendar: null,
+  myCalendar: null,
   month: getInitialMonth(),
   day: APP.firstDay,
   today: todayInKorea(),
