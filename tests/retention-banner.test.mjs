@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { RETENTION_BANNER_PREVIEW, renderRetentionBanner } from '../src/ui/retention-banner.js';
+import { renderRetentionBanner } from '../src/ui/retention-banner.js';
 
 const t = (ko) => ko;
 
@@ -18,7 +18,9 @@ test('매년 9월에 지난 시즌 기준으로 날짜 자동 갱신', () => {
   assert.match(renderRetentionBanner({ today: '2028-09-30', t }), /2027년에 받은/);
 });
 
-test('현재 테스트용 미리보기 스위치가 켜져 있음', () => {
-  assert.equal(RETENTION_BANNER_PREVIEW, true);
+test('2026년 11월만 임시 미리보기, 이후에는 9월에만 표시', () => {
   assert.match(renderRetentionBanner({ today: '2026-11-04', t }), /2027년 10월 1일/);
+  assert.equal(renderRetentionBanner({ today: '2026-12-01', t }), '');
+  assert.equal(renderRetentionBanner({ today: '2027-08-31', t }), '');
+  assert.equal(renderRetentionBanner({ today: '2027-10-01', t }), '');
 });
