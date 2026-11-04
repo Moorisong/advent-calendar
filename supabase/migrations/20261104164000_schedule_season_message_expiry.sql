@@ -17,9 +17,9 @@ begin
   using public.calendars as calendar
   where message.calendar_id = calendar.id
     and message.gift_date < pg_catalog.make_date(
-      pg_catalog.extract(year from (pg_catalog.now() at time zone calendar.timezone))::integer
+      extract(year from (pg_catalog.now() at time zone calendar.timezone))::integer
         - case
-          when pg_catalog.extract(month from (pg_catalog.now() at time zone calendar.timezone)) >= 10
+          when extract(month from (pg_catalog.now() at time zone calendar.timezone)) >= 10
             then 0
           else 1
         end,
