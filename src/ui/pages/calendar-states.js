@@ -1,4 +1,6 @@
 import { btn } from '../chrome.js';
+import { APP } from '../../config/constants.js';
+import { escapeHtml } from '../../utils/format.js';
 import { renderCalendar } from '../calendar.js';
 import { icon } from '../sprites.js';
 
@@ -22,7 +24,7 @@ export function renderLocked(state) {
     icon(3),
     `</div><h3>${t('아직 열 수 없는 서랍이야!', 'Not time to open this drawer yet!')}</h3>`,
     `<p>${month}${t('월 ', ' / ')}${day}${t('일에 다시 만나.', ' · Come back on this date.')}`,
-    `<br>${t('한국 시간(KST) 기준', 'Korea Standard Time (KST)')}</p>`,
+    `<br>${escapeHtml(state.calendar?.timezone ?? APP.timeZone)}</p>`,
     btn(t('기다릴게!', 'I’ll be back!'), 'owner'),
     '</div></div>',
   ].join('');
