@@ -25,6 +25,6 @@ export function renderShareActions(state) {
 }
 
 export function renderPublicLink(url) {
-  return `<div class="share-link" title="${escapeHtml(url)}">`
+  return `<div class="share-link url" title="${escapeHtml(url)}">`
     + `<span aria-hidden="true">🔗</span><span class="share-link-url">${escapeHtml(url)}</span></div>`;
 }
