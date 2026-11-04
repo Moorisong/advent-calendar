@@ -392,3 +392,9 @@ button:disabled {
   font-weight: 600;
   line-height: 1.5;
 }
+
+/* Keep the nickname focus ring within the field, clear of its label. */
+.form input[name="nickname"]:focus-visible {
+  outline: 3px solid var(--green);
+  outline-offset: 0;
+}
