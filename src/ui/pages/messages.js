@@ -5,7 +5,7 @@ import { btn } from '../chrome.js';
 import { icon } from '../sprites.js';
 
 export function renderWrite(state) {
-  const { t, lang, month, day, selected, nickname } = state;
+  const { t, lang, month, day, selected, nickname, myMessage } = state;
   const options = CHOCOLATES.map((choice, index) => {
     const active = index === selected;
     return [
@@ -33,7 +33,15 @@ export function renderWrite(state) {
     '<br>',
     t('지난 날짜의 메시지는 바로 열려요.', 'Past-date notes can be opened right away.'),
     '</p>',
-    btn(t('초콜릿 남기기', 'Leave a chocolate'), 'send'),
+    '<p class="fine">',
+    t('한 사람당 이 캘린더의 날짜별로 한 개만 남길 수 있어요.',
+      'One note per person for each date on this calendar.'),
+    '</p>',
+    btn(myMessage ? t('메시지 수정하기', 'Update my note')
+      : t('초콜릿 남기기', 'Leave a chocolate'), 'send'),
+    myMessage
+      ? `<button type="button" class="textbtn" data-action="delete-message">${t('내 메시지 삭제', 'Delete my note')}</button>`
+      : '',
     `<button type="button" class="textbtn" data-action="visitor">${t('캘린더로 돌아가기', 'Back to calendar')}</button>`,
     '</form></div>',
   ].join('');
