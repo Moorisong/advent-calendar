@@ -171,8 +171,8 @@ export async function shareCalendar(action) {
       toast(sdkFailed
         ? translate('카카오 SDK를 불러오지 못했어요. 네트워크를 확인해 줘.',
           'Could not load Kakao SDK. Check your connection.')
-        : translate('카카오톡 공유를 시작할 수 없어요. 설정을 확인해 줘.',
-          'KakaoTalk sharing is unavailable. Check the setup.'));
+        : translate('카카오톡으로 공유할 수 없어요. 링크 복사나 다른 앱으로 공유해 줘.',
+          "Couldn't share via KakaoTalk. Try copying the link or using another app."));
     }
     return;
   }
