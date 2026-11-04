@@ -196,12 +196,8 @@ export function changeSelectedChocolate(index) {
   render();
 }
 
-export async function removeOwnedCalendar(confirmation) {
+export async function removeOwnedCalendar() {
   if (state.deleting || !state.deleteOpen || !state.user || !state.calendar) {
-    return;
-  }
-  if (confirmation !== translate('삭제', 'DELETE')) {
-    toast(translate('확인 문구를 정확히 입력해 줘.', 'Enter the confirmation word.'));
     return;
   }
   if (state.calendar.owner_id !== state.user.id) {
