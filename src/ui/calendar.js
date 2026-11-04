@@ -48,9 +48,9 @@ export function renderBox(state, role = 'visitor', mini = false) {
 export function renderCalendar(state, role = 'visitor', ended = false) {
   const { t, month, lang, nickname } = state;
   const title = lang === 'ko'
-    ? `<span class="calendar-title-line"><span class="title-highlight">${escapeHtml(nickname)}</span>의</span>`
+    ? `<span class="calendar-title-line">${escapeHtml(nickname)}의</span>`
       + '<span class="calendar-title-line">초콜릿 캘린더</span>'
-    : `<span class="title-highlight">${escapeHtml(nickname)}</span>’s chocolate calendar`;
+    : `${escapeHtml(nickname)}’s chocolate calendar`;
   const subtitle = ended
     ? t('올해의 초콜릿 배달이 끝났어요.', 'This year’s chocolate deliveries have ended.')
     : role === 'owner'
@@ -85,7 +85,10 @@ export function renderCalendar(state, role = 'visitor', ended = false) {
     `<div class="calendar-layout ${role === 'owner' ? 'owner-layout' : ''}">`,
     '<div class="content calendar-intro">',
     `<div class="kicker">${role === 'owner' ? 'YOUR CHOCOLATE POST OFFICE' : 'A LITTLE CHOCOLATE'}</div>`,
-    `<h2>${title}</h2><p class="sub">${subtitle}</p>`,
+    '<h2 class="calendar-heading">',
+    `<span class="calendar-heading-text">${title}</span>`,
+    '<span class="calendar-heading-gift" aria-hidden="true"></span></h2>',
+    `<p class="sub">${subtitle}</p>`,
     '</div>',
     '<div class="content calendar-main"><div class="tabs">',
     `<button data-month="11" class="${month === 11 ? 'on' : ''}" aria-pressed="${month === 11}">`,
