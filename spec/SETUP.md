@@ -56,17 +56,39 @@ Google Client Secret은 `.env.local`의 `VITE_*`에 입력하지 않습니다.
 기본 Supabase 카카오 OAuth가 아닌 별도의 코드 교환 방식이므로
 카카오의 Redirect URI를 Supabase Callback URL로 바꾸지 마세요.
 
-## 4. 배포 조건
+## 4. 카카오톡 공유
+
+카카오 로그인과 별개로 Kakao JavaScript SDK를 사용합니다. 별도의 로그인 동의나
+Client Secret이 필요하지 않으며, 기본 텍스트 템플릿을 사용하므로 템플릿 ID도 필요하지 않습니다.
+
+1. [Kakao Developers](https://developers.kakao.com/)에서 **기존 Dear Choco 카카오 앱**을 선택합니다.
+2. **앱 → 플랫폼 키 → JavaScript 키**에서 JavaScript 키를 복사합니다.
+   REST API 키와는 **다른 키**입니다.
+3. 해당 JavaScript 키의 **JavaScript SDK 도메인**에
+   `http://localhost:5173` 및 실제 서비스 Origin(`https://YOUR_DOMAIN`)을 등록합니다.
+4. **앱 → 제품 링크 관리 → 웹 도메인**에도 실제 서비스 도메인을 등록합니다.
+   (로컬에서 공유 링크를 테스트하려면 `http://localhost:5173`도 등록합니다.)
+5. `.env.local`에 `VITE_KAKAO_JAVASCRIPT_KEY=발급받은_JavaScript_키`를 추가하고
+   개발 서버를 재시작합니다. 배포 시에도 같은 환경변수를 빌드에 주입합니다.
+6. 캘린더 주인 화면 또는 생성 완료 화면에서 **카카오톡으로 공유**를 클릭합니다.
+   카카오톡 메시지의 버튼이 친구용 `/c/{slug}` 주소로 연결되는지 확인합니다.
+
+SDK는 공식 CDN 2.8.4 버전을 로드합니다. 카카오톡 공유를 사용할 수 없는 환경에서는
+**다른 앱으로 공유** 또는 **링크 복사** 버튼을 사용하면 됩니다.
+공유 메시지는 현재 이미지가 없는 텍스트 카드입니다. 이미지 카드가 필요하다면
+공개 HTTPS 이미지와 피드 템플릿을 별도로 준비해야 합니다.
+
+## 5. 배포 조건
 
 - HTTPS가 설정된 실제 도메인 필요
 - 정적 호스팅 서버에서 모든 앱 경로를 `/index.html`로 재작성하는 **SPA fallback** 필요
 - 필요한 공개 환경변수(`VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`,
-  `VITE_KAKAO_REST_API_KEY`)를 **빌드 시점**에 주입해야 합니다.
+  `VITE_KAKAO_REST_API_KEY`, `VITE_KAKAO_JAVASCRIPT_KEY`)를 **빌드 시점**에 주입해야 합니다.
 - 카카오 Edge Function의 `KAKAO_ALLOWED_ORIGINS`에도 실제 서비스 Origin을 추가해야 합니다.
 - Vite는 빌드된 HTML·JS·CSS 파일을 생성합니다. `npm run build` 결과물인 `dist`를 배포하세요.
 - OAuth 실패 시 Provider 설정, Supabase Redirect URLs, 브라우저 네트워크 로그를 확인하세요.
 
-## 5. 최초 동작 점검 순서
+## 6. 최초 동작 점검 순서
 
 1. 카카오 계정으로 로그인 후 캘린더 생성, 친구용 링크 복사
 2. 다른 계정으로 친구용 링크에 접근해 날짜 선택, 로그인, 메시지 작성
