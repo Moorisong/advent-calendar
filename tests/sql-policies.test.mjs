@@ -41,3 +41,15 @@ test('오너 삭제만 허용하고 초콜릿은 외래키로 연쇄 삭제', ()
   assert.match(schema, /calendar_id uuid not null references public\.calendars \(id\) on delete cascade/);
   assert.doesNotMatch(schema, /grant select, insert, delete on public\.messages/);
 });
+
+test('오너 메시지는 다음 해 10월에만 정리하고 캘린더는 유지', () => {
+  assert.match(schema, /create or replace function private\.purge_expired_chocolates/);
+  assert.match(schema, /delete from public\.messages as message/);
+  assert.match(schema, /using public\.calendars as calendar/);
+  assert.match(schema, /when pg_catalog\.extract\(month/);
+  assert.match(schema, /then 0\s+else 1/);
+  assert.match(schema, /'dearchoco-expire-previous-season'/);
+  assert.match(schema, /'\*\/15 \* \* \* \*'/);
+  assert.doesNotMatch(schema.split('create or replace function private.purge_expired_chocolates')[1],
+    /delete from public\.calendars/);
+});

@@ -6,6 +6,7 @@ import { btn, footer } from './chrome.js';
 import { scene } from './sprites.js';
 import { renderPublicLink, renderShareActions } from './share.js';
 import { renderCalendarDeletion } from './delete-calendar.js';
+import { renderRetentionBanner } from './retention-banner.js';
 
 const PREVIEW_DAYS = Object.freeze(Array.from({ length: 15 }, (_, index) => index + 1));
 
@@ -100,6 +101,7 @@ export function renderCalendar(state, role = 'visitor', ended = false) {
     `<span class="calendar-heading-text">${title}</span>`,
     '<span class="calendar-heading-gift" aria-hidden="true"></span></h2>',
     `<p class="sub">${subtitle}</p>`,
+    role === 'owner' ? renderRetentionBanner(state) : '',
     '</div>',
     '<div class="content calendar-main">',
     yearPicker,

@@ -152,3 +152,11 @@ test('2027년 서랍과 날짜 표기가 2026년과 겹치지 않음', () => {
   assert.match(html, /NOVEMBER · 2027/);
   assert.equal((html.match(/data-day=/g) ?? []).length, 30);
 });
+
+test('보관 기간 안내는 오너에게만 표시', () => {
+  const owner = renderCalendar({ ...base, today: '2026-11-04' }, 'owner');
+  const visitor = renderCalendar({ ...base, today: '2026-11-04' }, 'visitor');
+  assert.match(owner, /class="retention-banner"/);
+  assert.match(owner, /2027년 10월 1일/);
+  assert.doesNotMatch(visitor, /retention-banner/);
+});

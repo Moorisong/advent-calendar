@@ -1,0 +1,30 @@
+.retention-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 18px 0 0;
+  padding: 15px 16px;
+  border: 2px solid #c9a77b;
+  background: #fff2d9;
+  color: #624630;
+  box-shadow: 3px 3px 0 #d9b78a;
+}
+.retention-banner-icon {
+  flex: 0 0 auto;
+  font-size: 21px;
+  line-height: 1.2;
+}
+.retention-banner-copy { min-width: 0; }
+.retention-banner-copy strong {
+  display: block;
+  font-size: 13px;
+  line-height: 1.55;
+}
+.retention-banner-copy p {
+  margin: 5px 0 0;
+  font-size: 12px;
+  line-height: 1.7;
+}
+@media (max-width: 520px) {
+  .retention-banner { margin: 16px 0 0; padding: 13px 12px; }
+}
