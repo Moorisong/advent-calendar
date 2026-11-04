@@ -46,6 +46,10 @@ export function render() {
     contents,
     '</section></main>',
   ].join('');
+  const modal = root.querySelector('.shade');
+  if (modal) {
+    root.querySelector('main')?.append(modal);
+  }
   if (current.page === SCREEN.write) {
     const textarea = document.getElementById('message');
     if (textarea) {
