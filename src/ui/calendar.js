@@ -1,17 +1,18 @@
 import { APP } from '../config/constants.js';
-import { calendarDate, calendarDays, drawerStatus } from '../utils/date.js';
+import { calendarDate, calendarDays, canWriteDate, drawerStatus, getSeasonYear } from '../utils/date.js';
 import { escapeHtml } from '../utils/format.js';
 
 import { btn, footer } from './chrome.js';
 import { scene } from './sprites.js';
 import { renderPublicLink, renderShareActions } from './share.js';
+import { renderCalendarDeletion } from './delete-calendar.js';
 
 const PREVIEW_DAYS = Object.freeze(Array.from({ length: 15 }, (_, index) => index + 1));
 
 export function renderBox(state, role = 'visitor', mini = false) {
   const days = mini ? PREVIEW_DAYS : calendarDays(state.month);
   const drawers = days.map((day) => {
-    const date = calendarDate(state.month, day);
+    const date = calendarDate(state.month, day, state.year ?? APP.year);
     const status = mini || role !== 'owner' ? '' : drawerStatus(date, state.today);
     const drawerClass = status === 'future' || status === 'invalid' ? '' : status;
     const todayLabel = status === 'today'
@@ -34,7 +35,7 @@ export function renderBox(state, role = 'visitor', mini = false) {
   }).join('');
   const baseLabel = mini
     ? 'WITH LOVE, FOR YOU'
-    : state.month === APP.firstMonth ? 'NOVEMBER · 2026' : 'DECEMBER · 2026';
+    : `${state.month === APP.firstMonth ? 'NOVEMBER' : 'DECEMBER'} · ${state.year ?? APP.year}`;
   return [
     `<div class="${mini ? 'mini' : ''}">`,
     scene(),
@@ -51,8 +52,11 @@ export function renderCalendar(state, role = 'visitor', ended = false) {
     ? `<span class="calendar-title-line">${escapeHtml(nickname)}의</span>`
       + '<span class="calendar-title-line">초콜릿 캘린더</span>'
     : `${escapeHtml(nickname)}’s chocolate calendar`;
-  const subtitle = ended
-    ? t('올해의 초콜릿 배달이 끝났어요.', 'This year’s chocolate deliveries have ended.')
+  const seasonOpen = canWriteDate(state.today);
+  const viewingArchive = (state.year ?? APP.year) !== Number(state.today.slice(0, 4));
+  const subtitle = ended || (role === 'owner' && (!seasonOpen || viewingArchive))
+    ? t('초콜릿 배달은 쉬고 있어. 받은 마음은 언제든 다시 열어봐.',
+      'Deliveries are closed. Your sweet notes are here to revisit.')
     : role === 'owner'
       ? t('오늘의 서랍을 열어볼까?', 'Shall we open today’s drawer?')
       : t('달력에서 날짜를 고르고 초콜릿을 선택해 메시지를 남겨줘. 그날이 되면 친구가 열어볼 수 있어!',
@@ -74,6 +78,15 @@ export function renderCalendar(state, role = 'visitor', ended = false) {
     ].join('')
     : '';
   const callToAction = btn(t('나도 캘린더 만들기', 'Make my own calendar'), 'create', true);
+  const currentYear = getSeasonYear(state.today);
+  const options = Array.from({ length: currentYear - APP.year + 1 }, (_, i) => currentYear - i)
+    .map((year) => `<option value="${year}"${year === state.year ? ' selected' : ''}>${year}</option>`)
+    .join('');
+  const yearPicker = role === 'owner'
+    ? `<label class="calendar-year-picker">${t('캘린더 연도', 'Calendar year')}`
+      + `<select data-year aria-label="${t('캘린더 연도', 'Calendar year')}">${options}</select></label>`
+    : '';
+  const deletion = role === 'owner' ? renderCalendarDeletion(state) : '';
   const shareTrigger = role === 'owner'
     ? `<button class="mobile-share-trigger" type="button" data-action="open-share"`
       + ` aria-controls="owner-share" aria-expanded="false">`
@@ -88,7 +101,9 @@ export function renderCalendar(state, role = 'visitor', ended = false) {
     '<span class="calendar-heading-gift" aria-hidden="true"></span></h2>',
     `<p class="sub">${subtitle}</p>`,
     '</div>',
-    '<div class="content calendar-main"><div class="tabs">',
+    '<div class="content calendar-main">',
+    yearPicker,
+    '<div class="tabs">',
     `<button data-month="11" class="${month === 11 ? 'on' : ''}" aria-pressed="${month === 11}">`,
     `${t('11월', 'November')}</button>`,
     `<button data-month="12" class="${month === 12 ? 'on' : ''}" aria-pressed="${month === 12}">`,
@@ -97,6 +112,7 @@ export function renderCalendar(state, role = 'visitor', ended = false) {
     role === 'visitor' ? `<div class="visitor-create-action">${callToAction}</div>` : '',
     footer(state),
     `<div class="ad">${t('광고 영역', 'ADVERTISEMENT')}</div>`,
+    deletion,
     '</div>',
     role === 'owner' ? `<aside class="owner-sidebar">${shareTools}</aside>` : '',
     shareTrigger,
