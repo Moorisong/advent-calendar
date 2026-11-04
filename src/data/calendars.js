@@ -16,6 +16,24 @@ export async function findCalendar(slug) {
   return data;
 }
 
+export async function findMyCalendar(ownerId) {
+  if (!ownerId) {
+    return null;
+  }
+  const { data, error } = await requireDatabase()
+    .from('calendars')
+    .select(SELECT_COLUMNS)
+    .eq('owner_id', ownerId)
+    .order('created_at', { ascending: false })
+    .order('id', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (error) {
+    throw error;
+  }
+  return data;
+}
+
 function generateSlug() {
   return crypto.randomUUID().replaceAll('-', '').slice(0, APP.calendarSlugLength);
 }
