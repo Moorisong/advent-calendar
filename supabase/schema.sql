@@ -101,7 +101,7 @@ revoke all on public.calendars from public, anon, authenticated;
 grant select on public.calendars to anon, authenticated;
 grant insert, delete on public.calendars to authenticated;
 
- -- Sender IDs enforce one message per person, but are never readable by clients.
+-- Sender IDs enforce one message per person, but are never readable by clients.
 revoke all on public.messages from public, anon, authenticated;
 grant select (id, calendar_id, gift_date, chocolate_type, body, created_at)
   on public.messages to authenticated;
@@ -142,8 +142,8 @@ create policy "Signed-in users can leave chocolates in season"
     )
   );
 
--- Crucially, future-dated message rows are excluded even from direct API
--- SELECT, COUNT and requests made outside the official UI.
+-- Owners cannot query future-dated notes, even via direct API SELECT or COUNT.
+-- Each author may still read only their own note for editing.
 create policy "Owners read arrived notes and senders read their own"
   on public.messages for select
   to authenticated
