@@ -105,6 +105,9 @@ export async function submitMessage(form) {
       }
       toast(translate('이미 남긴 메시지가 있어요. 수정해서 다시 보내줘.',
         'You already left a note. You can update it.'));
+    } else if (error.message?.includes('MESSAGE_RATE_LIMIT')) {
+      toast(translate('메시지는 5초 간격으로 남길 수 있어요.',
+        'Please wait five seconds between notes.'));
     } else {
       toast(translate('메시지를 저장하지 못했어요. 다시 시도해 줘.',
         'Could not save the message. Try again.'));
