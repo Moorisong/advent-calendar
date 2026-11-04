@@ -145,3 +145,60 @@
   .owner-layout.share-open .mobile-share-trigger { display: none; }
   .owner-layout .owner-extra { margin: 24px 0; }
 }
+
+/* Tiny original pixel gift, kept secondary to the title typography. */
+.calendar-layout .calendar-heading {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 100%;
+  gap: 12px;
+}
+
+.calendar-heading-text {
+  min-width: 0;
+}
+
+.calendar-heading-gift {
+  position: relative;
+  display: inline-block;
+  flex: 0 0 26px;
+  width: 26px;
+  height: 24px;
+  border: 3px solid var(--brown);
+  background:
+    linear-gradient(90deg, transparent 38%, #e9c776 38% 62%, transparent 62%),
+    linear-gradient(0deg, transparent 37%, #e9c776 37% 63%, transparent 63%),
+    #a93238;
+  image-rendering: pixelated;
+}
+
+.calendar-heading-gift::before,
+.calendar-heading-gift::after {
+  content: '';
+  position: absolute;
+  top: -9px;
+  width: 8px;
+  height: 6px;
+  border: 3px solid var(--brown);
+  background: #e9c776;
+}
+
+.calendar-heading-gift::before {
+  left: 1px;
+}
+
+.calendar-heading-gift::after {
+  right: 1px;
+}
+
+@container (max-width:699px) {
+  .calendar-layout .calendar-heading {
+    gap: 9px;
+  }
+  .calendar-heading-gift {
+    flex-basis: 22px;
+    width: 22px;
+    height: 21px;
+  }
+}
