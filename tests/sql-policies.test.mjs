@@ -46,7 +46,7 @@ test('오너 메시지는 다음 해 10월에만 정리하고 캘린더는 유�
   assert.match(schema, /create or replace function private\.purge_expired_chocolates/);
   assert.match(schema, /delete from public\.messages as message/);
   assert.match(schema, /using public\.calendars as calendar/);
-  assert.match(schema, /when pg_catalog\.extract\(month/);
+  assert.match(schema, /when extract\(month/);
   assert.match(schema, /then 0\s+else 1/);
   assert.match(schema, /'dearchoco-expire-previous-season'/);
   assert.match(schema, /'\*\/15 \* \* \* \*'/);
