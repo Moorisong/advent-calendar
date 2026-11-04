@@ -1,12 +1,11 @@
 import { getSeasonYear } from '../utils/date.js';
 
-// Temporary visual QA switch. Set to false after checking the banner design.
-export const RETENTION_BANNER_PREVIEW = true;
-
 export function renderRetentionBanner(state) {
   const today = state.today;
   const month = Number(today.slice(5, 7));
-  if (month !== 9 && !RETENTION_BANNER_PREVIEW) {
+  // Preview automatically expires; all future years show this banner only in September.
+  const preview = today >= '2026-11-01' && today <= '2026-11-30';
+  if (month !== 9 && !preview) {
     return '';
   }
   // In September the messages from last year's season expire next month.
