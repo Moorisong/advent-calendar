@@ -25,6 +25,7 @@ export async function submitCalendar(form) {
   try {
     const calendar = await createCalendar(nickname, state.user.id);
     state.calendar = calendar;
+    state.myCalendar = calendar;
     state.nicknameDraft = '';
     await navigate({ page: SCREEN.created, slug: calendar.slug });
   } catch (error) {
