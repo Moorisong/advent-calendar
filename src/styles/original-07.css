@@ -114,6 +114,18 @@
   .calendar-layout .calendar-intro {
     padding-top: 110px;
   }
+  /* Owner controls align with the top edge of the month selector. */
+  .solo .screen .owner-layout {
+    align-items: start;
+  }
+  .solo .screen .owner-layout .calendar-intro {
+    padding-top: 0;
+    margin-top: 0;
+    align-self: start;
+  }
+  .owner-layout .calendar-intro h2 {
+    margin-top: 0;
+  }
   .calendar-layout h2 {
     font-size: 35px;
   }
