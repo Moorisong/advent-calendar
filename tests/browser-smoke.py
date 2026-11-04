@@ -103,8 +103,19 @@ def main():
             assert header['y'] < calendar['y']
             assert sidebar['x'] > calendar['x']
             assert abs(sidebar['y'] - calendar['y']) < 15
+            owner_button_style = page.locator('.desktop-new-calendar .new-calendar-button').evaluate(
+                "(el) => ({background: getComputedStyle(el).backgroundColor, "
+                "border: getComputedStyle(el).borderTopWidth, "
+                "shadow: getComputedStyle(el).boxShadow})")
+            assert owner_button_style['border'] == '3px'
+            assert owner_button_style['shadow'] != 'none'
             page.set_viewport_size({'width': 390, 'height': 844})
             page.locator('[data-month="11"]').click()
+            mobile_button_style = page.locator('.mobile-new-calendar .new-calendar-button').evaluate(
+                "(el) => ({background: getComputedStyle(el).backgroundColor, "
+                "border: getComputedStyle(el).borderTopWidth, "
+                "shadow: getComputedStyle(el).boxShadow})")
+            assert mobile_button_style == owner_button_style
             page.locator('[data-action=open-share]').click()
             page.locator('.owner-layout.share-open .owner-share').wait_for()
             page.locator('.share-close').click()
@@ -139,6 +150,11 @@ def main():
                        - (visitor_calendar['x'] + visitor_calendar['width'] / 2)) < 15
             assert visitor_action['y'] > visitor_box['y'] + visitor_box['height']
             assert page.locator('.visitor-create-action .secondary').is_visible()
+            visitor_button_style = page.locator('.visitor-create-action .secondary').evaluate(
+                "(el) => ({background: getComputedStyle(el).backgroundColor, "
+                "border: getComputedStyle(el).borderTopWidth, "
+                "shadow: getComputedStyle(el).boxShadow})")
+            assert visitor_button_style == owner_button_style
             assert page.locator('.visitor-guide').count() == 0
             assert '초콜릿을 선택해 메시지를 남겨줘' in page.locator(
                 '.visitor-layout .calendar-intro .sub').inner_text()
