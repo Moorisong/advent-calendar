@@ -39,3 +39,11 @@ export function writeLocal(key, value) {
     // Storage may be disabled; no personal data is saved for tutorials.
   }
 }
+
+export function removeLocal(key) {
+  try {
+    localStorage.removeItem(`${APP.storagePrefix}${key}`);
+  } catch {
+    // Storage may be unavailable.
+  }
+}
