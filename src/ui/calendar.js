@@ -1,5 +1,5 @@
 import { APP } from '../config/constants.js';
-import { calendarDate, calendarDays, canWriteDate, drawerStatus, getSeasonYear } from '../utils/date.js';
+import { calendarDate, calendarDays, canWriteDate, drawerStatus } from '../utils/date.js';
 import { escapeHtml } from '../utils/format.js';
 
 import { btn, footer } from './chrome.js';
@@ -79,13 +79,9 @@ export function renderCalendar(state, role = 'visitor', ended = false) {
     ].join('')
     : '';
   const callToAction = btn(t('나도 캘린더 만들기', 'Make my own calendar'), 'create', true);
-  const currentYear = getSeasonYear(state.today);
-  const options = Array.from({ length: currentYear - APP.year + 1 }, (_, i) => currentYear - i)
-    .map((year) => `<option value="${year}"${year === state.year ? ' selected' : ''}>${year}</option>`)
-    .join('');
-  const yearPicker = role === 'owner'
-    ? `<label class="calendar-year-picker">${t('캘린더 연도', 'Calendar year')}`
-      + `<select data-year aria-label="${t('캘린더 연도', 'Calendar year')}">${options}</select></label>`
+  const yearLabel = role === 'owner'
+    ? `<div class="calendar-year-picker"><span>${t('캘린더 연도', 'Calendar year')}</span>`
+      + `<span class="calendar-year-value">${state.year ?? APP.year}</span></div>`
     : '';
   const deletion = role === 'owner' ? renderCalendarDeletion(state) : '';
   const shareTrigger = role === 'owner'
@@ -104,7 +100,7 @@ export function renderCalendar(state, role = 'visitor', ended = false) {
     role === 'owner' ? renderRetentionBanner(state) : '',
     '</div>',
     '<div class="content calendar-main">',
-    yearPicker,
+    yearLabel,
     '<div class="tabs">',
     `<button data-month="11" class="${month === 11 ? 'on' : ''}" aria-pressed="${month === 11}">`,
     `${t('11월', 'November')}</button>`,
