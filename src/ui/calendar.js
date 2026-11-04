@@ -57,7 +57,8 @@ export function renderCalendar(state, role = 'visitor', ended = false) {
   const stamp = role === 'owner'
     ? `<span class="stamp">${t('오늘', 'TODAY')} · ${state.today.slice(5)} · KST</span>`
     : '';
-  const publicUrl = `${window.location.origin}/c/${state.slug}`;
+  const origin = typeof window === 'undefined' ? '' : window.location.origin;
+  const publicUrl = `${origin}/c/${state.slug}`;
   const shareTools = role === 'owner'
     ? [
       '<div class="owner-share">',
