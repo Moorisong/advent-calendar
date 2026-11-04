@@ -48,8 +48,9 @@ export function renderBox(state, role = 'visitor', mini = false) {
 export function renderCalendar(state, role = 'visitor', ended = false) {
   const { t, month, lang, nickname } = state;
   const title = lang === 'ko'
-    ? `${nickname}의 초콜릿 캘린더`
-    : `${nickname}’s chocolate calendar`;
+    ? `<span class="calendar-title-line">${escapeHtml(nickname)}의</span>`
+      + '<span class="calendar-title-line">초콜릿 캘린더</span>'
+    : `${escapeHtml(nickname)}’s chocolate calendar`;
   const subtitle = ended
     ? t('올해의 초콜릿 배달이 끝났어요.', 'This year’s chocolate deliveries have ended.')
     : role === 'owner'
@@ -77,7 +78,7 @@ export function renderCalendar(state, role = 'visitor', ended = false) {
     '<div class="calendar-layout">',
     '<div class="content calendar-intro">',
     `<div class="kicker">${role === 'owner' ? 'YOUR CHOCOLATE POST OFFICE' : 'A LITTLE CHOCOLATE'}</div>`,
-    `<h2>${escapeHtml(title)}</h2><p class="sub">${subtitle}</p>${stamp}</div>`,
+    `<h2>${title}</h2><p class="sub">${subtitle}</p>${stamp}</div>`,
     '<div class="content"><div class="tabs">',
     `<button data-month="11" class="${month === 11 ? 'on' : ''}" aria-pressed="${month === 11}">`,
     `${t('11월', 'November')}</button>`,
