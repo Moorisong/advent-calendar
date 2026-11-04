@@ -3,7 +3,8 @@ import { finishSignIn, getUser, subscribeToAuth } from '../data/auth.js';
 import { findMyCalendar } from '../data/calendars.js';
 import { installPixelFont } from '../ui/pixel-font.js';
 import { snow } from '../ui/sprites.js';
-import { todayInKorea } from '../utils/date.js';
+import { todayInZone } from '../utils/date.js';
+import { deviceTimeZone } from '../utils/timezones.js';
 
 import { attachEvents } from './events.js';
 import { takeIntent } from './intent.js';
@@ -91,16 +92,20 @@ export async function startApp() {
   window.addEventListener('popstate', () => {
     void navigate(readRoute(), { replace: true, scroll: false });
   });
-  window.addEventListener('visibilitychange', () => {
-    if (document.visibilityState !== 'visible') {
-      return;
-    }
-    const today = todayInKorea();
+  function checkOwnerDate() {
+    const zone = state.calendar?.timezone ?? deviceTimeZone();
+    const today = todayInZone(zone);
     if (state.today !== today) {
-      state.today = today;
       void navigate(state.route, { replace: true, scroll: false });
     }
+  }
+  window.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      checkOwnerDate();
+    }
   });
+  window.addEventListener('focus', checkOwnerDate);
+  window.setInterval(checkOwnerDate, 30_000);
   window.addEventListener('resize', () => {
     const frame = window.matchMedia('(max-width:650px)').matches ? 'mobile' : 'desktop';
     const screen = document.querySelector('.solo');
