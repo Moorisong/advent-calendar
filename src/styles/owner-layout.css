@@ -31,14 +31,16 @@
   .owner-layout .calendar-title-line { display: inline; }
   .owner-layout .calendar-title-line + .calendar-title-line::before { content: " "; }
   .owner-layout .calendar-intro .sub {
-    display: inline-block;
-    margin: 0 14px 0 0;
+    display: block;
+    margin: 0 0 12px;
     font-size: 14px;
   }
   .owner-layout .calendar-intro .stamp {
     display: inline-block;
+    margin: 0;
     padding: 7px 10px;
     font-size: 10px;
+    vertical-align: top;
   }
   .owner-layout .calendar-main {
     grid-area: calendar;
