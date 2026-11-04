@@ -1,6 +1,6 @@
 import { APP } from '../../config/constants.js';
 import { escapeHtml } from '../../utils/format.js';
-import { timeZoneOptions } from '../../utils/timezones.js';
+import { timeZoneOptions, timeZoneLabel } from '../../utils/timezones.js';
 
 import { renderBox } from '../calendar.js';
 import { btn, footer } from '../chrome.js';
@@ -30,7 +30,7 @@ export function renderCreate(state) {
   const { t, timezoneDraft } = state;
   const zones = timeZoneOptions(timezoneDraft).map((zone) => {
     const selected = zone === timezoneDraft ? ' selected' : '';
-    return `<option value="${escapeHtml(zone)}"${selected}>${escapeHtml(zone.replaceAll('_', ' '))}</option>`;
+    return `<option value="${escapeHtml(zone)}"${selected}>${escapeHtml(timeZoneLabel(zone, state.lang))}</option>`;
   }).join('');
   return [
     '<div class="content"><div class="sprig">',
