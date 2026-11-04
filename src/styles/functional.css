@@ -254,3 +254,37 @@ button:disabled {
   outline: 3px solid var(--brown);
   outline-offset: 5px;
 }
+
+/* Equal-weight sharing choices, with no decorative bullets or arrows. */
+.owner-share .share-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 14px 0 0;
+}
+
+.owner-share .share-actions > button {
+  width: 100%;
+  min-width: 0;
+  min-height: 56px;
+  padding: 12px 8px;
+  border: 2px solid var(--brown);
+  border-radius: 0;
+  box-shadow: 3px 3px 0 var(--brown);
+  background: #fff4de;
+  color: var(--brown);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+.owner-share .share-actions > button:hover {
+  background: #f9e6bd;
+}
+
+.owner-share .share-actions > button:focus-visible {
+  outline: 3px solid var(--brown);
+  outline-offset: 5px;
+}
