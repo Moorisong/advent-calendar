@@ -2,7 +2,7 @@ import { APP, SCREEN } from '../config/constants.js';
 import { createCalendar } from '../data/calendars.js';
 import { shareToKakao } from '../data/kakao-share.js';
 import { writeMessage } from '../data/messages.js';
-import { canWriteDate, todayInZone } from '../utils/date.js';
+import { canWriteDate, getInitialMonth, todayInZone } from '../utils/date.js';
 import { validTimeZone } from '../utils/timezones.js';
 
 import { navigate } from './navigation.js';
@@ -35,6 +35,7 @@ export async function submitCalendar(form) {
     state.myCalendar = calendar;
     state.nicknameDraft = '';
     state.timezoneDraft = timezone;
+    state.month = getInitialMonth(todayInZone(timezone));
     await navigate({ page: SCREEN.created, slug: calendar.slug });
   } catch (error) {
     console.error('Create calendar failed:', error);
