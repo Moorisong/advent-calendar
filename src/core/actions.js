@@ -2,7 +2,8 @@ import { APP, SCREEN } from '../config/constants.js';
 import { createCalendar } from '../data/calendars.js';
 import { shareToKakao } from '../data/kakao-share.js';
 import { writeMessage } from '../data/messages.js';
-import { canWriteDate } from '../utils/date.js';
+import { canWriteDate, todayInZone } from '../utils/date.js';
+import { validTimeZone } from '../utils/timezones.js';
 
 import { navigate } from './navigation.js';
 import { render, toast } from './render.js';
@@ -18,16 +19,22 @@ export async function submitCalendar(form) {
     toast(translate('닉네임을 다시 확인해 줘.', 'Please check the nickname.'));
     return;
   }
+  const timezone = String(form.elements.namedItem('timezone')?.value ?? '');
+  if (!validTimeZone(timezone)) {
+    toast(translate('시간대를 다시 선택해 줘.', 'Please choose a valid time zone.'));
+    return;
+  }
   state.writing = true;
   const button = form.querySelector('button[type="submit"],button[data-action="submit-create"]');
   if (button) {
     button.disabled = true;
   }
   try {
-    const calendar = await createCalendar(nickname, state.user.id);
+    const calendar = await createCalendar(nickname, state.user.id, timezone);
     state.calendar = calendar;
     state.myCalendar = calendar;
     state.nicknameDraft = '';
+    state.timezoneDraft = timezone;
     await navigate({ page: SCREEN.created, slug: calendar.slug });
   } catch (error) {
     console.error('Create calendar failed:', error);
@@ -44,7 +51,8 @@ export async function submitMessage(form) {
   if (!state.user || !state.calendar || state.writing) {
     return;
   }
-  if (!canWriteDate(state.today)) {
+  const today = todayInZone(state.calendar.timezone);
+  if (!canWriteDate(today)) {
     toast(translate('지금은 초콜릿을 남길 수 없어요.', 'Chocolate deliveries are closed right now.'));
     return;
   }
