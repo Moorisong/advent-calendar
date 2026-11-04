@@ -93,6 +93,7 @@ def main():
             assert page.locator('[data-screen=owner] .share-link .share-copy-icon').count() == 1
             assert page.locator('[data-screen=owner] .share-utilities [data-action=copy]').count() == 0
             assert page.locator('[data-screen=owner] [data-action=new-calendar]').count() == 0
+            assert '2027년 10월 1일' in page.locator('.owner-layout .retention-banner').inner_text()
             assert public_link in page.locator('[data-screen=owner] .share-link-url').inner_text()
             page.set_viewport_size({'width': 1280, 'height': 900})
             page.locator('[data-month="12"]').click()
