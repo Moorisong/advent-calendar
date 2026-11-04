@@ -13,7 +13,8 @@ export function renderCalendarDeletion(state) {
   );
   const modal = state.deleteOpen ? [
     '<div class="delete-overlay">',
-    '<div class="delete-scrim" data-action="delete-close"></div>',
+    '<button type="button" class="delete-scrim" data-action="delete-close"',
+    ' aria-label="Close dialog"></button>',
     '<section class="delete-dialog" role="dialog" aria-modal="true" aria-labelledby="delete-title">',
     `<h3 id="delete-title">${t('캘린더를 영구 삭제할까?', 'Permanently delete your calendar?')}</h3>`,
     `<p>${warning}</p>`,

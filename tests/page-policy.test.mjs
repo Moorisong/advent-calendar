@@ -24,7 +24,7 @@ test('날짜가 없는 열람·작성 경로는 안전한 화면으로 이동', 
 });
 
 test('시즌 시작 전과 종료 후 작성 화면을 차단', () => {
-  assert.equal(resolvePage(route(SCREEN.write, future), '2026-11-04').page, SCREEN.visitor);
+  assert.equal(resolvePage(route(SCREEN.write, future), '2026-10-31').page, SCREEN.visitor);
   assert.equal(resolvePage(route(SCREEN.write, future), '2026-12-26').page, SCREEN.visitor);
   assert.equal(resolvePage(route(SCREEN.write, future), opened).page, SCREEN.write);
 });

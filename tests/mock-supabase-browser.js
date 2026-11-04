@@ -15,18 +15,6 @@ function query(table, operation, payload) {
       return builder;
     },
     select() {
-      if (operation === 'delete') {
-        if (table !== 'calendars') {
-          return Promise.resolve(resolve({ data: null, error: { code: '42501' } }));
-        }
-        const user = read(USER_KEY, null);
-        const matched = rows.filter((row) =>
-          row.owner_id === user?.id && filters.every(([key, value]) => row[key] === value));
-        write(CALENDAR_KEY, rows.filter((row) => !matched.includes(row)));
-        const gifts = read(MESSAGE_KEY, []);
-        write(MESSAGE_KEY, gifts.filter((gift) => !matched.some((row) => row.id === gift.calendar_id)));
-        return Promise.resolve(resolve({ data: matched, error: null }));
-      }
       if (operation === 'insert' || operation === 'delete') {
         return builder;
       }
@@ -51,6 +39,15 @@ function query(table, operation, payload) {
     then(resolve) {
       const collectionKey = table === 'calendars' ? CALENDAR_KEY : MESSAGE_KEY;
       const rows = read(collectionKey, []);
+      if (operation === 'delete') {
+        const user = read(USER_KEY, null);
+        const matched = rows.filter((row) =>
+          row.owner_id === user?.id && filters.every(([key, value]) => row[key] === value));
+        write(CALENDAR_KEY, rows.filter((row) => !matched.includes(row)));
+        const gifts = read(MESSAGE_KEY, []);
+        write(MESSAGE_KEY, gifts.filter((gift) => !matched.some((row) => row.id === gift.calendar_id)));
+        return Promise.resolve(resolve({ data: matched, error: null }));
+      }
       if (operation === 'insert') {
         if (table === 'calendars' && rows.some((row) => row.owner_id === payload.owner_id)) {
           return Promise.resolve(resolve({

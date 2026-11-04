@@ -17,16 +17,16 @@ test('기기 위치 접근 없이 표준 IANA 시간대 사용', () => {
 });
 
 test('동일한 순간이라도 주인 시간대에 따라 시즌 시작일이 다름', () => {
-  const instant = new Date('2026-11-04T16:00:00Z');
-  assert.equal(todayInZone('Asia/Seoul', instant), '2026-11-05');
-  assert.equal(todayInZone('America/New_York', instant), '2026-11-04');
+  const instant = new Date('2026-10-31T16:00:00Z');
+  assert.equal(todayInZone('Asia/Seoul', instant), '2026-11-01');
+  assert.equal(todayInZone('America/New_York', instant), '2026-10-31');
   assert.equal(canWriteDate(todayInZone('Asia/Seoul', instant)), true);
   assert.equal(canWriteDate(todayInZone('America/New_York', instant)), false);
 });
 
-test('미국 뉴욕 11월 5일 현지 자정 경계', () => {
-  assert.equal(todayInZone('America/New_York', new Date('2026-11-05T04:59:59Z')), '2026-11-04');
-  assert.equal(todayInZone('America/New_York', new Date('2026-11-05T05:00:00Z')), '2026-11-05');
+test('미국 뉴욕 11월 1일 현지 자정 경계', () => {
+  assert.equal(todayInZone('America/New_York', new Date('2026-11-01T03:59:59Z')), '2026-10-31');
+  assert.equal(todayInZone('America/New_York', new Date('2026-11-01T04:00:00Z')), '2026-11-01');
 });
 
 test('호주 시드니 12월 25일 자정은 UTC 12월 24일 13시', () => {

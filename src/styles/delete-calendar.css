@@ -32,7 +32,7 @@
   place-items: center;
   padding: 18px;
 }
-.delete-scrim { position: absolute; inset: 0; background: #24150fcc; }
+.delete-scrim { position: absolute; inset: 0; width: 100%; border: 0; background: #24150fcc; cursor: pointer; }
 .delete-dialog {
   position: relative;
   width: min(100%, 440px);
