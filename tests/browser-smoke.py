@@ -89,7 +89,7 @@ def main():
             assert page.locator('[data-action=private]').count() == 0
             page.get_by_role('button', name='내 캘린더로 가기').click()
             page.locator('[data-screen=owner]').wait_for()
-            assert page.get_by_role('button', name='친구용 링크 복사').count() == 1
+            assert page.get_by_role('button', name='링크 복사').count() == 1
             assert public_link in page.locator('[data-screen=owner] .url').inner_text()
             page.screenshot(path=str(ROOT / 'tests/owner-current.png'))
             # 확인: 미래 날짜는 메시지 개수 없이 잠금 상태만 노출.
