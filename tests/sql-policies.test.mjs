@@ -21,7 +21,8 @@ test('미래 날짜 정보는 SQL 정책으로 차단', () => {
 });
 
 test('시즌 밖의 메시지 쓰기는 정책에서 차단', () => {
-  assert.match(schema, /between date '2026-11-05' and date '2026-12-25'/);
+  assert.match(schema, /make_date\(extract\(year from now\(\) at time zone calendar\.timezone\)/);
+  assert.match(schema, /extract\(year from messages\.gift_date\)/);
   assert.match(schema, /to authenticated\s+with check/);
   assert.match(schema, /at time zone calendar\.timezone/);
 });
@@ -31,4 +32,12 @@ test('기존 데이터 보존하면서 계정당 신규 캘린더 생성을 하�
   assert.match(schema, /pg_advisory_xact_lock/);
   assert.match(schema, /where owner_id = new\.owner_id/);
   assert.match(schema, /constraint = 'calendars_one_per_owner'/);
+});
+
+test('오너 삭제만 허용하고 초콜릿은 외래키로 연쇄 삭제', () => {
+  assert.match(schema, /grant insert, delete on public\.calendars to authenticated/);
+  assert.match(schema, /on public\.calendars for delete/);
+  assert.match(schema, /using \(owner_id = \(select auth\.uid\(\)\)\)/);
+  assert.match(schema, /calendar_id uuid not null references public\.calendars \(id\) on delete cascade/);
+  assert.doesNotMatch(schema, /grant select, insert, delete on public\.messages/);
 });

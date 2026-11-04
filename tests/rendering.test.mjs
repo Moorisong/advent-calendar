@@ -28,11 +28,11 @@ test('12월 캘린더 25개 서랍은 미래 메시지 수를 노출하지 않�
   assert.doesNotMatch(html, /data-count|message-count|받은 초콜릿 \d+개/);
 });
 
-test('11월 캘린더는 5일부터 30일까지', () => {
+test('11월 캘린더는 1일부터 30일까지', () => {
   const html = renderBox({ ...base, month: 11 }, 'visitor');
-  assert.equal((html.match(/data-day=/g) ?? []).length, 26);
-  assert.match(html, /data-day="5"/);
-  assert.doesNotMatch(html, /data-day="4"/);
+  assert.equal((html.match(/data-day=/g) ?? []).length, 30);
+  assert.match(html, /data-day="1"/);
+  assert.match(html, /data-day="30"/);
 });
 
 test('주인 캘린더에는 공유만 있고 새 캘린더 생성 버튼은 없음', () => {
@@ -131,7 +131,24 @@ test('친구 캘린더는 날짜 선택 뒤에 단일 생성 버튼을 배치', 
 
 test('종료된 친구 캘린더는 메시지 작성 대신 종료 안내를 표시', () => {
   const html = renderCalendar(base, 'visitor', true);
-  assert.match(html, /올해의 초콜릿 배달이 끝났어요/);
+  assert.match(html, /초콜릿 배달은 쉬고 있어/);
   assert.doesNotMatch(html, /class="visitor-guide"/);
   assert.doesNotMatch(html, /data-role="visitor"/);
+});
+
+test('오너만 삭제 확인창과 연도 선택을 사용할 수 있음', () => {
+  const owner = renderCalendar({ ...base, year: 2027, today: '2027-12-26', deleteOpen: true }, 'owner');
+  assert.match(owner, /data-action="delete-open"/);
+  assert.match(owner, /data-delete-confirmation/);
+  assert.match(owner, /data-action="delete-confirm"/);
+  assert.match(owner, /data-year/);
+  assert.match(owner, /<option value="2026"/);
+  const visitor = renderCalendar(base, 'visitor');
+  assert.doesNotMatch(visitor, /delete-confirm|delete-open|data-year/);
+});
+
+test('2027년 서랍과 날짜 표기가 2026년과 겹치지 않음', () => {
+  const html = renderBox({ ...base, month: 11, year: 2027 }, 'owner');
+  assert.match(html, /NOVEMBER · 2027/);
+  assert.equal((html.match(/data-day=/g) ?? []).length, 30);
 });

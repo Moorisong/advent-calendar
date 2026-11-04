@@ -68,7 +68,11 @@ create table if not exists public.messages (
   body text not null,
   created_at timestamptz not null default now(),
   constraint messages_gift_date_range check (
-    gift_date between date '2026-11-05' and date '2026-12-25'
+    gift_date >= date '2026-11-01'
+    and (
+      extract(month from gift_date) = 11
+      or (extract(month from gift_date) = 12 and extract(day from gift_date) <= 25)
+    )
   ),
   constraint messages_chocolate_type_range check (
     chocolate_type between 0 and 5
@@ -91,7 +95,7 @@ alter table public.messages enable row level security;
 -- User email and identity information are NEVER stored here.
 revoke all on public.calendars from public, anon, authenticated;
 grant select on public.calendars to anon, authenticated;
-grant insert on public.calendars to authenticated;
+grant insert, delete on public.calendars to authenticated;
 
 -- Messages intentionally have NO sender identifier column, despite sign-in
 -- being mandatory for inserting them. Calendar owners cannot infer authors.
@@ -123,7 +127,10 @@ create policy "Signed-in users can leave chocolates in season"
       from public.calendars as calendar
       where calendar.id = messages.calendar_id
         and (now() at time zone calendar.timezone)::date
-          between date '2026-11-05' and date '2026-12-25'
+          between make_date(extract(year from now() at time zone calendar.timezone)::int, 11, 1)
+              and make_date(extract(year from now() at time zone calendar.timezone)::int, 12, 25)
+        and extract(year from messages.gift_date)
+            = extract(year from now() at time zone calendar.timezone)
     )
   );
 
@@ -142,5 +149,9 @@ create policy "Only owners can open arrived messages"
     )
   );
 
--- There are deliberately no UPDATE or DELETE privileges or policies.
--- This version of the product has no edit/delete UI.
+create policy "Owners may permanently delete their calendars"
+  on public.calendars for delete
+  to authenticated
+  using (owner_id = (select auth.uid()));
+
+-- Message deletion cascades from calendars. Direct message DELETE remains denied.
