@@ -6,6 +6,7 @@ import { canWriteDate, getInitialMonth, todayInZone } from '../utils/date.js';
 import { validTimeZone } from '../utils/timezones.js';
 
 import { navigate } from './navigation.js';
+import { clearMessageDraft, saveMessageDraft } from './message-draft.js';
 import { render, toast } from './render.js';
 import { state, translate } from './state.js';
 
@@ -87,6 +88,7 @@ export async function submitMessage(form) {
     } else {
       await writeMessage(state.calendar.id, state.route.date, state.selected, note);
     }
+    clearMessageDraft(state);
     state.message = '';
     state.lastSent = { slug: state.calendar.slug, date: state.route.date };
     await navigate({ page: SCREEN.sent, slug: state.calendar.slug, date: state.route.date });
@@ -127,6 +129,7 @@ export async function removeMyMessage() {
   state.writing = true;
   try {
     await deleteMessage(state.myMessage.id);
+    clearMessageDraft(state);
     state.myMessage = null;
     state.message = '';
     await navigate({ page: SCREEN.visitor, slug: state.calendar.slug });
@@ -189,6 +192,7 @@ export async function shareCalendar(action) {
 
 export function changeSelectedChocolate(index) {
   state.selected = index;
+  saveMessageDraft(state);
   render();
 }
 
