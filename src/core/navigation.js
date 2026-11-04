@@ -1,7 +1,9 @@
 import { PROTECTED_SCREENS, SCREEN } from '../config/constants.js';
 import { findCalendar } from '../data/calendars.js';
 import { getMessages } from '../data/messages.js';
-import { calendarDate, canReadDate, getInitialMonth, isSeasonEnded, todayInZone, validCalendarDate } from '../utils/date.js';
+import {
+  calendarDate, canReadDate, getInitialMonth, isSeasonEnded, todayInZone, validCalendarDate,
+} from '../utils/date.js';
 import { readLocal, writeLocal } from '../utils/storage.js';
 
 import { saveIntent } from './intent.js';
