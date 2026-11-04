@@ -61,6 +61,10 @@ export async function createCalendar(nickname, ownerId, timezone = APP.timeZone)
     if (error?.code !== '23505') {
       throw error ?? new Error('CALENDAR_CREATE_FAILED');
     }
+    // A unique violation may mean a duplicate owner or a rare slug collision.
+    if (await findMyCalendar(ownerId)) {
+      throw new Error('CALENDAR_ALREADY_EXISTS');
+    }
   }
   throw new Error('SLUG_COLLISION');
 }

@@ -1,5 +1,5 @@
 import { APP, SCREEN } from '../config/constants.js';
-import { createCalendar } from '../data/calendars.js';
+import { createCalendar, findMyCalendar } from '../data/calendars.js';
 import { shareToKakao } from '../data/kakao-share.js';
 import { writeMessage } from '../data/messages.js';
 import { canWriteDate, getInitialMonth, todayInZone } from '../utils/date.js';
@@ -38,6 +38,19 @@ export async function submitCalendar(form) {
     state.month = getInitialMonth(todayInZone(timezone));
     await navigate({ page: SCREEN.created, slug: calendar.slug });
   } catch (error) {
+    if (error.message === 'CALENDAR_ALREADY_EXISTS') {
+      try {
+        const existing = await findMyCalendar(state.user.id);
+        if (existing) {
+          state.myCalendar = existing;
+          await navigate({ page: SCREEN.owner, slug: existing.slug }, { replace: true });
+          toast(translate('이미 만든 캘린더로 이동했어요.', 'Opened your existing calendar.'));
+          return;
+        }
+      } catch (lookupError) {
+        console.error('Existing calendar lookup failed:', lookupError);
+      }
+    }
     console.error('Create calendar failed:', error);
     toast(translate('캘린더를 만들지 못했어요. 다시 시도해 줘.', 'Could not create the calendar. Try again.'));
     if (button) {

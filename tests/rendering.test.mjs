@@ -35,11 +35,11 @@ test('11월 캘린더는 5일부터 30일까지', () => {
   assert.doesNotMatch(html, /data-day="4"/);
 });
 
-test('주인 캘린더에 공유와 추가 생성 버튼이 존재', () => {
+test('주인 캘린더에는 공유만 있고 새 캘린더 생성 버튼은 없음', () => {
   const html = renderCalendar(base, 'owner');
   assert.match(html, /data-action="share"/);
   assert.match(html, /data-action="kakao-share"/);
-  assert.match(html, /data-action="new-calendar"/);
+  assert.doesNotMatch(html, /new-calendar|새 캘린더 만들기|Create another calendar/);
 });
 
 test('메시지 본문과 닉네임에 HTML 출력 인젝션이 일어나지 않음', () => {
@@ -106,14 +106,11 @@ test('한국어 캘린더 제목은 이름과 제목을 정확히 두 줄로 분
   assert.doesNotMatch(html, /title-highlight|초콜릿 캘린더의/);
 });
 
-test('모바일 새 캘린더 버튼은 날짜 안내와 광고보다 먼저 표시', () => {
+test('주인 화면은 모바일과 데스크톱 모두 새 캘린더 버튼을 렌더링하지 않음', () => {
   const html = renderCalendar(base, 'owner');
-  const mobileAction = html.indexOf('class="mobile-new-calendar"');
-  const ad = html.indexOf('class="ad"');
-  assert.ok(mobileAction > html.indexOf('class="content calendar-main"'));
-  assert.ok(mobileAction < ad);
-  assert.match(html, /class="desktop-new-calendar"/);
-  assert.equal((html.match(/data-action="new-calendar"/g) ?? []).length, 2);
+  assert.doesNotMatch(html, /mobile-new-calendar|desktop-new-calendar|new-calendar-button/);
+  assert.doesNotMatch(html, /data-action="create"|data-action="new-calendar"/);
+  assert.match(html, /class="owner-sidebar"/);
 });
 
 test('친구 캘린더는 날짜 선택 뒤에 단일 생성 버튼을 배치', () => {

@@ -40,6 +40,12 @@ function query(table, operation, payload) {
       const collectionKey = table === 'calendars' ? CALENDAR_KEY : MESSAGE_KEY;
       const rows = read(collectionKey, []);
       if (operation === 'insert') {
+        if (table === 'calendars' && rows.some((row) => row.owner_id === payload.owner_id)) {
+          return Promise.resolve(resolve({
+            data: null,
+            error: { code: '23505', message: 'Only one calendar is allowed per account' },
+          }));
+        }
         const record = {
           id: crypto.randomUUID(),
           created_at: new Date().toISOString(),

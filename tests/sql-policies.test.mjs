@@ -25,3 +25,10 @@ test('시즌 밖의 메시지 쓰기는 정책에서 차단', () => {
   assert.match(schema, /to authenticated\s+with check/);
   assert.match(schema, /at time zone calendar\.timezone/);
 });
+
+test('기존 데이터 보존하면서 계정당 신규 캘린더 생성을 하나로 제한', () => {
+  assert.match(schema, /create trigger enforce_one_calendar_per_owner_on_insert/);
+  assert.match(schema, /pg_advisory_xact_lock/);
+  assert.match(schema, /where owner_id = new\.owner_id/);
+  assert.match(schema, /constraint = 'calendars_one_per_owner'/);
+});

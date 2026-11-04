@@ -92,7 +92,7 @@ def main():
             page.locator('[data-screen=owner]').wait_for()
             assert page.locator('[data-screen=owner] .share-link .share-copy-icon').count() == 1
             assert page.locator('[data-screen=owner] .share-utilities [data-action=copy]').count() == 0
-            assert page.locator('[data-screen=owner] .new-calendar-button:visible').count() == 1
+            assert page.locator('[data-screen=owner] [data-action=new-calendar]').count() == 0
             assert public_link in page.locator('[data-screen=owner] .share-link-url').inner_text()
             page.set_viewport_size({'width': 1280, 'height': 900})
             page.locator('[data-month="12"]').click()
@@ -103,19 +103,8 @@ def main():
             assert header['y'] < calendar['y']
             assert sidebar['x'] > calendar['x']
             assert abs(sidebar['y'] - calendar['y']) < 15
-            owner_button_style = page.locator('.desktop-new-calendar .new-calendar-button').evaluate(
-                "(el) => ({background: getComputedStyle(el).backgroundColor, "
-                "border: getComputedStyle(el).borderTopWidth, "
-                "shadow: getComputedStyle(el).boxShadow})")
-            assert owner_button_style['border'] == '3px'
-            assert owner_button_style['shadow'] != 'none'
             page.set_viewport_size({'width': 390, 'height': 844})
             page.locator('[data-month="11"]').click()
-            mobile_button_style = page.locator('.mobile-new-calendar .new-calendar-button').evaluate(
-                "(el) => ({background: getComputedStyle(el).backgroundColor, "
-                "border: getComputedStyle(el).borderTopWidth, "
-                "shadow: getComputedStyle(el).boxShadow})")
-            assert mobile_button_style == owner_button_style
             page.locator('[data-action=open-share]').click()
             page.locator('.owner-layout.share-open .owner-share').wait_for()
             page.locator('.share-close').click()
@@ -155,7 +144,8 @@ def main():
                 "(el) => ({background: getComputedStyle(el).backgroundColor, "
                 "border: getComputedStyle(el).borderTopWidth, "
                 "shadow: getComputedStyle(el).boxShadow})")
-            assert visitor_button_style == owner_button_style
+            assert visitor_button_style['border'] == '3px'
+            assert visitor_button_style['shadow'] != 'none'
             assert page.locator('.visitor-guide').count() == 0
             assert '초콜릿을 선택해 메시지를 남겨줘' in page.locator(
                 '.visitor-layout .calendar-intro .sub').inner_text()
@@ -166,6 +156,16 @@ def main():
             mobile_footer = page.locator('.visitor-layout footer').bounding_box()
             assert mobile_action and mobile_footer and mobile_action['y'] < mobile_footer['y'], (
                 f"mobile CTA: {mobile_action}, footer: {mobile_footer}")
+            # Visitor CTA: a returning owner signs in to their existing calendar.
+            page.locator('.visitor-create-action [data-action=create]').click()
+            page.locator('[data-screen=login]').wait_for()
+            page.get_by_role('button', name='카카오로 계속하기').click()
+            page.locator('[data-screen=owner]').wait_for()
+            assert public_link in page.locator('[data-screen=owner] .share-link-url').inner_text()
+            assert page.locator('[data-action=new-calendar]').count() == 0
+            page.get_by_role('button', name='로그아웃').click()
+            page.goto(public_link)
+            page.locator('[data-screen=visitor]').wait_for()
             page.goto(public_link + '/sent?date=2026-12-12')
             page.locator('[data-screen=visitor]').wait_for()
             page.locator('[data-month="12"]').click()
@@ -203,10 +203,13 @@ def main():
             assert '1 / 2' in page.locator('.paging').inner_text()
             page.locator('[data-action=next]').click()
             assert '두 번째 선물!' in page.locator('.note').inner_text()
-            # 주인과 다른 시간대를 선택한 신규 캘린더의 미래 서랍 잠금 검증.
+            # Existing owners cannot reach /create; a separate account may create one.
             page.get_by_role('button', name='서랍 닫기').click()
             page.locator('[data-screen=owner]').wait_for()
-            page.locator('[data-action=new-calendar]:visible').click()
+            page.goto(url + '/create')
+            page.locator('[data-screen=owner]').wait_for()
+            page.evaluate("localStorage.setItem('mock-user', JSON.stringify({id:'timezone-789'}))")
+            page.goto(url + '/create')
             page.locator('[data-screen=create]').wait_for()
             page.locator('input[name=nickname]').fill('뉴욕친구')
             page.locator('select[name=timezone]').select_option('America/New_York')

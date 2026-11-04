@@ -1,5 +1,5 @@
 import { PROTECTED_SCREENS, SCREEN } from '../config/constants.js';
-import { findCalendar } from '../data/calendars.js';
+import { findCalendar, findMyCalendar } from '../data/calendars.js';
 import { getMessages } from '../data/messages.js';
 import {
   calendarDate, canReadDate, getInitialMonth, isSeasonEnded, todayInZone, validCalendarDate,
@@ -69,6 +69,25 @@ export async function navigate(requested, { replace = false, scroll = true } = {
   }
   if (route.page === SCREEN.login && state.user) {
     route = { page: SCREEN.landing, slug: null, date: null };
+  }
+  if (route.page === SCREEN.create && state.user) {
+    try {
+      const existing = await findMyCalendar(state.user.id);
+      if (navigationVersion !== version) {
+        return;
+      }
+      state.myCalendar = existing;
+      if (existing) {
+        route = { page: SCREEN.owner, slug: existing.slug, date: null };
+      }
+    } catch (error) {
+      if (navigationVersion !== version) {
+        return;
+      }
+      console.error('Calendar ownership lookup failed:', error);
+      showError(translate('내 캘린더를 확인하지 못했어요.', 'Could not check your calendar.'));
+      return;
+    }
   }
   state.route = route;
   state.loginError = route.page === SCREEN.login ? state.loginError : '';

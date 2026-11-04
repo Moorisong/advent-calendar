@@ -34,10 +34,7 @@ async function handleAction(action) {
   const slug = state.calendar?.slug ?? state.route.slug;
   const navigations = {
     landing: { page: SCREEN.landing },
-    create: state.myCalendar
-      ? { page: SCREEN.owner, slug: state.myCalendar.slug }
-      : { page: SCREEN.create },
-    'new-calendar': { page: SCREEN.create },
+    create: { page: SCREEN.create },
     visitor: { page: SCREEN.visitor, slug },
     owner: { page: SCREEN.owner, slug },
     'tutorial-close': { page: SCREEN.visitor, slug },

@@ -63,8 +63,6 @@
   .owner-layout .share-heading { font-size: 17px; }
   .owner-layout .share-description { font-size: 12px; line-height: 1.6; }
   .owner-layout .share-actions > button { font-size: 12px; min-height: 52px; }
-  .owner-layout .owner-extra { margin: 22px 0 0; }
-  .owner-layout .mobile-new-calendar { display: none; }
   .owner-layout .share-close,.owner-layout .share-backdrop,
   .owner-layout .mobile-share-trigger { display: none; }
 }
@@ -136,44 +134,6 @@
     cursor: pointer;
   }
   .owner-layout.share-open .mobile-share-trigger { display: none; }
-  .owner-layout .desktop-new-calendar { display: none; }
-  .owner-layout .mobile-new-calendar { margin: 24px 0 12px; }
-  .owner-layout .mobile-new-calendar .owner-extra {
-    width: min(100%, 340px);
-    margin: 0 auto;
-  }
-}
-
-/* Match the visitor's yellow create-calendar CTA on both screen sizes. */
-.owner-layout .owner-extra .new-calendar-button {
-  width: 100%;
-  min-height: 54px;
-  margin: 0;
-  padding: 12px 16px;
-  border: 3px solid var(--brown);
-  background: var(--yellow);
-  color: var(--brown);
-  box-shadow: 4px 4px 0 var(--brown);
-  font: inherit;
-  font-size: 15px;
-  font-weight: 800;
-  line-height: 1.4;
-  cursor: pointer;
-}
-
-.owner-layout .owner-extra .new-calendar-button:hover {
-  background: #f4d58b;
-  transform: none;
-}
-
-.owner-layout .owner-extra .new-calendar-button:focus-visible {
-  outline: 3px solid var(--green);
-  outline-offset: 6px;
-}
-
-.owner-layout .owner-extra .new-calendar-button:active {
-  transform: translate(3px, 3px);
-  box-shadow: 1px 1px 0 var(--brown);
 }
 
 /* Tiny original pixel gift, kept secondary to the title typography. */
