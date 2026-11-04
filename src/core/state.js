@@ -1,5 +1,6 @@
 import { APP, CHOCOLATES, SCREEN } from '../config/constants.js';
-import { getInitialMonth, todayInKorea } from '../utils/date.js';
+import { getInitialMonth, todayInZone } from '../utils/date.js';
+import { deviceTimeZone } from '../utils/timezones.js';
 import { readSession, writeSession } from '../utils/storage.js';
 
 export const state = {
@@ -8,12 +9,13 @@ export const state = {
   user: null,
   calendar: null,
   myCalendar: null,
-  month: getInitialMonth(),
+  month: getInitialMonth(todayInZone(deviceTimeZone())),
   day: APP.firstDay,
-  today: todayInKorea(),
+  today: todayInZone(deviceTimeZone()),
   selected: 0,
   message: '',
   nicknameDraft: '',
+  timezoneDraft: deviceTimeZone(),
   notes: [],
   lastSent: null,
   readIndex: 0,
