@@ -48,7 +48,7 @@ export function renderCreate(state) {
     `<label for="timezone">${t('캘린더 시간대', 'Calendar time zone')}</label>`,
     `<select id="timezone" name="timezone" required>${zones}</select>`,
     `<p class="fine">${t('기기 시간대가 기본값이에요. 변경할 수 있으며 서랍은 이 시간대의 자정에 열려요.',
-      'Defaults to your device's time zone. You can change it; drawers open at midnight.')}</p>`,
+      'Your device time zone is the default. You can change it; drawers open at midnight.')}</p>`,
     '</div>',
     btn(t('캘린더 만들기', 'Create calendar'), 'submit-create'),
     '</form>',
