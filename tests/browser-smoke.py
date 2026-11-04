@@ -86,8 +86,11 @@ def main():
             page.locator('[data-screen=created]').wait_for()
             public_link = page.locator('.url').inner_text()
             assert '/c/' in public_link, public_link
+            assert page.locator('[data-action=private]').count() == 0
             page.get_by_role('button', name='내 캘린더로 가기').click()
             page.locator('[data-screen=owner]').wait_for()
+            assert page.get_by_role('button', name='친구용 링크 복사').count() == 1
+            assert public_link in page.locator('[data-screen=owner] .url').inner_text()
             page.screenshot(path=str(ROOT / 'tests/owner-current.png'))
             # 확인: 미래 날짜는 메시지 개수 없이 잠금 상태만 노출.
             page.locator('[data-month="12"]').click()
@@ -128,7 +131,8 @@ def main():
             page.goto(url + '/create')
             page.locator('[data-screen=login]').wait_for()
             page.get_by_role('button', name='카카오로 계속하기').click()
-            page.locator('[data-screen=create]').wait_for()
+            page.locator('[data-screen=owner]').wait_for()
+            assert public_link in page.locator('[data-screen=owner] .url').inner_text()
             page.goto(public_link + '/owner')
             page.locator('[data-screen=owner]').wait_for()
             page.locator('[data-month="12"]').click()
