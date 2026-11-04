@@ -10,8 +10,10 @@
     max-width: 860px;
     margin: 34px auto 60px;
   }
-  .owner-layout .calendar-intro {
+  .solo .screen .owner-layout .calendar-intro {
     grid-area: intro;
+    max-width: none;
+    width: 100%;
     padding: 0 0 20px;
     margin: 0;
     text-align: left;
