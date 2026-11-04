@@ -75,7 +75,7 @@ export function renderCalendar(state, role = 'visitor', ended = false) {
     : '';
   const callToAction = role === 'owner'
     ? `<div class="owner-extra"><button class="new-calendar-button" data-action="new-calendar">`
-      + `<span aria-hidden="true">＋</span> ${t('새 캘린더 만들기', 'Create another calendar')}</button></div>`
+      + `${t('새 캘린더 만들기', 'Create another calendar')}</button></div>`
     : btn(t('나도 캘린더 만들기', 'Make my own calendar'), 'create', true);
   return [
     '<div class="calendar-layout">',
