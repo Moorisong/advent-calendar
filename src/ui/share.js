@@ -1,23 +1,19 @@
 import { escapeHtml } from '../utils/format.js';
 
 export function renderShareActions(state) {
-  const { t, lang } = state;
+  const { t } = state;
   const kakao = [
     '<button class="kakao-share" data-action="kakao-share">',
-    '<span aria-hidden="true">●</span> ',
     t('카카오톡으로 공유', 'Share via KakaoTalk'),
     '</button>',
   ].join('');
   const native = `<button class="share-utility" data-action="share">`
-    + `<span aria-hidden="true">↗</span> ${t('다른 앱으로 공유', 'Other apps')}</button>`;
-  const main = lang === 'ko' ? kakao : native;
-  const other = lang === 'ko' ? native : kakao;
+    + `${t('다른 앱으로 공유', 'Other apps')}</button>`;
   return [
     '<div class="share-actions">',
-    main,
-    '<div class="share-utilities">',
-    other,
-    '</div></div>',
+    kakao,
+    native,
+    '</div>',
   ].join('');
 }
 
