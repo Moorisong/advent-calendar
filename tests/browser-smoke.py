@@ -92,7 +92,7 @@ def main():
             page.locator('[data-screen=owner]').wait_for()
             assert page.locator('[data-screen=owner] .share-link .share-copy-icon').count() == 1
             assert page.locator('[data-screen=owner] .share-utilities [data-action=copy]').count() == 0
-            assert page.locator('[data-screen=owner] .new-calendar-button').is_visible()
+            assert page.locator('[data-screen=owner] .new-calendar-button:visible').count() == 1
             assert public_link in page.locator('[data-screen=owner] .share-link-url').inner_text()
             page.set_viewport_size({'width': 1280, 'height': 900})
             page.locator('[data-month="12"]').click()
