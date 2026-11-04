@@ -77,11 +77,6 @@ export function renderCalendar(state, role = 'visitor', ended = false) {
     ? `<div class="owner-extra"><button class="new-calendar-button" data-action="new-calendar">`
       + `${t('새 캘린더 만들기', 'Create another calendar')}</button></div>`
     : btn(t('나도 캘린더 만들기', 'Make my own calendar'), 'create', true);
-  const visitorGuide = role === 'owner' ? '' : [
-    '<aside class="visitor-sidebar">',
-    `<div class="visitor-desktop-action">${callToAction}</div>`,
-    '</aside>',
-  ].join('');
   const shareTrigger = role === 'owner'
     ? `<button class="mobile-share-trigger" type="button" data-action="open-share"`
       + ` aria-controls="owner-share" aria-expanded="false">`
@@ -103,12 +98,12 @@ export function renderCalendar(state, role = 'visitor', ended = false) {
     `${t('12월', 'December')}</button></div>`,
     renderBox(state, ended ? 'ended' : role),
     role === 'owner' ? `<div class="mobile-new-calendar">${callToAction}</div>`
-      : `<div class="visitor-mobile-action">${callToAction}</div>`,
+      : `<div class="visitor-create-action">${callToAction}</div>`,
     footer(state),
     `<div class="ad">${t('광고 영역', 'ADVERTISEMENT')}</div>`,
     '</div>',
     role === 'owner' ? '<aside class="owner-sidebar">' + shareTools
-      + `<div class="desktop-new-calendar">${callToAction}</div></aside>` : visitorGuide,
+      + `<div class="desktop-new-calendar">${callToAction}</div></aside> : '',
     shareTrigger,
     '</div>',
   ].join('');
