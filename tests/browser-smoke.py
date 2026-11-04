@@ -182,8 +182,10 @@ def main():
             page.locator('[data-month="12"]').click()
             page.locator('[data-day="12"][data-role="visitor"]').click()
             page.locator('[data-screen=write]').wait_for()
+            assert page.locator('textarea[name=message]').input_value() == '달콤한 하루!'
+            assert page.get_by_role('button', name='메시지 수정하기').count() == 1
             page.locator('textarea[name=message]').fill('두 번째 선물!')
-            page.get_by_role('button', name='초콜릿 남기기').click()
+            page.get_by_role('button', name='메시지 수정하기').click()
             page.locator('[data-screen=sent]').wait_for()
             page.get_by_role('button', name='로그아웃').click()
             page.goto(public_link)
@@ -199,10 +201,29 @@ def main():
             page.locator('[data-month="12"]').click()
             page.locator('[data-day="12"][data-role="owner"]').click()
             page.locator('[data-screen=read]').wait_for()
-            assert '달콤한 하루!' in page.locator('.note').inner_text()
-            assert '1 / 2' in page.locator('.paging').inner_text()
-            page.locator('[data-action=next]').click()
             assert '두 번째 선물!' in page.locator('.note').inner_text()
+            assert '1 / 1' in page.locator('.paging').inner_text()
+            # 수정된 글도 작성자만 삭제할 수 있음. 다른 사람의 메시지는 유지해야 함.
+            page.get_by_role('button', name='서랍 닫기').click()
+            page.get_by_role('button', name='로그아웃').click()
+            page.goto(public_link)
+            page.locator('[data-screen=visitor]').wait_for()
+            page.locator('[data-day="12"][data-role="visitor"]').click()
+            page.locator('[data-screen=login]').wait_for()
+            page.get_by_role('button', name='Google로 계속하기').click()
+            page.locator('[data-screen=write]').wait_for()
+            assert page.locator('textarea[name=message]').input_value() == '두 번째 선물!'
+            page.once('dialog', lambda dialog: dialog.accept())
+            page.locator('[data-action=delete-message]').click()
+            page.locator('[data-screen=visitor]').wait_for()
+            page.get_by_role('button', name='로그아웃').click()
+            page.goto(url + '/create')
+            page.locator('[data-screen=login]').wait_for()
+            page.get_by_role('button', name='카카오로 계속하기').click()
+            page.locator('[data-screen=owner]').wait_for()
+            page.locator('[data-month="12"]').click()
+            page.locator('[data-day="12"][data-role="owner"]').click()
+            page.locator('[data-screen=empty]').wait_for()
             # Existing owners cannot reach /create; a separate account may create one.
             page.get_by_role('button', name='서랍 닫기').click()
             page.locator('[data-screen=owner]').wait_for()
@@ -250,7 +271,7 @@ def main():
             page.locator('[data-delete-confirmation]').fill('삭제')
             page.locator('[data-action=delete-confirm]').click()
             page.locator('[data-screen=create]').wait_for()
-            assert not any('달콤한 하루!' in note['body'] for note in page.evaluate(
+            assert not any('두 번째 선물!' in note['body'] for note in page.evaluate(
                 "JSON.parse(localStorage.getItem('mock-messages') || '[]')"))
             page.goto(public_link)
             page.locator('[data-screen=error]').wait_for()
