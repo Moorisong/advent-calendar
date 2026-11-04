@@ -43,3 +43,109 @@ button:disabled {
 .calendar-title-line {
   display: block;
 }
+
+/* Compact sharing controls: one primary action, two lightweight utilities. */
+.owner-share {
+  margin: 28px 0 12px;
+  padding: 18px 14px 16px;
+  border: 2px solid var(--brown);
+  background: #fff4de;
+  box-shadow: 4px 4px 0 #4b2d2526;
+}
+
+.share-heading {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.4;
+}
+
+.share-description {
+  margin: 6px 0 14px;
+  font-size: 12px;
+  opacity: .8;
+}
+
+.share-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 11px 12px;
+  border: 1px dashed #a88b6a;
+  background: #f9eacd;
+  color: var(--brown);
+  font: 12px monospace;
+}
+
+.share-link-url {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.share-actions {
+  gap: 12px;
+  margin: 14px 0 0;
+}
+
+.share-actions .kakao-share,
+.share-actions > .share-utility {
+  min-height: 52px;
+}
+
+.share-utilities {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.share-utilities .share-utility,
+.share-utilities .kakao-share {
+  width: 100%;
+  min-width: 0;
+  min-height: 42px;
+  padding: 9px 5px;
+  border: 1px solid #9d7c64;
+  box-shadow: none;
+  background: transparent;
+  color: var(--brown);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.share-utilities .kakao-share {
+  background: #fee500;
+  border-color: #b69a28;
+}
+
+.share-utilities .share-utility:hover {
+  background: #f7e5c5;
+}
+
+.share-utilities button:focus-visible {
+  outline: 2px solid var(--brown);
+  outline-offset: 2px;
+}
+
+.owner-extra {
+  text-align: center;
+  margin: 20px 0 28px;
+}
+
+.owner-extra .textbtn {
+  display: inline-block;
+  width: auto;
+  margin: 0;
+  padding: 6px 8px;
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+  color: var(--brown);
+  font-size: 12px;
+  font-weight: 700;
+  opacity: .8;
+  cursor: pointer;
+}
