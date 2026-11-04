@@ -87,3 +87,10 @@ test('한국어는 카카오톡 우선, 영어는 다른 앱 공유 우선', () 
   assert.match(ko, /data-action="copy"/);
   assert.match(en, /data-action="copy"/);
 });
+
+test('한국어 캘린더 제목은 이름과 제목을 정확히 두 줄로 분리', () => {
+  const html = renderCalendar({ ...base, nickname: '똥현' }, 'owner');
+  assert.match(html, /<span class="calendar-title-line">똥현의<\/span>/);
+  assert.match(html, /<span class="calendar-title-line">초콜릿 캘린더<\/span>/);
+  assert.doesNotMatch(html, /초콜릿 캘린더의/);
+});
