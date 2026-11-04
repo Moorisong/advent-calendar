@@ -28,12 +28,12 @@ export function renderLanding(state) {
 
 export function renderCreate(state) {
   const { t, timezoneDraft } = state;
-  const zones = timeZoneGroups(timezoneDraft, state.lang).map((group) => {
+  const zones = timeZoneGroups(timezoneDraft, state.lang).flatMap((group) => {
     const options = group.options.map(({ value, label }) => {
       const selected = value === timezoneDraft ? ' selected' : '';
-      return `<option value="${escapeHtml(value)}"${selected}>${escapeHtml(label)}</option>`;
-    }).join('');
-    return `<optgroup label="${escapeHtml(group.label)}">${options}</optgroup>`;
+      return `<option value="${escapeHtml(value)}"${selected}>${escapeHtml(label === group.label ? label : `${group.label} - ${label}`)}</option>`;
+    });
+    return options;
   }).join('');
   return [
     '<div class="content"><div class="sprig">',
