@@ -266,8 +266,8 @@ def main():
             page.locator('[data-screen=owner]').wait_for()
             # Delete cascades to every year's gifts and invalidates the old link.
             page.locator('[data-action=delete-open]').click()
-            assert page.locator('[data-action=delete-confirm]').is_disabled()
-            page.locator('[data-delete-confirmation]').fill('삭제')
+            assert page.locator('[data-action=delete-confirm]').is_enabled()
+            assert page.locator('[data-delete-confirmation]').count() == 0
             page.locator('[data-action=delete-confirm]').click()
             page.locator('[data-screen=create]').wait_for()
             assert not any('두 번째 선물!' in note['body'] for note in page.evaluate(
