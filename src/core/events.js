@@ -79,7 +79,7 @@ async function handleAction(action) {
     }
     return;
   }
-  if (['share', 'copy'].includes(action)) {
+  if (['share', 'copy', 'kakao-share'].includes(action)) {
     await shareCalendar(action);
     return;
   }
