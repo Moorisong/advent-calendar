@@ -96,11 +96,12 @@ export function renderCalendar(state, role = 'visitor', ended = false) {
     `<button data-month="12" class="${month === 12 ? 'on' : ''}" aria-pressed="${month === 12}">`,
     `${t('12월', 'December')}</button></div>`,
     renderBox(state, ended ? 'ended' : role),
-    role === 'owner' ? '' : callToAction,
+    role === 'owner' ? `<div class="mobile-new-calendar">${callToAction}</div>` : callToAction,
     footer(state),
     `<div class="ad">${t('광고 영역', 'ADVERTISEMENT')}</div>`,
     '</div>',
-    role === 'owner' ? '<aside class="owner-sidebar">' + shareTools + callToAction + '</aside>' : '',
+    role === 'owner' ? '<aside class="owner-sidebar">' + shareTools
+      + `<div class="desktop-new-calendar">${callToAction}</div></aside>` : '',
     shareTrigger,
     '</div>',
   ].join('');
