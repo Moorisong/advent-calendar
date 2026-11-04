@@ -1,6 +1,6 @@
 import { PROTECTED_SCREENS, SCREEN } from '../config/constants.js';
 import { findCalendar, findMyCalendar } from '../data/calendars.js';
-import { getMessages } from '../data/messages.js';
+import { getMessages, getMyMessage } from '../data/messages.js';
 import {
   calendarDate, canReadDate, getInitialMonth, getSeasonYear, isSeasonEnded, todayInZone, validCalendarDate,
 } from '../utils/date.js';
@@ -94,6 +94,7 @@ export async function navigate(requested, { replace = false, scroll = true } = {
   state.loginError = route.page === SCREEN.login ? state.loginError : '';
   state.error = '';
   state.notes = [];
+  state.myMessage = null;
   state.readIndex = 0;
   state.deleteOpen = false;
   if (route.date) {
@@ -145,6 +146,23 @@ export async function navigate(requested, { replace = false, scroll = true } = {
   if (route.page === SCREEN.created && state.calendar?.owner_id !== state.user?.id) {
     showError();
     return;
+  }
+  if (route.page === SCREEN.write) {
+    try {
+      state.myMessage = await getMyMessage(state.calendar.id, route.date);
+      if (navigationVersion !== version) {
+        return;
+      }
+      state.selected = state.myMessage?.chocolate_type ?? 0;
+      state.message = state.myMessage?.body ?? '';
+    } catch (error) {
+      if (navigationVersion !== version) {
+        return;
+      }
+      console.error('Own message lookup failed:', error);
+      showError(translate('내 메시지를 확인하지 못했어요.', 'Could not load your message.'));
+      return;
+    }
   }
   if (route.page === SCREEN.read) {
     try {
