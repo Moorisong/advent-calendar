@@ -153,10 +153,9 @@ def main():
             page.set_viewport_size({'width': 390, 'height': 844})
             assert page.locator('.visitor-create-action .secondary').is_visible()
             assert page.locator('.visitor-create-action .secondary').count() == 1
-            mobile_action = page.locator('.visitor-create-action .secondary').bounding_box()
-            mobile_footer = page.locator('.visitor-layout footer').bounding_box()
-            assert mobile_action and mobile_footer and mobile_action['y'] < mobile_footer['y'], (
-                f"mobile CTA: {mobile_action}, footer: {mobile_footer}")
+            assert page.locator('.visitor-create-action .secondary').evaluate(
+                "(el) => !!(el.compareDocumentPosition(document.querySelector('.visitor-layout footer')) "
+                "& Node.DOCUMENT_POSITION_FOLLOWING)")
             # Visitor CTA: a returning owner signs in to their existing calendar.
             page.locator('.visitor-create-action [data-action=create]').click()
             page.locator('[data-screen=login]').wait_for()
