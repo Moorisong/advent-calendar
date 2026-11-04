@@ -74,7 +74,7 @@ async function handleAction(action) {
     }
     return;
   }
-  if (['share', 'copy', 'private'].includes(action)) {
+  if (['share', 'copy'].includes(action)) {
     await shareCalendar(action);
     return;
   }
