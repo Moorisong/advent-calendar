@@ -57,7 +57,7 @@ export function renderCalendar(state, role = 'visitor', ended = false) {
       ? t('오늘의 서랍을 열어볼까?', 'Shall we open today’s drawer?')
       : t('날짜를 골라 초콜릿과 메시지를 남겨줘!', 'Pick a date. Leave a chocolate and a note!');
   const stamp = role === 'owner'
-    ? `<span class="stamp">${t('오늘', 'TODAY')} · ${state.today.slice(5)} · KST</span>`
+    ? `<span class="stamp">${t('오늘', 'TODAY')} · ${state.today.slice(5)} · ${escapeHtml(state.calendar?.timezone ?? APP.timeZone)}</span>`
     : '';
   const origin = typeof window === 'undefined' ? '' : window.location.origin;
   const publicUrl = `${origin}/c/${state.slug}`;
