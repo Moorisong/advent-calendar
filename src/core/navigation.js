@@ -53,6 +53,15 @@ export async function navigate(requested, { replace = false, scroll = true } = {
   const version = ++navigationVersion;
   const initial = { page: requested.page, slug: requested.slug ?? null, date: requested.date ?? null };
   let route = initial;
+  // Nonexistent send confirmations and invalid write dates are public visitor routes,
+  // not login prompts; this check does not depend on the calendar's time zone.
+  if (route.page === SCREEN.sent
+    && (state.lastSent?.slug !== route.slug || state.lastSent?.date !== route.date)) {
+    route = { ...route, page: SCREEN.visitor, date: null };
+  }
+  if (route.page === SCREEN.write && !validCalendarDate(route.date)) {
+    route = { ...route, page: SCREEN.visitor, date: null };
+  }
   if (PROTECTED_SCREENS.has(route.page) && !state.user) {
     saveIntent(route);
     route = { page: SCREEN.login, slug: null, date: null };
