@@ -1,4 +1,6 @@
 import { APP } from '../config/constants.js';
+import { escapeHtml } from '../utils/format.js';
+import { timeZoneLabel } from '../utils/timezones.js';
 
 import { icon } from './sprites.js';
 
@@ -29,7 +31,7 @@ export function footer(state) {
   return [
     `<footer class="fine">${state.year ?? APP.year}. 11. 01 — 12. 25<br>`,
     label,
-    timezone ? ` · ${timezone}` : '',
+    timezone ? ` · ${escapeHtml(timeZoneLabel(timezone, state.lang))}` : '',
     '</footer>',
   ].join('');
 }
