@@ -149,3 +149,37 @@ button:disabled {
   opacity: .8;
   cursor: pointer;
 }
+
+.timezone-setting {
+  margin: 20px 0 24px;
+  text-align: left;
+}
+
+.timezone-setting label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 800;
+}
+
+.timezone-setting select {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  padding: 12px 10px;
+  border: 3px solid var(--brown);
+  border-radius: 0;
+  background: var(--cream);
+  color: var(--brown);
+  font: inherit;
+  cursor: pointer;
+}
+
+.timezone-setting select:focus-visible {
+  outline: 3px solid var(--green);
+  outline-offset: 2px;
+}
+
+.timezone-setting .fine {
+  margin-top: 10px;
+  line-height: 1.6;
+}
