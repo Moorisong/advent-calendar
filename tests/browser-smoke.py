@@ -128,6 +128,21 @@ def main():
             page.locator('[data-screen=tutorial]').wait_for()
             page.get_by_role('button', name='알겠어!').click()
             page.locator('[data-screen=visitor]').wait_for()
+            page.set_viewport_size({'width': 1280, 'height': 900})
+            visitor_header = page.locator('.visitor-layout .calendar-intro').bounding_box()
+            visitor_calendar = page.locator('.visitor-layout .calendar-main').bounding_box()
+            visitor_sidebar = page.locator('.visitor-layout .visitor-sidebar').bounding_box()
+            assert visitor_header and visitor_calendar and visitor_sidebar
+            assert visitor_header['y'] < visitor_calendar['y']
+            assert visitor_sidebar['x'] > visitor_calendar['x']
+            assert abs(visitor_sidebar['y'] - visitor_calendar['y']) < 15
+            assert page.locator('.visitor-desktop-action .secondary').is_visible()
+            page.set_viewport_size({'width': 390, 'height': 844})
+            assert page.locator('.visitor-mobile-action .secondary').is_visible()
+            assert not page.locator('.visitor-sidebar').is_visible()
+            mobile_action = page.locator('.visitor-mobile-action').bounding_box()
+            mobile_footer = page.locator('.visitor-layout footer').bounding_box()
+            assert mobile_action and mobile_footer and mobile_action['y'] < mobile_footer['y']
             page.goto(public_link + '/sent?date=2026-12-12')
             page.locator('[data-screen=visitor]').wait_for()
             page.locator('[data-month="12"]').click()
