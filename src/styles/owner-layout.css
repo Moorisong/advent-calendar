@@ -6,7 +6,7 @@
     grid-template-areas: "intro intro" "calendar aside";
     align-items: start;
     justify-content: center;
-    gap: 28px 32px;
+    gap: 32px 32px;
     max-width: 860px;
     margin: 34px auto 60px;
   }
@@ -14,7 +14,7 @@
     grid-area: intro;
     max-width: none;
     width: 100%;
-    padding: 0 0 28px;
+    padding: 0 0 32px;
     margin: 0;
     text-align: left;
     border-bottom: 1px solid #4b2d2533;
@@ -28,23 +28,11 @@
     font-size: clamp(25px, 3vw, 32px);
     line-height: 1.3;
   }
-  /* A restrained pixel sparkle accents the title without adding another badge. */
-  .owner-layout .calendar-intro h2::after {
-    content: "";
-    display: inline-block;
-    width: 7px;
-    height: 7px;
-    margin: 0 0 8px 20px;
-    background: #e8c777;
-    box-shadow: -7px 0 #e8c777, 7px 0 #e8c777,
-      0 -7px #e8c777, 0 7px #e8c777;
-    vertical-align: middle;
-  }
   .owner-layout .calendar-title-line { display: inline; }
   .owner-layout .calendar-title-line + .calendar-title-line::before { content: " "; }
   .owner-layout .calendar-intro .sub {
     display: block;
-    margin: 0 0 12px;
+    margin: 0;
     font-size: 14px;
   }
   .owner-layout .calendar-intro .stamp {
