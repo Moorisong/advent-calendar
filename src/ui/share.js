@@ -30,5 +30,5 @@ export function renderPublicLink(url) {
     + ' stroke="currentColor" stroke-width="2" stroke-linecap="square" aria-hidden="true">'
     + '<rect x="8" y="8" width="12" height="12" rx="1"/>'
     + '<path d="M16 8V4H4v12h4"/>'
-    + '</svg></button></div>`;
+    + '</svg></button></div>';
 }
