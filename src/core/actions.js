@@ -1,7 +1,7 @@
 import { APP, SCREEN } from '../config/constants.js';
 import { createCalendar, deleteCalendar, findMyCalendar } from '../data/calendars.js';
 import { shareToKakao } from '../data/kakao-share.js';
-import { writeMessage } from '../data/messages.js';
+import { deleteMessage, getMyMessage, updateMessage, writeMessage } from '../data/messages.js';
 import { canWriteDate, getInitialMonth, todayInZone } from '../utils/date.js';
 import { validTimeZone } from '../utils/timezones.js';
 
@@ -82,16 +82,55 @@ export async function submitMessage(form) {
     button.disabled = true;
   }
   try {
-    await writeMessage(state.calendar.id, state.route.date, state.selected, note);
+    if (state.myMessage) {
+      await updateMessage(state.myMessage.id, state.route.date, state.selected, note);
+    } else {
+      await writeMessage(state.calendar.id, state.route.date, state.selected, note);
+    }
     state.message = '';
     state.lastSent = { slug: state.calendar.slug, date: state.route.date };
     await navigate({ page: SCREEN.sent, slug: state.calendar.slug, date: state.route.date });
   } catch (error) {
     console.error('Submit message failed:', error);
-    toast(translate('메시지를 보내지 못했어요. 다시 시도해 줘.', 'Could not send the message. Try again.'));
+    if (error.code === '23505') {
+      try {
+        state.myMessage = await getMyMessage(state.calendar.id, state.route.date);
+        if (state.myMessage) {
+          state.selected = state.myMessage.chocolate_type;
+          state.message = state.myMessage.body;
+          render();
+        }
+      } catch (lookupError) {
+        console.error('Message reload failed:', lookupError);
+      }
+      toast(translate('이미 남긴 메시지가 있어요. 수정해서 다시 보내줘.',
+        'You already left a note. You can update it.'));
+    } else {
+      toast(translate('메시지를 저장하지 못했어요. 다시 시도해 줘.',
+        'Could not save the message. Try again.'));
+    }
     if (button) {
       button.disabled = false;
     }
+  } finally {
+    state.writing = false;
+  }
+}
+
+export async function removeMyMessage() {
+  if (!state.user || !state.myMessage || state.writing || !state.calendar) {
+    return;
+  }
+  state.writing = true;
+  try {
+    await deleteMessage(state.myMessage.id);
+    state.myMessage = null;
+    state.message = '';
+    await navigate({ page: SCREEN.visitor, slug: state.calendar.slug });
+    toast(translate('내 메시지를 삭제했어요.', 'Your note was deleted.'));
+  } catch (error) {
+    console.error('Message deletion failed:', error);
+    toast(translate('메시지를 삭제하지 못했어요.', 'Could not delete your note.'));
   } finally {
     state.writing = false;
   }
