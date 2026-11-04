@@ -23,11 +23,13 @@ export function head(state) {
 }
 
 export function footer(state) {
-  const timezone = state.calendar?.timezone ?? state.timezoneDraft ?? APP.timeZone;
+  const timezone = state.calendar?.timezone;
+  const label = state.t('날짜는 캘린더 주인의 시간대 기준이에요.',
+    'Dates follow the calendar owner’s time zone.');
   return [
     `<footer class="fine">${APP.year}. 11. 05 — 12. 25<br>`,
-    state.t('캘린더 주인의 시간대 기준', 'Dates follow the calendar owner’s time zone'),
-    ` · ${timezone}`,
+    label,
+    timezone ? ` · ${timezone}` : '',
     '</footer>',
   ].join('');
 }
