@@ -1,6 +1,6 @@
 import { APP, CHOCOLATES, SCREEN } from '../config/constants.js';
 import { logout, signIn } from '../data/auth.js';
-import { canWriteDate } from '../utils/date.js';
+import { canWriteDate, todayInZone } from '../utils/date.js';
 import { writeLocal } from '../utils/storage.js';
 
 import { changeSelectedChocolate, shareCalendar, submitCalendar, submitMessage } from './actions.js';
@@ -119,7 +119,7 @@ async function handleClick(event) {
   if (button.dataset.day !== undefined) {
     const day = Number(button.dataset.day);
     const role = button.dataset.role;
-    if (role === 'ended' || (role === 'visitor' && !canWriteDate(state.today))) {
+    if (role === 'ended' || (role === 'visitor' && !canWriteDate(todayInZone(state.calendar?.timezone)))) {
       toast(translate('지금은 초콜릿을 남길 수 없어요.', 'Chocolate deliveries are closed right now.'));
       return;
     }
@@ -141,6 +141,9 @@ function handleInput(event) {
   }
   if (event.target.name === 'nickname') {
     state.nicknameDraft = event.target.value;
+  }
+  if (event.target.name === 'timezone') {
+    state.timezoneDraft = event.target.value;
   }
 }
 
