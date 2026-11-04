@@ -116,13 +116,14 @@ test('모바일 새 캘린더 버튼은 날짜 안내와 광고보다 먼저 표
   assert.equal((html.match(/data-action="new-calendar"/g) ?? []).length, 2);
 });
 
-test('친구 캘린더는 주인과 동일한 구조로 안내와 보조 버튼을 배치', () => {
+test('친구 캘린더는 제목 아래 작성 방법을 안내하고 생성 버튼을 배치', () => {
   const html = renderCalendar(base, 'visitor');
   assert.match(html, /class="calendar-layout visitor-layout"/);
   assert.match(html, /class="content calendar-intro"/);
   assert.match(html, /class="content calendar-main"/);
   assert.match(html, /class="visitor-sidebar"/);
-  assert.match(html, /class="visitor-guide"/);
+  assert.match(html, /달력에서 날짜를 고르고 초콜릿을 선택해 메시지를 남겨줘/);
+  assert.doesNotMatch(html, /class="visitor-guide"|친구에게 초콜릿 남기기/);
   assert.match(html, /class="visitor-mobile-action"/);
   assert.match(html, /class="visitor-desktop-action"/);
   assert.match(html, /data-day="12" data-role="visitor"/);
@@ -134,6 +135,6 @@ test('친구 캘린더는 주인과 동일한 구조로 안내와 보조 버튼�
 test('종료된 친구 캘린더는 메시지 작성 대신 종료 안내를 표시', () => {
   const html = renderCalendar(base, 'visitor', true);
   assert.match(html, /올해의 초콜릿 배달이 끝났어요/);
-  assert.match(html, /class="visitor-guide"/);
+  assert.doesNotMatch(html, /class="visitor-guide"/);
   assert.doesNotMatch(html, /data-role="visitor"/);
 });
