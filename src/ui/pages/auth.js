@@ -30,7 +30,6 @@ export function renderLogin(state) {
     '</div>',
     loginError ? `<p class="auth-error" role="alert">${escapeHtml(loginError)}</p>` : '',
     isConfigured ? '' : `<p class="auth-hint">${t('로그인 연결 준비 중이에요.', 'Social sign-in is being configured.')}</p>`,
-    `<p class="auth-fine">${t('로그인하면 원래 보던 화면으로 돌아가요.', 'You’ll return to where you left off after signing in.')}</p>`,
     `<button class="textbtn" data-action="leave-login">${t('돌아가기', 'Go back')}</button>`,
     '</div>',
     footer(state),
