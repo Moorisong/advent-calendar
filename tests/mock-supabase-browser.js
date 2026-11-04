@@ -7,6 +7,8 @@ let observer = () => {};
 
 function query(table, operation, payload) {
   const filters = [];
+  let rowLimit = Infinity;
+  let ordering = [];
   const builder = {
     eq(column, value) {
       filters.push([column, value]);
@@ -26,7 +28,12 @@ function query(table, operation, payload) {
       const result = await builder;
       return { data: result.data?.[0] ?? null, error: result.error };
     },
-    order() {
+    order(column, { ascending = true } = {}) {
+      ordering.push([column, ascending]);
+      return builder;
+    },
+    limit(value) {
+      rowLimit = value;
       return builder;
     },
     then(resolve) {
@@ -43,7 +50,16 @@ function query(table, operation, payload) {
         return Promise.resolve(resolve({ data: [record], error: null }));
       }
       const filtered = rows.filter((row) => filters.every(([key, value]) => row[key] === value));
-      return Promise.resolve(resolve({ data: filtered, error: null }));
+      filtered.sort((a, b) => {
+        for (const [column, ascending] of ordering) {
+          const comparison = String(a[column] ?? '').localeCompare(String(b[column] ?? ''));
+          if (comparison !== 0) {
+            return ascending ? comparison : -comparison;
+          }
+        }
+        return 0;
+      });
+      return Promise.resolve(resolve({ data: filtered.slice(0, rowLimit), error: null }));
     },
   };
   return builder;
