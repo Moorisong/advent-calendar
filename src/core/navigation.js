@@ -5,6 +5,7 @@ import {
   calendarDate, canReadDate, getInitialMonth, getSeasonYear, isSeasonEnded, todayInZone, validCalendarDate,
 } from '../utils/date.js';
 import { readLocal, writeLocal } from '../utils/storage.js';
+import { draftKey } from './message-draft.js';
 import { deviceTimeZone } from '../utils/timezones.js';
 
 import { saveIntent } from './intent.js';
@@ -155,6 +156,20 @@ export async function navigate(requested, { replace = false, scroll = true } = {
       }
       state.selected = state.myMessage?.chocolate_type ?? 0;
       state.message = state.myMessage?.body ?? '';
+      const saved = readLocal(draftKey(state.user.id, state.calendar.id, route.date));
+      if (saved !== null) {
+        try {
+          const draft = JSON.parse(saved);
+          if (typeof draft.message === 'string') {
+            state.message = draft.message.slice(0, 200);
+          }
+          if (Number.isInteger(draft.selected) && draft.selected >= 0 && draft.selected < 6) {
+            state.selected = draft.selected;
+          }
+        } catch {
+          // Ignore a corrupted draft and use the existing saved message.
+        }
+      }
     } catch (error) {
       if (navigationVersion !== version) {
         return;
