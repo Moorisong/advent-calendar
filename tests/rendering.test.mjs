@@ -38,7 +38,7 @@ test('11월 캘린더는 5일부터 30일까지', () => {
 test('주인 캘린더에 공유와 추가 생성 버튼이 존재', () => {
   const html = renderCalendar(base, 'owner');
   assert.match(html, /data-action="share"/);
-  assert.match(html, /data-action="create"/);
+  assert.match(html, /data-action="new-calendar"/);
 });
 
 test('메시지 본문과 닉네임에 HTML 출력 인젝션이 일어나지 않음', () => {
@@ -60,7 +60,10 @@ test('랜딩 미리보기 서랍은 클릭 가능한 실제 캘린더로 오인�
 });
 
 test('생성 완료 화면에서 중복 관리 링크 저장 영역 제거', () => {
+  const previousWindow = globalThis.window;
+  globalThis.window = { location: { origin: 'https://dearchoco.example' } };
   const html = renderCreated(base);
+  globalThis.window = previousWindow;
   assert.doesNotMatch(html, /data-action="private"|class="private"/);
   assert.match(html, /data-action="copy"/);
   assert.match(html, /data-action="share"/);
