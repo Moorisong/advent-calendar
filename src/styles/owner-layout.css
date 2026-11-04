@@ -64,6 +64,7 @@
   .owner-layout .share-description { font-size: 12px; line-height: 1.6; }
   .owner-layout .share-actions > button { font-size: 12px; min-height: 52px; }
   .owner-layout .owner-extra { margin: 22px 0 0; }
+  .owner-layout .mobile-new-calendar { display: none; }
   .owner-layout .new-calendar-button {
     width: 100%;
     min-height: 48px;
@@ -143,7 +144,18 @@
     cursor: pointer;
   }
   .owner-layout.share-open .mobile-share-trigger { display: none; }
-  .owner-layout .owner-extra { margin: 24px 0; }
+  .owner-layout .desktop-new-calendar { display: none; }
+  .owner-layout .mobile-new-calendar { margin: 24px 0 12px; }
+  .owner-layout .mobile-new-calendar .owner-extra { margin: 0; }
+  .owner-layout .mobile-new-calendar .new-calendar-button {
+    width: 100%;
+    min-height: 48px;
+    border: 2px solid var(--brown);
+    background: transparent;
+    box-shadow: none;
+    color: var(--brown);
+    font-size: 13px;
+  }
 }
 
 /* Tiny original pixel gift, kept secondary to the title typography. */
