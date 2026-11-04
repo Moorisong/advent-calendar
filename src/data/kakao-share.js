@@ -1,4 +1,4 @@
-const JAVASCRIPT_KEY = import.meta.env.VITE_KAKAO_JAVASCRIPT_KEY ?? '';
+const JAVASCRIPT_KEY = import.meta.env?.VITE_KAKAO_JAVASCRIPT_KEY ?? '';
 
 export function kakaoShareConfigured() {
   return Boolean(JAVASCRIPT_KEY);
