@@ -66,6 +66,7 @@ create table if not exists public.messages (
   gift_date date not null,
   chocolate_type smallint not null,
   body text not null,
+  sender_id uuid not null default auth.uid(),
   created_at timestamptz not null default now(),
   constraint messages_gift_date_range check (
     gift_date >= date '2026-11-01'
@@ -88,6 +89,9 @@ create index if not exists calendars_owner_index
 create index if not exists messages_date_index
   on public.messages (calendar_id, gift_date, created_at, id);
 
+create unique index if not exists messages_one_sender_per_day
+  on public.messages (calendar_id, gift_date, sender_id);
+
 alter table public.calendars enable row level security;
 alter table public.messages enable row level security;
 
@@ -97,10 +101,14 @@ revoke all on public.calendars from public, anon, authenticated;
 grant select on public.calendars to anon, authenticated;
 grant insert, delete on public.calendars to authenticated;
 
--- Messages intentionally have NO sender identifier column, despite sign-in
--- being mandatory for inserting them. Calendar owners cannot infer authors.
+ -- Sender IDs enforce one message per person, but are never readable by clients.
 revoke all on public.messages from public, anon, authenticated;
-grant select, insert on public.messages to authenticated;
+grant select (id, calendar_id, gift_date, chocolate_type, body, created_at)
+  on public.messages to authenticated;
+grant insert (calendar_id, gift_date, chocolate_type, body)
+  on public.messages to authenticated;
+grant update (chocolate_type, body) on public.messages to authenticated;
+grant delete on public.messages to authenticated;
 
 create policy "Anyone may view calendar cover"
   on public.calendars for select
@@ -115,7 +123,7 @@ create policy "Signed-in users can create their own calendars"
     and (select auth.uid()) is not null
   );
 
--- A signed-in user may leave multiple messages per date, including past dates.
+-- Many friends may write on one date, but each person may write only one.
 -- The database (not only UI) closes submissions after December 25 in the owner's time zone.
 create policy "Signed-in users can leave chocolates in season"
   on public.messages for insert
@@ -136,11 +144,12 @@ create policy "Signed-in users can leave chocolates in season"
 
 -- Crucially, future-dated message rows are excluded even from direct API
 -- SELECT, COUNT and requests made outside the official UI.
-create policy "Only owners can open arrived messages"
+create policy "Owners read arrived notes and senders read their own"
   on public.messages for select
   to authenticated
   using (
-    exists (
+    sender_id = (select auth.uid())
+    or exists (
       select 1
       from public.calendars as calendar
       where calendar.id = messages.calendar_id
@@ -149,12 +158,45 @@ create policy "Only owners can open arrived messages"
     )
   );
 
+-- Authors can change only their own note, and only while the season is open.
+create policy "Senders can edit their notes"
+  on public.messages for update to authenticated
+  using (sender_id = (select auth.uid()))
+  with check (
+    sender_id = (select auth.uid())
+    and exists (
+      select 1 from public.calendars as calendar
+      where calendar.id = messages.calendar_id
+        and (now() at time zone calendar.timezone)::date
+          between make_date(extract(year from now() at time zone calendar.timezone)::int, 11, 1)
+              and make_date(extract(year from now() at time zone calendar.timezone)::int, 12, 25)
+    )
+  );
+
+create policy "Senders can delete their notes"
+  on public.messages for delete to authenticated
+  using (sender_id = (select auth.uid()));
+
+-- A deliberately narrow function returns the author's own note, never sender_id.
+create or replace function public.get_my_message(p_calendar_id uuid, p_gift_date date)
+returns table(id uuid, chocolate_type smallint, body text)
+language sql stable security definer set search_path = ''
+as $
+  select m.id, m.chocolate_type, m.body
+  from public.messages m
+  where m.calendar_id = p_calendar_id and m.gift_date = p_gift_date
+    and m.sender_id = (select auth.uid())
+  limit 1
+$;
+revoke all on function public.get_my_message(uuid, date) from public, anon;
+grant execute on function public.get_my_message(uuid, date) to authenticated;
+
 create policy "Owners may permanently delete their calendars"
   on public.calendars for delete
   to authenticated
   using (owner_id = (select auth.uid()));
 
--- Message deletion cascades from calendars. Direct message DELETE remains denied.
+-- Calendar deletion cascades to messages; authors can also delete their own note.
 
 -- Clean up old season messages every 15 minutes, in each calendar's own time zone.
 -- Calendars, accounts, and share links are deliberately never removed by this job.
