@@ -94,6 +94,19 @@ def main():
             assert page.locator('[data-screen=owner] .share-utilities [data-action=copy]').count() == 0
             assert page.locator('[data-screen=owner] .new-calendar-button').is_visible()
             assert public_link in page.locator('[data-screen=owner] .share-link-url').inner_text()
+            page.set_viewport_size({'width': 1280, 'height': 900})
+            header = page.locator('.owner-layout .calendar-intro').bounding_box()
+            calendar = page.locator('.owner-layout .calendar-main').bounding_box()
+            sidebar = page.locator('.owner-layout .owner-sidebar').bounding_box()
+            assert header and calendar and sidebar
+            assert header['y'] < calendar['y']
+            assert sidebar['x'] > calendar['x']
+            assert abs(sidebar['y'] - calendar['y']) < 15
+            page.set_viewport_size({'width': 390, 'height': 844})
+            page.locator('[data-action=open-share]').click()
+            page.locator('.owner-layout.share-open .owner-share').wait_for()
+            page.locator('.share-close').click()
+            assert page.locator('.owner-layout.share-open').count() == 0
             page.screenshot(path=str(ROOT / 'tests/owner-current.png'))
             # 확인: 미래 날짜는 메시지 개수 없이 잠금 상태만 노출.
             page.locator('[data-month="12"]').click()
