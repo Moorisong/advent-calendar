@@ -1,25 +1,28 @@
 import { getSeasonYear } from '../utils/date.js';
 
+// Temporary visual QA switch. Set to false after checking the banner design.
+export const RETENTION_BANNER_PREVIEW = true;
+
 export function renderRetentionBanner(state) {
   const today = state.today;
   const month = Number(today.slice(5, 7));
-  // During October, the previous season's messages have already expired.
-  if (month === 10) {
+  if (month !== 9 && !RETENTION_BANNER_PREVIEW) {
     return '';
   }
-  const seasonYear = getSeasonYear(today);
+  // In September the messages from last year's season expire next month.
+  const seasonYear = month === 9 ? Number(today.slice(0, 4)) - 1 : getSeasonYear(today);
   const deletionYear = seasonYear + 1;
   const { t } = state;
   return [
     '<aside class="retention-banner" aria-label="Message retention notice">',
     '<span class="retention-banner-icon" aria-hidden="true">✉</span>',
     '<div class="retention-banner-copy">',
-    `<strong>${t('지난 초콜릿은 다음 가을까지 보관해!', 'Your chocolates are kept until next autumn!')}</strong>`,
+    `<strong>${t('지난 초콜릿이 곧 정리돼!', 'Your saved chocolates will soon expire!')}</strong>`,
     `<p>${t(
       `${seasonYear}년에 받은 초콜릿과 메시지는 ${deletionYear}년 10월 1일에 영구 삭제돼. `
-        + '삭제된 메시지는 복구할 수 없으니 소중한 마음을 미리 보관해 줘.',
-      `Chocolates and notes from ${seasonYear} will be permanently deleted on October 1, ${deletionYear}. `
-        + 'They cannot be restored, so keep any memories you want to save.',
+        + '삭제 후에는 복구할 수 없으니 9월 30일까지 소중한 메시지를 따로 저장해 줘.',
+      `Chocolates and messages from ${seasonYear} will be permanently deleted on October 1, ${deletionYear}. `
+        + 'They cannot be recovered, so save any messages you want to keep by September 30.',
     )}</p>`,
     '</div>',
     '</aside>',
