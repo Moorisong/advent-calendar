@@ -110,7 +110,9 @@ test('생성 완료 화면에서 중복 관리 링크 저장 영역 제거', () 
 
 test('빈 서랍은 선택한 날짜를 선물 아이콘과 제목 사이에 표시', () => {
   const html = renderEmpty({ ...base, month: 11, day: 2 });
-  assert.match(html, /class="empty-drawer-date">11월 2일의 서랍<\/div>/);
+  assert.match(html, /class="empty-drawer-date">11\/2<\/div>/);
+  const english = renderEmpty({ ...base, lang: 'en', month: 11, day: 2 });
+  assert.match(english, /class="empty-drawer-date">NOV 2<\/div>/);
   assert.ok(html.indexOf('class="largeicon"') < html.indexOf('class="empty-drawer-date"'));
   assert.ok(html.indexOf('class="empty-drawer-date"') < html.indexOf('아직 조용한 서랍이야'));
 });
