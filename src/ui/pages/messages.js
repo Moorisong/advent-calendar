@@ -88,7 +88,7 @@ export function renderEmpty(state) {
     '<div class="content empty"><div class="largeicon">',
     icon(3),
     '</div>',
-    `<div class="empty-drawer-date">${state.month}${t('월 ', ' / ')}${state.day}${t('일의 서랍', ' · Drawer')}</div>`,
+    `<div class="empty-drawer-date">${state.lang === 'en' ? `${['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'][state.month - 1]} ${state.day}` : `${state.month}/${state.day}`}</div>`,
     `<h2>${t('아직 조용한 서랍이야', 'A quiet little drawer')}</h2>`,
     `<p class="sub">${t('친구들에게 캘린더를 살짝 알려줘볼까?', 'Let your friends know about your calendar.')}</p>`,
     '<div class="empty-share-panel">',
