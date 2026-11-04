@@ -5,6 +5,7 @@ import {
   calendarDate, canReadDate, getInitialMonth, isSeasonEnded, todayInZone, validCalendarDate,
 } from '../utils/date.js';
 import { readLocal, writeLocal } from '../utils/storage.js';
+import { deviceTimeZone } from '../utils/timezones.js';
 
 import { saveIntent } from './intent.js';
 import { resolvePage } from './page-policy.js';
@@ -105,7 +106,7 @@ export async function navigate(requested, { replace = false, scroll = true } = {
   if (navigationVersion !== version) {
     return;
   }
-  const zone = state.calendar?.timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const zone = state.calendar?.timezone ?? deviceTimeZone();
   state.today = todayInZone(zone);
   route = resolvePage(route, state.today, state.lastSent);
   if (route.slug && isOwnerScreen(route.page) && state.calendar?.owner_id !== state.user?.id) {
