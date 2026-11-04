@@ -137,6 +137,9 @@ def main():
             assert visitor_sidebar['x'] > visitor_calendar['x']
             assert abs(visitor_sidebar['y'] - visitor_calendar['y']) < 15
             assert page.locator('.visitor-desktop-action .secondary').is_visible()
+            assert page.locator('.visitor-guide').count() == 0
+            assert '초콜릿을 선택해 메시지를 남겨줘' in page.locator(
+                '.visitor-layout .calendar-intro .sub').inner_text()
             page.set_viewport_size({'width': 390, 'height': 844})
             assert page.locator('.visitor-mobile-action .secondary').is_visible()
             assert not page.locator('.visitor-sidebar').is_visible()
