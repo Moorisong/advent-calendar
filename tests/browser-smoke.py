@@ -110,11 +110,16 @@ def main():
             page.screenshot(path=str(ROOT / 'tests/owner-current.png'))
             # 확인: 미래 날짜는 메시지 개수 없이 잠금 상태만 노출.
             page.locator('[data-month="12"]').click()
+            page.evaluate("window.scrollTo(0, 360)")
+            before_drawer = page.evaluate("window.scrollY")
+            assert before_drawer > 0
             page.locator('[data-day="13"][data-role="owner"]').click()
             page.locator('[data-screen=locked]').wait_for()
             assert '13일에' in page.locator('.bubble').inner_text()
+            assert abs(page.evaluate("window.scrollY") - before_drawer) < 5
             page.get_by_role('button', name='기다릴게!').click()
             page.locator('[data-screen=owner]').wait_for()
+            assert abs(page.evaluate("window.scrollY") - before_drawer) < 5
             page.get_by_role('button', name='로그아웃').click()
             page.locator('[data-screen=landing]').wait_for()
             page.goto(public_link)
