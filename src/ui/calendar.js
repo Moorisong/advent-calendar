@@ -98,7 +98,7 @@ export function renderCalendar(state, role = 'visitor', ended = false) {
     `${t('12월', 'December')}</button></div>`,
     renderBox(state, ended ? 'ended' : role),
     role === 'owner' ? '' : callToAction,
-    footer(state),
+    role === 'owner' ? '' : footer(state),
     `<div class="ad">${t('광고 영역', 'ADVERTISEMENT')}</div>`,
     '</div>',
     role === 'owner' ? '<aside class="owner-sidebar">' + shareTools + callToAction + '</aside>' : '',
