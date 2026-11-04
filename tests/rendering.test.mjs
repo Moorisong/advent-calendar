@@ -53,6 +53,20 @@ test('메시지 본문과 닉네임에 HTML 출력 인젝션이 일어나지 않
   assert.doesNotMatch(input, /FOR <img src=x>/);
 });
 
+test('이미 작성한 날짜는 새 글 대신 수정 및 삭제를 표시', () => {
+  const html = renderWrite({
+    ...base,
+    myMessage: { id: 'my-note', chocolate_type: 2, body: '안녕' },
+    selected: 2,
+    message: '안녕',
+  });
+  assert.match(html, /메시지 수정하기/);
+  assert.match(html, /data-action="delete-message"/);
+  const fresh = renderWrite(base);
+  assert.match(fresh, /초콜릿 남기기/);
+  assert.doesNotMatch(fresh, /data-action="delete-message"/);
+});
+
 test('랜딩 미리보기 서랍은 클릭 가능한 실제 캘린더로 오인하지 않음', () => {
   const html = renderBox(base, 'visitor', true);
   assert.equal((html.match(/<span class="drawer"/g) ?? []).length, 15);
