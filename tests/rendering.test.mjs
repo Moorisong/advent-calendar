@@ -28,6 +28,19 @@ test('12월 캘린더 25개 서랍은 미래 메시지 수를 노출하지 않�
   assert.doesNotMatch(html, /data-count|message-count|받은 초콜릿 \d+개/);
 });
 
+test('주인과 방문자 모두 지난 날짜와 오늘을 구분하고 미래 날짜는 유지', () => {
+  for (const role of ['owner', 'visitor']) {
+    const html = renderBox(base, role);
+    assert.match(html, new RegExp('class="drawer past" data-day="11" data-role="' + role + '"'));
+    assert.match(html, new RegExp('class="drawer today" data-day="12" data-role="' + role + '"'));
+    assert.match(html, new RegExp('class="drawer " data-day="13" data-role="' + role + '"'));
+    assert.match(html, /<small>오늘<\/small>/);
+    assert.doesNotMatch(html, /disabled/);
+  }
+  const preview = renderBox(base, 'visitor', true);
+  assert.doesNotMatch(preview, /drawer past|drawer today/);
+});
+
 test('11월 캘린더는 1일부터 30일까지', () => {
   const html = renderBox({ ...base, month: 11 }, 'visitor');
   assert.equal((html.match(/data-day=/g) ?? []).length, 30);
