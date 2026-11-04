@@ -92,6 +92,54 @@ create index if not exists messages_date_index
 create unique index if not exists messages_one_sender_per_day
   on public.messages (calendar_id, gift_date, sender_id);
 
+-- Protect free-tier capacity from rapid automated submissions.
+create index if not exists messages_sender_recent_index
+  on public.messages (sender_id, created_at desc);
+
+create schema if not exists private;
+
+create or replace function private.enforce_message_write_interval()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $
+begin
+  if (select auth.uid()) is null or new.sender_id is distinct from (select auth.uid()) then
+    raise exception 'INVALID_MESSAGE_SENDER' using errcode = '42501';
+  end if;
+
+  perform pg_catalog.pg_advisory_xact_lock(
+    pg_catalog.hashtextextended(new.sender_id::text, 1706)
+  );
+
+  if exists (
+    select 1 from public.messages
+    where sender_id = new.sender_id
+      and calendar_id = new.calendar_id
+      and gift_date = new.gift_date
+  ) then
+    raise exception 'MESSAGE_ALREADY_EXISTS'
+      using errcode = '23505', constraint = 'messages_one_sender_per_day';
+  end if;
+
+  if exists (
+    select 1 from public.messages
+    where sender_id = new.sender_id
+      and created_at > pg_catalog.now() - interval '5 seconds'
+  ) then
+    raise exception 'MESSAGE_RATE_LIMIT' using errcode = 'P0001';
+  end if;
+  return new;
+end;
+$;
+
+revoke all on function private.enforce_message_write_interval() from public, anon, authenticated;
+drop trigger if exists enforce_message_write_interval_on_insert on public.messages;
+create trigger enforce_message_write_interval_on_insert
+before insert on public.messages
+for each row execute function private.enforce_message_write_interval();
+
 alter table public.calendars enable row level security;
 alter table public.messages enable row level security;
 
