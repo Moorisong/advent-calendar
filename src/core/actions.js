@@ -1,5 +1,6 @@
 import { APP, SCREEN } from '../config/constants.js';
 import { createCalendar } from '../data/calendars.js';
+import { shareToKakao } from '../data/kakao-share.js';
 import { writeMessage } from '../data/messages.js';
 import { canWriteDate } from '../utils/date.js';
 
@@ -90,6 +91,22 @@ export async function shareCalendar(action) {
     return;
   }
   const publicUrl = `${window.location.origin}/c/${slug}`;
+  if (action === 'kakao-share') {
+    try {
+      shareToKakao({
+        url: publicUrl,
+        nickname: state.calendar.nickname,
+        lang: state.lang,
+      });
+    } catch (error) {
+      console.error('Kakao sharing unavailable:', error);
+      toast(translate(
+        '카카오톡 공유를 시작할 수 없어요. 설정을 확인해 줘.',
+        'KakaoTalk sharing is unavailable. Check the setup.',
+      ));
+    }
+    return;
+  }
   if (action === 'share' && navigator.share) {
     try {
       await navigator.share({ title: APP.title, url: publicUrl });
