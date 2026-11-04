@@ -18,8 +18,8 @@ test('매년 9월에 지난 시즌 기준으로 날짜 자동 갱신', () => {
   assert.match(renderRetentionBanner({ today: '2028-09-30', t }), /2027년에 받은/);
 });
 
-test('2026년 11월만 임시 미리보기, 이후에는 9월에만 표시', () => {
-  assert.match(renderRetentionBanner({ today: '2026-11-04', t }), /2027년 10월 1일/);
+test('미리보기 없이 매년 9월에만 표시', () => {
+  assert.equal(renderRetentionBanner({ today: '2026-11-04', t }), '');
   assert.equal(renderRetentionBanner({ today: '2026-12-01', t }), '');
   assert.equal(renderRetentionBanner({ today: '2027-08-31', t }), '');
   assert.equal(renderRetentionBanner({ today: '2027-10-01', t }), '');
