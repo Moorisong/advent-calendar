@@ -45,13 +45,13 @@ export function renderWrite(state) {
 }
 
 export function renderSent(state) {
-  const { t, selected } = state;
+  const { t, selected, month, day } = state;
   return [
     '<div class="content success"><div class="largeicon">',
     icon(selected),
     '</div><div class="kicker">SEALED WITH SWEETNESS</div>',
     `<h2>${t('마음을 넣어두었어요!', 'A little love, tucked away!')}</h2>`,
-    `<p class="sub">${t('선택한 날, 친구에게 달콤한 선물이 될 거예요.', 'A sweet surprise for your friend, on the day you picked.')}</p>`,
+    `<p class="sub">${t(`${month}월 ${day}일에 친구가 확인할 수 있습니다.`, `Your friend can read it on ${month}/${day}.`)}</p>`,
     btn(t('나도 캘린더 만들기', 'Make my own calendar'), 'create'),
     btn(t('캘린더로 돌아가기', 'Back to calendar'), 'visitor', true),
     '</div>',
