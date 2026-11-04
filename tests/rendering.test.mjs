@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 
 import { renderBox, renderCalendar } from '../src/ui/calendar.js';
-import { renderRead, renderWrite } from '../src/ui/pages/messages.js';
+import { renderEmpty, renderRead, renderWrite } from '../src/ui/pages/messages.js';
 import { renderCreated } from '../src/ui/pages/intro.js';
 
 const t = (ko) => ko;
@@ -106,6 +106,23 @@ test('생성 완료 화면에서 중복 관리 링크 저장 영역 제거', () 
   assert.match(html, /data-action="share"/);
   assert.match(html, /data-action="kakao-share"/);
   assert.match(html, /data-action="owner"/);
+});
+
+test('빈 서랍에서도 오너와 동일한 공유 기능을 제공', () => {
+  const previousWindow = globalThis.window;
+  globalThis.window = { location: { origin: 'https://advent.example' } };
+  try {
+    const html = renderEmpty(base);
+    assert.match(html, /class="empty-share-panel"/);
+    assert.match(html, /https:\/\/advent.example\/c\/abcdef1234567890/);
+    assert.match(html, /data-action="copy"/);
+    assert.match(html, /data-action="kakao-share"/);
+    assert.match(html, /data-action="share"/);
+    assert.match(html, /data-action="owner"/);
+    assert.doesNotMatch(html, /data-action="create"/);
+  } finally {
+    globalThis.window = previousWindow;
+  }
 });
 
 test('주인 화면에서 언제든 친구용 주소 복사 가능', () => {
