@@ -56,10 +56,6 @@ export function renderCalendar(state, role = 'visitor', ended = false) {
     : role === 'owner'
       ? t('오늘의 서랍을 열어볼까?', 'Shall we open today’s drawer?')
       : t('날짜를 골라 초콜릿과 메시지를 남겨줘!', 'Pick a date. Leave a chocolate and a note!');
-  const stamp = role === 'owner'
-    ? `<span class="stamp">${t('오늘', 'TODAY')} · ${state.today.slice(5)} · `
-      + `${escapeHtml(state.calendar?.timezone ?? APP.timeZone)}</span>`
-    : '';
   const origin = typeof window === 'undefined' ? '' : window.location.origin;
   const publicUrl = `${origin}/c/${state.slug}`;
   const shareTools = role === 'owner'
@@ -89,7 +85,7 @@ export function renderCalendar(state, role = 'visitor', ended = false) {
     `<div class="calendar-layout ${role === 'owner' ? 'owner-layout' : ''}">`,
     '<div class="content calendar-intro">',
     `<div class="kicker">${role === 'owner' ? 'YOUR CHOCOLATE POST OFFICE' : 'A LITTLE CHOCOLATE'}</div>`,
-    `<h2>${title}</h2><p class="sub">${subtitle}</p>${stamp}`,
+    `<h2>${title}</h2><p class="sub">${subtitle}</p>`,
     '</div>',
     '<div class="content calendar-main"><div class="tabs">',
     `<button data-month="11" class="${month === 11 ? 'on' : ''}" aria-pressed="${month === 11}">`,
@@ -98,7 +94,7 @@ export function renderCalendar(state, role = 'visitor', ended = false) {
     `${t('12월', 'December')}</button></div>`,
     renderBox(state, ended ? 'ended' : role),
     role === 'owner' ? '' : callToAction,
-    role === 'owner' ? '' : footer(state),
+    footer(state),
     `<div class="ad">${t('광고 영역', 'ADVERTISEMENT')}</div>`,
     '</div>',
     role === 'owner' ? '<aside class="owner-sidebar">' + shareTools + callToAction + '</aside>' : '',
