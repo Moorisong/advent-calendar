@@ -9,9 +9,23 @@ test('캘린더와 메시지에 모두 RLS를 설정', () => {
   assert.match(schema, /alter table public\.messages enable row level security;/);
 });
 
-test('익명 작성자를 데이터베이스에 저장하지 않음', () => {
-  const messages = schema.split('create table if not exists public.messages')[1].split(');')[0];
-  assert.doesNotMatch(messages, /sender_id|author_id|writer_id/);
+test('날짜별 작성자 중복은 DB에서 막고, 작성자 ID는 읽을 수 없음', () => {
+  assert.match(schema, /sender_id uuid not null default auth.uid\(\)/);
+  assert.match(schema, /messages_one_sender_per_day/);
+  assert.match(schema, /\(calendar_id, gift_date, sender_id\)/);
+  assert.match(schema, /grant select \(id, calendar_id, gift_date, chocolate_type, body, created_at\)/);
+  assert.match(schema, /grant insert \(calendar_id, gift_date, chocolate_type, body\)/);
+  assert.doesNotMatch(schema, /grant select, insert on public.messages to authenticated/);
+  assert.match(schema, /m.sender_id = \(select auth.uid\(\)\)/);
+  assert.match(schema, /grant execute on function public.get_my_message/);
+  assert.match(schema, /revoke all on function public.get_my_message/);
+});
+
+test('메시지 수정과 삭제는 작성자만 가능', () => {
+  assert.match(schema, /create policy "Senders can edit their notes"/);
+  assert.match(schema, /create policy "Senders can delete their notes"/);
+  assert.match(schema, /grant update \(chocolate_type, body\)/);
+  assert.match(schema, /using \(sender_id = \(select auth.uid\(\)\)/);
 });
 
 test('미래 날짜 정보는 SQL 정책으로 차단', () => {
