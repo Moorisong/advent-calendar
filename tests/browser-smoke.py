@@ -163,7 +163,8 @@ def main():
             assert page.locator('.visitor-create-action .secondary').count() == 1
             mobile_action = page.locator('.visitor-create-action').bounding_box()
             mobile_footer = page.locator('.visitor-layout footer').bounding_box()
-            assert mobile_action and mobile_footer and mobile_action['y'] < mobile_footer['y']
+            assert mobile_action and mobile_footer and mobile_action['y'] < mobile_footer['y'], (
+                f"mobile CTA: {mobile_action}, footer: {mobile_footer}")
             page.goto(public_link + '/sent?date=2026-12-12')
             page.locator('[data-screen=visitor]').wait_for()
             page.locator('[data-month="12"]').click()
