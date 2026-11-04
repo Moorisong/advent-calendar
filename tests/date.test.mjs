@@ -12,6 +12,8 @@ import {
   validCalendarDate,
 } from '../src/utils/date.js';
 
+import { timeZoneLabel } from '../src/utils/timezones.js';
+
 const FIRST_DAY = '2026-11-01';
 const LAST_DAY = '2026-12-25';
 
@@ -65,4 +67,15 @@ test('2027년 이후에도 11월 1일부터 열리고 12월 26일 닫힘', () =>
   assert.equal(canWriteDate('2028-01-01'), false);
   assert.equal(canWriteDate('2028-11-01'), true);
   assert.equal(canReadDate('2026-12-25', '2028-11-01'), true);
+});
+
+test('시간대는 저장값을 유지하면서 언어별 국가 및 도시를 표시', () => {
+  assert.equal(timeZoneLabel('Asia/Seoul', 'ko'), '대한민국');
+  assert.equal(timeZoneLabel('Asia/Seoul', 'en'), 'South Korea');
+  assert.equal(timeZoneLabel('Asia/Tokyo', 'en'), 'Japan');
+  assert.equal(timeZoneLabel('Europe/Paris', 'en'), 'France');
+  assert.equal(timeZoneLabel('America/New_York', 'en'), 'United States · New York');
+  assert.equal(timeZoneLabel('America/New_York', 'ko'), '미국 · New York');
+  assert.equal(timeZoneLabel('UTC', 'ko'), 'UTC');
+  assert.equal(timeZoneLabel('Pacific/Fiji', 'en'), 'Fiji');
 });
