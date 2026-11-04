@@ -14,7 +14,7 @@ export function renderBox(state, role = 'visitor', mini = false) {
   const days = mini ? PREVIEW_DAYS : calendarDays(state.month);
   const drawers = days.map((day) => {
     const date = calendarDate(state.month, day, state.year ?? APP.year);
-    const status = mini || role !== 'owner' ? '' : drawerStatus(date, state.today);
+    const status = mini ? '' : drawerStatus(date, state.today);
     const drawerClass = status === 'future' || status === 'invalid' ? '' : status;
     const todayLabel = status === 'today'
       ? `<small>${state.t('오늘', 'TODAY')}</small>`
