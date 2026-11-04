@@ -115,3 +115,25 @@ test('모바일 새 캘린더 버튼은 날짜 안내와 광고보다 먼저 표
   assert.match(html, /class="desktop-new-calendar"/);
   assert.equal((html.match(/data-action="new-calendar"/g) ?? []).length, 2);
 });
+
+test('친구 캘린더는 주인과 동일한 구조로 안내와 보조 버튼을 배치', () => {
+  const html = renderCalendar(base, 'visitor');
+  assert.match(html, /class="calendar-layout visitor-layout"/);
+  assert.match(html, /class="content calendar-intro"/);
+  assert.match(html, /class="content calendar-main"/);
+  assert.match(html, /class="visitor-sidebar"/);
+  assert.match(html, /class="visitor-guide"/);
+  assert.match(html, /class="visitor-mobile-action"/);
+  assert.match(html, /class="visitor-desktop-action"/);
+  assert.match(html, /data-day="12" data-role="visitor"/);
+  assert.equal((html.match(/data-action="create"/g) ?? []).length, 2);
+  assert.doesNotMatch(html, /class="owner-share"|data-action="open-share"/);
+  assert.ok(html.indexOf('class="visitor-mobile-action"') < html.indexOf('class="ad"'));
+});
+
+test('종료된 친구 캘린더는 메시지 작성 대신 종료 안내를 표시', () => {
+  const html = renderCalendar(base, 'visitor', true);
+  assert.match(html, /올해의 초콜릿 배달이 끝났어요/);
+  assert.match(html, /class="visitor-guide"/);
+  assert.doesNotMatch(html, /data-role="visitor"/);
+});
