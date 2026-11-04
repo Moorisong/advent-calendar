@@ -19,14 +19,14 @@ create table if not exists public.calendars (
 create or replace function public.validate_calendar_timezone()
 returns trigger language plpgsql
 set search_path = ''
-as $
+as $$
 begin
   if not exists (select 1 from pg_catalog.pg_timezone_names where name = new.timezone) then
     raise exception 'Invalid calendar timezone' using errcode = '22023';
   end if;
   return new;
 end;
-$;
+$$;
 
 drop trigger if exists validate_calendar_timezone_on_insert on public.calendars;
 create trigger validate_calendar_timezone_on_insert
