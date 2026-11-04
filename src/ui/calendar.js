@@ -63,16 +63,18 @@ export function renderCalendar(state, role = 'visitor', ended = false) {
   const publicUrl = `${origin}/c/${state.slug}`;
   const shareTools = role === 'owner'
     ? [
-      '<div class="owner-share">',
-      `<p class="sub">${t('언제든 친구들에게 캘린더를 공유할 수 있어요.',
-        'You can share your calendar with friends anytime.')}</p>`,
+      '<section class="owner-share" aria-label="Share calendar">',
+      `<h3 class="share-heading">${t('친구들에게 초콜릿 부탁하기', 'Invite your friends')}</h3>`,
+      `<p class="share-description">${t('링크를 보내고 달콤한 메시지를 받아봐.',
+        'Share your link to collect sweet messages.')}</p>`,
       renderPublicLink(publicUrl),
       renderShareActions(state),
-      '</div>',
+      '</section>',
     ].join('')
     : '';
   const callToAction = role === 'owner'
-    ? btn(t('새 캘린더 만들기', 'Create another calendar'), 'new-calendar', true)
+    ? `<div class="owner-extra"><button class="textbtn" data-action="new-calendar">`
+      + `${t('＋ 새 캘린더 만들기', '＋ Create another calendar')}</button></div>`
     : btn(t('나도 캘린더 만들기', 'Make my own calendar'), 'create', true);
   return [
     '<div class="calendar-layout">',
