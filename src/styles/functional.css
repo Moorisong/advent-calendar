@@ -381,3 +381,16 @@ button:disabled {
     font-size: 12px;
   }
 }
+
+/* Quiet drawer: understated selected-date label below the gift icon. */
+.empty-drawer-date {
+  width: fit-content;
+  margin: 12px auto 10px;
+  padding: 5px 12px;
+  border: 1px solid #b39a78;
+  background: #f7e8cc;
+  color: var(--brown);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+}
