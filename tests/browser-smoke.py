@@ -132,7 +132,7 @@ def main():
             visitor_header = page.locator('.visitor-layout .calendar-intro').bounding_box()
             # .calendar-main uses display:contents on some viewports; measure the real calendar box.
             visitor_calendar = page.locator('.visitor-layout .box').bounding_box()
-            visitor_action = page.locator('.visitor-layout .visitor-create-action').bounding_box()
+            visitor_action = page.locator('.visitor-layout .visitor-create-action .secondary').bounding_box()
             visitor_box = page.locator('.visitor-layout .box').bounding_box()
             assert visitor_header and visitor_calendar and visitor_action and visitor_box
             assert visitor_header['y'] < visitor_calendar['y']
@@ -153,7 +153,7 @@ def main():
             page.set_viewport_size({'width': 390, 'height': 844})
             assert page.locator('.visitor-create-action .secondary').is_visible()
             assert page.locator('.visitor-create-action .secondary').count() == 1
-            mobile_action = page.locator('.visitor-create-action').bounding_box()
+            mobile_action = page.locator('.visitor-create-action .secondary').bounding_box()
             mobile_footer = page.locator('.visitor-layout footer').bounding_box()
             assert mobile_action and mobile_footer and mobile_action['y'] < mobile_footer['y'], (
                 f"mobile CTA: {mobile_action}, footer: {mobile_footer}")
