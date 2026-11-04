@@ -3,7 +3,9 @@ import { logout, signIn } from '../data/auth.js';
 import { canWriteDate, todayInZone } from '../utils/date.js';
 import { writeLocal } from '../utils/storage.js';
 
-import { changeSelectedChocolate, shareCalendar, submitCalendar, submitMessage } from './actions.js';
+import {
+  changeSelectedChocolate, removeOwnedCalendar, shareCalendar, submitCalendar, submitMessage,
+} from './actions.js';
 import { clearIntent, takeIntent } from './intent.js';
 import { navigate, openDrawer } from './navigation.js';
 import { render, toast } from './render.js';
@@ -46,6 +48,27 @@ async function handleAction(action) {
     const closingDrawer = ['owner', 'visitor', 'tutorial-close'].includes(action)
       && [SCREEN.locked, SCREEN.read, SCREEN.empty, SCREEN.write, SCREEN.tutorial].includes(state.route.page);
     await navigate(navigations[action], { scroll: !closingDrawer });
+    return;
+  }
+  if (action === 'delete-open') {
+    if (state.calendar?.owner_id !== state.user?.id) {
+      return;
+    }
+    state.deleteOpen = true;
+    render();
+    document.querySelector('[data-delete-confirmation]')?.focus();
+    return;
+  }
+  if (action === 'delete-close') {
+    if (!state.deleting) {
+      state.deleteOpen = false;
+      render();
+      document.querySelector('[data-action="delete-open"]')?.focus();
+    }
+    return;
+  }
+  if (action === 'delete-confirm') {
+    await removeOwnedCalendar(document.querySelector('[data-delete-confirmation]')?.value);
     return;
   }
   if (action === 'open-share' || action === 'close-share') {
@@ -135,6 +158,12 @@ async function handleClick(event) {
 }
 
 function handleInput(event) {
+  if (event.target.matches('[data-delete-confirmation]')) {
+    const submit = document.querySelector('[data-action="delete-confirm"]');
+    if (submit) {
+      submit.disabled = event.target.value !== translate('삭제', 'DELETE');
+    }
+  }
   if (event.target.name === 'message') {
     state.message = event.target.value.slice(0, APP.maximumMessageLength);
     const counter = document.getElementById('count');
@@ -164,6 +193,24 @@ async function handleSubmit(event) {
 }
 
 export function attachEvents() {
+  document.addEventListener('change', (event) => {
+    if (event.target.matches('[data-year]')) {
+      const year = Number(event.target.value);
+      const maximum = Number(state.today.slice(0, 4));
+      if (state.route.page === SCREEN.owner && year >= APP.year && year <= maximum) {
+        state.year = year;
+        state.month = 11;
+        render();
+      }
+    }
+  });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && state.deleteOpen && !state.deleting) {
+      state.deleteOpen = false;
+      render();
+      document.querySelector('[data-action="delete-open"]')?.focus();
+    }
+  });
   document.addEventListener('click', handleClick);
   document.addEventListener('input', handleInput);
   document.addEventListener('submit', handleSubmit);

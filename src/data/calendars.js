@@ -68,3 +68,21 @@ export async function createCalendar(nickname, ownerId, timezone = APP.timeZone)
   }
   throw new Error('SLUG_COLLISION');
 }
+
+export async function deleteCalendar(id, ownerId) {
+  if (!id || !ownerId) {
+    throw new Error('INVALID_CALENDAR_DELETE');
+  }
+  const { data, error } = await requireDatabase()
+    .from('calendars')
+    .delete()
+    .eq('id', id)
+    .eq('owner_id', ownerId)
+    .select('id');
+  if (error) {
+    throw error;
+  }
+  if (data?.length !== 1) {
+    throw new Error('CALENDAR_DELETE_NOT_ALLOWED');
+  }
+}

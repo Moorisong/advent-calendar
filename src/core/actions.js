@@ -1,5 +1,5 @@
 import { APP, SCREEN } from '../config/constants.js';
-import { createCalendar, findMyCalendar } from '../data/calendars.js';
+import { createCalendar, deleteCalendar, findMyCalendar } from '../data/calendars.js';
 import { shareToKakao } from '../data/kakao-share.js';
 import { writeMessage } from '../data/messages.js';
 import { canWriteDate, getInitialMonth, todayInZone } from '../utils/date.js';
@@ -148,4 +148,44 @@ export async function shareCalendar(action) {
 export function changeSelectedChocolate(index) {
   state.selected = index;
   render();
+}
+
+export async function removeOwnedCalendar(confirmation) {
+  if (state.deleting || !state.deleteOpen || !state.user || !state.calendar) {
+    return;
+  }
+  if (confirmation !== translate('삭제', 'DELETE')) {
+    toast(translate('확인 문구를 정확히 입력해 줘.', 'Enter the confirmation word.'));
+    return;
+  }
+  if (state.calendar.owner_id !== state.user.id) {
+    toast(translate('내 캘린더만 삭제할 수 있어.', 'Only your calendar can be deleted.'));
+    return;
+  }
+  state.deleting = true;
+  render();
+  try {
+    await deleteCalendar(state.calendar.id, state.user.id);
+    state.calendar = null;
+    state.myCalendar = null;
+    state.notes = [];
+    state.lastSent = null;
+    state.deleteOpen = false;
+    const remaining = await findMyCalendar(state.user.id);
+    if (remaining) {
+      state.myCalendar = remaining;
+      await navigate({ page: SCREEN.owner, slug: remaining.slug }, { replace: true });
+      toast(translate('삭제했어. 다른 기존 캘린더로 이동했어.', 'Deleted. Opened another existing calendar.'));
+    } else {
+      await navigate({ page: SCREEN.create }, { replace: true });
+      toast(translate('캘린더를 삭제했어. 새로 만들 수 있어.', 'Deleted. You can make another calendar.'));
+    }
+  } catch (error) {
+    console.error('Delete calendar failed:', error);
+    state.deleteOpen = false;
+    toast(translate('삭제에 실패했어. 다시 시도해 줘.', 'Delete failed. Please try again.'));
+  } finally {
+    state.deleting = false;
+    render();
+  }
 }
