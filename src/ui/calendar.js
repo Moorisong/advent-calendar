@@ -57,9 +57,20 @@ export function renderCalendar(state, role = 'visitor', ended = false) {
   const stamp = role === 'owner'
     ? `<span class="stamp">${t('오늘', 'TODAY')} · ${state.today.slice(5)} · KST</span>`
     : '';
+  const publicUrl = `${window.location.origin}/c/${state.slug}`;
+  const shareTools = role === 'owner'
+    ? [
+      '<div class="owner-share">',
+      `<p class="sub">${t('언제든 친구들에게 캘린더를 공유할 수 있어요.',
+        'You can share your calendar with friends anytime.')}</p>`,
+      `<div class="url">${escapeHtml(publicUrl)}</div>`,
+      btn(t('친구용 링크 복사', 'Copy friend link'), 'copy'),
+      btn(t('친구에게 공유', 'Share with friends'), 'share', true),
+      '</div>',
+    ].join('')
+    : '';
   const callToAction = role === 'owner'
-    ? btn(t('친구에게 링크 공유', 'Share with friends'), 'share')
-      + btn(t('새 캘린더 만들기', 'Create another calendar'), 'create', true)
+    ? btn(t('새 캘린더 만들기', 'Create another calendar'), 'create', true)
     : btn(t('나도 캘린더 만들기', 'Make my own calendar'), 'create', true);
   return [
     '<div class="calendar-layout">',
@@ -72,6 +83,7 @@ export function renderCalendar(state, role = 'visitor', ended = false) {
     `<button data-month="12" class="${month === 12 ? 'on' : ''}" aria-pressed="${month === 12}">`,
     `${t('12월', 'December')}</button></div>`,
     renderBox(state, ended ? 'ended' : role),
+    shareTools,
     callToAction,
     footer(state),
     `<div class="ad">${t('광고 영역', 'ADVERTISEMENT')}</div>`,
