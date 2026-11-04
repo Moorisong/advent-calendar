@@ -1,7 +1,7 @@
 import { PROTECTED_SCREENS, SCREEN } from '../config/constants.js';
 import { findCalendar } from '../data/calendars.js';
 import { getMessages } from '../data/messages.js';
-import { calendarDate, canReadDate, isSeasonEnded, todayInKorea, validCalendarDate } from '../utils/date.js';
+import { calendarDate, canReadDate, getInitialMonth, isSeasonEnded, todayInZone, validCalendarDate } from '../utils/date.js';
 import { readLocal, writeLocal } from '../utils/storage.js';
 
 import { saveIntent } from './intent.js';
@@ -40,18 +40,17 @@ async function hydrateCalendar(route, version) {
       return false;
     }
     state.calendar = loaded;
+    if (!route.date) {
+      state.month = getInitialMonth(todayInZone(loaded.timezone));
+    }
   }
   return true;
 }
 
 export async function navigate(requested, { replace = false, scroll = true } = {}) {
   const version = ++navigationVersion;
-  state.today = todayInKorea();
-  let route = resolvePage(
-    { page: requested.page, slug: requested.slug ?? null, date: requested.date ?? null },
-    state.today,
-    state.lastSent,
-  );
+  const initial = { page: requested.page, slug: requested.slug ?? null, date: requested.date ?? null };
+  let route = initial;
   if (PROTECTED_SCREENS.has(route.page) && !state.user) {
     saveIntent(route);
     route = { page: SCREEN.login, slug: null, date: null };
@@ -59,7 +58,6 @@ export async function navigate(requested, { replace = false, scroll = true } = {
   if (route.page === SCREEN.login && state.user) {
     route = { page: SCREEN.landing, slug: null, date: null };
   }
-  updateHistory(route, replace);
   state.route = route;
   state.loginError = route.page === SCREEN.login ? state.loginError : '';
   state.error = '';
@@ -69,8 +67,7 @@ export async function navigate(requested, { replace = false, scroll = true } = {
     state.month = Number(route.date.slice(5, 7));
     state.day = Number(route.date.slice(8, 10));
   }
-  const needsCalendar = Boolean(route.slug);
-  if (needsCalendar) {
+  if (route.slug) {
     state.loading = true;
     state.route = { ...route, page: SCREEN.loading };
     render();
@@ -91,14 +88,17 @@ export async function navigate(requested, { replace = false, scroll = true } = {
         state.loading = false;
       }
     }
+  } else {
+    state.calendar = null;
   }
   if (navigationVersion !== version) {
     return;
   }
+  const zone = state.calendar?.timezone ?? Intl.DateTimeFormat().resolvedOptions().timeZone;
+  state.today = todayInZone(zone);
+  route = resolvePage(route, state.today, state.lastSent);
   if (route.slug && isOwnerScreen(route.page) && state.calendar?.owner_id !== state.user?.id) {
-    state.route = { page: SCREEN.error, slug: null, date: null };
-    state.error = translate('내 캘린더가 아니에요.', 'You cannot open this owner calendar.');
-    render();
+    showError(translate('내 캘린더가 아니에요.', 'You cannot open this owner calendar.'));
     return;
   }
   if (route.page === SCREEN.created && state.calendar?.owner_id !== state.user?.id) {
@@ -121,7 +121,11 @@ export async function navigate(requested, { replace = false, scroll = true } = {
       return;
     }
   }
+  if (navigationVersion !== version) {
+    return;
+  }
   state.route = route;
+  updateHistory(route, replace);
   if (route.slug && route.page === SCREEN.visitor && !isSeasonEnded(state.today)) {
     const tutorialKey = `tutorial:${route.slug}`;
     const visited = readLocal(tutorialKey) === 'seen';
