@@ -93,17 +93,19 @@ export async function shareCalendar(action) {
   const publicUrl = `${window.location.origin}/c/${slug}`;
   if (action === 'kakao-share') {
     try {
-      shareToKakao({
+      await shareToKakao({
         url: publicUrl,
         nickname: state.calendar.nickname,
         lang: state.lang,
       });
     } catch (error) {
       console.error('Kakao sharing unavailable:', error);
-      toast(translate(
-        '카카오톡 공유를 시작할 수 없어요. 설정을 확인해 줘.',
-        'KakaoTalk sharing is unavailable. Check the setup.',
-      ));
+      const sdkFailed = ['KAKAO_SDK_LOAD_FAILED', 'KAKAO_SDK_UNAVAILABLE'].includes(error.message);
+      toast(sdkFailed
+        ? translate('카카오 SDK를 불러오지 못했어요. 네트워크를 확인해 줘.',
+          'Could not load Kakao SDK. Check your connection.')
+        : translate('카카오톡 공유를 시작할 수 없어요. 설정을 확인해 줘.',
+          'KakaoTalk sharing is unavailable. Check the setup.'));
     }
     return;
   }
