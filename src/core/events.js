@@ -56,6 +56,8 @@ async function handleAction(action) {
       await logout();
       clearIntent();
       state.user = null;
+      state.myCalendar = null;
+      state.calendar = null;
       state.lastSent = null;
       await navigate({ page: SCREEN.landing });
     } catch (error) {
