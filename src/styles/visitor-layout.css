@@ -1,0 +1,102 @@
+/* Friend calendar: same hierarchy and column geometry as the owner view. */
+@container (min-width:700px) {
+  .solo .screen .visitor-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 440px) minmax(0, 310px);
+    grid-template-areas: "intro intro" "calendar aside";
+    align-items: start;
+    justify-content: center;
+    gap: 32px;
+    max-width: 860px;
+    margin: 34px auto 60px;
+  }
+
+  .solo .screen .visitor-layout .calendar-intro {
+    grid-area: intro;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0 0 32px;
+    border-bottom: 1px solid #4b2d2533;
+    text-align: left;
+  }
+
+  .visitor-layout .calendar-intro h2 {
+    margin: 0 0 8px;
+    font-size: clamp(25px, 3vw, 32px);
+    line-height: 1.3;
+  }
+
+  .visitor-layout .calendar-title-line { display: inline; }
+  .visitor-layout .calendar-title-line + .calendar-title-line::before { content: " "; }
+  .visitor-layout .calendar-intro .sub {
+    display: block;
+    margin: 0;
+    font-size: 14px;
+  }
+
+  .visitor-layout .calendar-main {
+    grid-area: calendar;
+    min-width: 0;
+    margin: 0;
+  }
+
+  .visitor-layout .visitor-sidebar {
+    grid-area: aside;
+    position: sticky;
+    top: 22px;
+    min-width: 0;
+    align-self: start;
+  }
+
+  .visitor-layout .visitor-mobile-action { display: none; }
+}
+
+.visitor-layout .visitor-guide {
+  padding: 18px 16px 20px;
+  border: 2px solid var(--brown);
+  background: var(--cream);
+  box-shadow: 3px 3px 0 #4b2d2526;
+  text-align: left;
+}
+
+.visitor-layout .visitor-guide h3 {
+  font-size: 17px;
+  line-height: 1.45;
+}
+
+.visitor-layout .visitor-guide p {
+  margin-top: 8px;
+  font-size: 12px;
+  line-height: 1.65;
+  color: #6b5147;
+}
+
+.visitor-layout .visitor-desktop-action { margin-top: 22px; }
+
+.visitor-layout .visitor-desktop-action .secondary,
+.visitor-layout .visitor-mobile-action .secondary {
+  width: 100%;
+  min-height: 48px;
+  margin: 0;
+  padding: 10px 14px;
+  border: 2px solid var(--brown);
+  background: transparent;
+  color: var(--brown);
+  box-shadow: none;
+  font-size: 13px;
+}
+
+@container (max-width:699px) {
+  .visitor-layout { display: block; }
+
+  .visitor-layout .calendar-intro {
+    padding: 26px 14px 20px;
+    margin: 0;
+    text-align: center;
+  }
+
+  .visitor-layout .calendar-intro h2 { margin: 12px 0; }
+  .visitor-layout .visitor-sidebar { display: none; }
+  .visitor-layout .visitor-mobile-action { margin: 24px 0 12px; }
+}
