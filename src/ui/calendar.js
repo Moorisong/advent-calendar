@@ -96,7 +96,7 @@ export function renderCalendar(state, role = 'visitor', ended = false) {
     '<h2 class="calendar-heading">',
     `<span class="calendar-heading-text">${title}</span>`,
     '<span class="calendar-heading-gift" aria-hidden="true"></span></h2>',
-    `<p class="sub">${subtitle}</p>`,
+    `<p class="sub">${role === 'visitor' && !ended ? subtitle.replace('. ', '.<br>') : subtitle}</p>`,
     role === 'owner' ? renderRetentionBanner(state) : '',
     '</div>',
     '<div class="content calendar-main">',
