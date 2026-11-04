@@ -45,8 +45,8 @@
 }
 
 .visitor-layout .visitor-create-action {
-  width: min(100%, 340px);
-  margin: 28px auto 16px;
+  width: 100%;
+  margin: 28px 0 16px;
 }
 
 .visitor-layout .visitor-create-action .secondary {
