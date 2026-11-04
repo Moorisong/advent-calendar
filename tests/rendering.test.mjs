@@ -108,6 +108,13 @@ test('생성 완료 화면에서 중복 관리 링크 저장 영역 제거', () 
   assert.match(html, /data-action="owner"/);
 });
 
+test('빈 서랍은 선택한 날짜를 선물 아이콘과 제목 사이에 표시', () => {
+  const html = renderEmpty({ ...base, month: 11, day: 2 });
+  assert.match(html, /class="empty-drawer-date">11월 2일의 서랍<\/div>/);
+  assert.ok(html.indexOf('class="largeicon"') < html.indexOf('class="empty-drawer-date"'));
+  assert.ok(html.indexOf('class="empty-drawer-date"') < html.indexOf('아직 조용한 서랍이야'));
+});
+
 test('빈 서랍에서도 오너와 동일한 공유 기능을 제공', () => {
   const previousWindow = globalThis.window;
   globalThis.window = { location: { origin: 'https://advent.example' } };
