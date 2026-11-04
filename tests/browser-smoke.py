@@ -174,8 +174,8 @@ def main():
             page.locator('[data-screen=created]').wait_for()
             page.get_by_role('button', name='내 캘린더로 가기').click()
             page.locator('[data-screen=owner]').wait_for()
-            assert 'America/New_York' in page.locator('.stamp').inner_text()
-            assert '12-11' in page.locator('.stamp').inner_text()
+            assert 'America/New_York' in page.locator('[data-screen=owner] footer').inner_text()
+            assert page.locator('[data-day="12"][data-role="owner"]').count() == 1
             page.locator('[data-month="12"]').click()
             page.locator('[data-day="12"][data-role="owner"]').click()
             page.locator('[data-screen=locked]').wait_for()
