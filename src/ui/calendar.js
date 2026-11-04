@@ -103,7 +103,7 @@ export function renderCalendar(state, role = 'visitor', ended = false) {
     `<div class="ad">${t('광고 영역', 'ADVERTISEMENT')}</div>`,
     '</div>',
     role === 'owner' ? '<aside class="owner-sidebar">' + shareTools
-      + `<div class="desktop-new-calendar">${callToAction}</div></aside> : '',
+      + `<div class="desktop-new-calendar">${callToAction}</div></aside>` : '',
     shareTrigger,
     '</div>',
   ].join('');
