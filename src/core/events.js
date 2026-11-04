@@ -63,7 +63,7 @@ async function handleAction(action) {
     }
     state.deleteOpen = true;
     render();
-    document.querySelector('[data-delete-confirmation]')?.focus();
+    document.querySelector('[data-action="delete-close"]')?.focus();
     return;
   }
   if (action === 'delete-close') {
@@ -75,7 +75,7 @@ async function handleAction(action) {
     return;
   }
   if (action === 'delete-confirm') {
-    await removeOwnedCalendar(document.querySelector('[data-delete-confirmation]')?.value);
+    await removeOwnedCalendar();
     return;
   }
   if (action === 'open-share' || action === 'close-share') {
@@ -166,12 +166,6 @@ async function handleClick(event) {
 }
 
 function handleInput(event) {
-  if (event.target.matches('[data-delete-confirmation]')) {
-    const submit = document.querySelector('[data-action="delete-confirm"]');
-    if (submit) {
-      submit.disabled = event.target.value !== translate('삭제', 'DELETE');
-    }
-  }
   if (event.target.name === 'message') {
     state.message = event.target.value.slice(0, APP.maximumMessageLength);
     saveMessageDraft(state);
