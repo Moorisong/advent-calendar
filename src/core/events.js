@@ -4,7 +4,7 @@ import { canWriteDate, todayInZone } from '../utils/date.js';
 import { writeLocal } from '../utils/storage.js';
 
 import {
-  changeSelectedChocolate, removeOwnedCalendar, shareCalendar, submitCalendar, submitMessage,
+  changeSelectedChocolate, removeMyMessage, removeOwnedCalendar, shareCalendar, submitCalendar, submitMessage,
 } from './actions.js';
 import { clearIntent, takeIntent } from './intent.js';
 import { navigate, openDrawer } from './navigation.js';
@@ -50,6 +50,12 @@ async function handleAction(action) {
     await navigate(navigations[action], { scroll: !closingDrawer });
     return;
   }
+  if (action === 'delete-message') {
+    if (window.confirm(translate('내 메시지를 삭제할까요?', 'Delete your note?'))) {
+      await removeMyMessage();
+    }
+    return;
+  }
   if (action === 'delete-open') {
     if (state.calendar?.owner_id !== state.user?.id) {
       return;
@@ -88,6 +94,7 @@ async function handleAction(action) {
       state.myCalendar = null;
       state.calendar = null;
       state.lastSent = null;
+      state.myMessage = null;
       await navigate({ page: SCREEN.landing });
     } catch (error) {
       console.error('Sign out failed:', error);
