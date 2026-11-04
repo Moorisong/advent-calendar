@@ -1,5 +1,6 @@
 import { PROTECTED_SCREENS, SCREEN } from '../config/constants.js';
 import { finishSignIn, getUser, subscribeToAuth } from '../data/auth.js';
+import { findMyCalendar } from '../data/calendars.js';
 import { installPixelFont } from '../ui/pixel-font.js';
 import { snow } from '../ui/sprites.js';
 import { todayInKorea } from '../utils/date.js';
@@ -14,6 +15,8 @@ import { state, translate } from './state.js';
 function handleSessionChange(event, user) {
   if (event === 'SIGNED_OUT') {
     state.user = null;
+    state.myCalendar = null;
+    state.calendar = null;
     if (PROTECTED_SCREENS.has(state.route.page)) {
       void navigate(state.route, { replace: true });
     } else {
@@ -25,6 +28,20 @@ function handleSessionChange(event, user) {
       render();
     }
   }
+}
+
+async function resolveAccountRoute(route) {
+  if (!state.user) {
+    return route;
+  }
+  if (route.page !== SCREEN.landing && route.page !== SCREEN.create) {
+    return route;
+  }
+  state.myCalendar = await findMyCalendar(state.user.id);
+  if (state.myCalendar) {
+    return { page: SCREEN.owner, slug: state.myCalendar.slug };
+  }
+  return route.page === SCREEN.landing ? { page: SCREEN.create } : route;
 }
 
 async function restoreSession(initialRoute) {
@@ -40,13 +57,13 @@ async function restoreSession(initialRoute) {
       if (!state.user) {
         throw new Error('AUTHENTICATION_NOT_COMPLETED');
       }
-      return takeIntent() ?? { page: SCREEN.landing };
+      return await resolveAccountRoute(takeIntent() ?? { page: SCREEN.landing });
     }
     state.user = await getUser();
     if (initialRoute.page === SCREEN.login && state.user) {
-      return takeIntent() ?? { page: SCREEN.landing };
+      return await resolveAccountRoute(takeIntent() ?? { page: SCREEN.landing });
     }
-    return initialRoute;
+    return await resolveAccountRoute(initialRoute);
   } catch (error) {
     console.error('Session initialization failed:', error);
     state.user = null;
