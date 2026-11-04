@@ -288,3 +288,28 @@ button:disabled {
   outline: 3px solid var(--brown);
   outline-offset: 5px;
 }
+
+/* Shared calendar date states: past remains readable and interactive. */
+.calendar-layout .drawer.past {
+  background: #b7a994;
+  color: #473a32;
+  border-color: #877666;
+  box-shadow: inset -3px -3px 0 #76685840, inset 3px 3px 0 #fff4de35;
+}
+
+.calendar-layout .drawer.today {
+  background: var(--yellow);
+  color: var(--brown);
+  border-color: var(--cream);
+  outline: 3px solid var(--cream);
+  outline-offset: 0;
+}
+
+.calendar-layout .drawer:focus-visible {
+  outline: 3px solid var(--yellow);
+  outline-offset: 2px;
+}
+
+.calendar-layout .drawer.today:focus-visible {
+  outline-color: var(--red);
+}
