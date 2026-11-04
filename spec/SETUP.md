@@ -1,12 +1,12 @@
 # 환경변수 및 소셜 로그인 설정 가이드
 
-## 1. Dear Choco 전용 Supabase 프로젝트 생성
+## 1. Advent 전용 Supabase 프로젝트 생성
 
 현재 다른 서비스에서 사용 중인 프로젝트와 DB를 섞지 마세요.
 Supabase 대시보드에서 **새 프로젝트**를 만든 다음 다음 사항을 설정하세요.
 
 1. 새 프로젝트라면 SQL Editor에서 `supabase/schema.sql` 전문을 **한 번 실행**합니다.
-   기존 Dear Choco 프로젝트 `lrpehigfvwddizepghnc`에는 2026-11-03에 이미 적용되었습니다.
+   기존 Advent 프로젝트 `lrpehigfvwddizepghnc`에는 2026-11-03에 이미 적용되었습니다.
    중복 실행하지 마세요.
 2. `Authentication → Providers`에서 **Google, Kakao**를 활성화합니다.
 3. `Authentication → URL Configuration`에서 실제 서비스 도메인을 Site URL로 지정합니다.
@@ -61,7 +61,7 @@ Google Client Secret은 `.env.local`의 `VITE_*`에 입력하지 않습니다.
 카카오 로그인과 별개로 Kakao JavaScript SDK를 사용합니다. 별도의 로그인 동의나
 Client Secret이 필요하지 않으며, 기본 텍스트 템플릿을 사용하므로 템플릿 ID도 필요하지 않습니다.
 
-1. [Kakao Developers](https://developers.kakao.com/)에서 **기존 Dear Choco 카카오 앱**을 선택합니다.
+1. [Kakao Developers](https://developers.kakao.com/)에서 **기존 Advent 카카오 앱**을 선택합니다.
 2. **앱 → 플랫폼 키 → JavaScript 키**에서 JavaScript 키를 복사합니다.
    REST API 키와는 **다른 키**입니다.
 3. 해당 JavaScript 키의 **JavaScript SDK 도메인**에

@@ -13,7 +13,7 @@ export function head(state) {
     : '';
   return [
     '<header class="apphead">',
-    `<div class="brand">${icon(3)} dear-choco.exe</div>`,
+    `<div class="brand">${icon(3)} advent.exe</div>`,
     '<div class="head-actions">',
     logout,
     `<button class="language" data-action="lang" aria-label="Change language">`,

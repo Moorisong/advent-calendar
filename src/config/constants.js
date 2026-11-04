@@ -1,5 +1,5 @@
 export const APP = Object.freeze({
-  title: 'Dear Choco',
+  title: 'Advent',
   startDate: '2026-11-01',
   endDate: '2026-12-25',
   timeZone: 'Asia/Seoul',
