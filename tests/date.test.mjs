@@ -12,7 +12,7 @@ import {
   validCalendarDate,
 } from '../src/utils/date.js';
 
-import { timeZoneLabel } from '../src/utils/timezones.js';
+import { timeZoneGroups, timeZoneLabel } from '../src/utils/timezones.js';
 
 const FIRST_DAY = '2026-11-01';
 const LAST_DAY = '2026-12-25';
@@ -78,4 +78,20 @@ test('시간대는 저장값을 유지하면서 언어별 국가 및 도시를 �
   assert.equal(timeZoneLabel('America/New_York', 'ko'), '미국 · New York');
   assert.equal(timeZoneLabel('UTC', 'ko'), 'UTC');
   assert.equal(timeZoneLabel('Pacific/Fiji', 'en'), 'Fiji');
+});
+
+test('시간대 선택은 국가별 그룹이며 미국 도시가 한 그룹에 모인다', () => {
+  const groups = timeZoneGroups('Asia/Seoul', 'ko');
+  const korea = groups.find((group) => group.label === '대한민국');
+  const usa = groups.find((group) => group.label === '미국');
+  assert.ok(korea);
+  assert.equal(groups[0].label, '대한민국');
+  assert.ok(korea.options.some((option) => option.value === 'Asia/Seoul' && option.label === '대한민국'));
+  assert.ok(usa.options.some((option) => option.value === 'America/New_York' && option.label === '뉴욕'));
+  assert.ok(usa.options.some((option) => option.value === 'America/Los_Angeles' && option.label === '로스앤젤레스'));
+  const english = timeZoneGroups('Asia/Seoul', 'en');
+  assert.equal(english[0].label, 'South Korea');
+  assert.ok(english.find((group) => group.label === 'United States').options
+    .some((option) => option.label === 'New York'));
+  assert.equal(groups.flatMap((group) => group.options).filter((option) => option.value === 'Asia/Seoul').length, 1);
 });
