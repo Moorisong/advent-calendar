@@ -64,7 +64,10 @@ export function renderCalendar(state, role = 'visitor', ended = false) {
   const publicUrl = `${origin}/c/${state.slug}`;
   const shareTools = role === 'owner'
     ? [
-      '<section class="owner-share" aria-label="Share calendar">',
+      '<div class="share-backdrop" data-action="close-share" aria-hidden="true"></div>',
+      '<section class="owner-share" id="owner-share" aria-label="Share calendar">',
+      '<button class="share-close" type="button" data-action="close-share"',
+      ` aria-label="${t('닫기', 'Close')}">×</button>`,
       `<h3 class="share-heading">${t('친구들에게 초콜릿 부탁하기', 'Invite your friends')}</h3>`,
       `<p class="share-description">${t('링크를 보내고 달콤한 메시지를 받아봐.',
         'Share your link to collect sweet messages.')}</p>`,
@@ -77,21 +80,29 @@ export function renderCalendar(state, role = 'visitor', ended = false) {
     ? `<div class="owner-extra"><button class="new-calendar-button" data-action="new-calendar">`
       + `${t('새 캘린더 만들기', 'Create another calendar')}</button></div>`
     : btn(t('나도 캘린더 만들기', 'Make my own calendar'), 'create', true);
+  const shareTrigger = role === 'owner'
+    ? `<button class="mobile-share-trigger" type="button" data-action="open-share"`
+      + ` aria-controls="owner-share" aria-expanded="false">`
+      + `${t('친구에게 공유하기', 'Share with friends')}</button>`
+    : '';
   return [
-    '<div class="calendar-layout">',
+    `<div class="calendar-layout ${role === 'owner' ? 'owner-layout' : ''}">`,
     '<div class="content calendar-intro">',
     `<div class="kicker">${role === 'owner' ? 'YOUR CHOCOLATE POST OFFICE' : 'A LITTLE CHOCOLATE'}</div>`,
-    `<h2>${title}</h2><p class="sub">${subtitle}</p>${stamp}</div>`,
-    '<div class="content"><div class="tabs">',
+    `<h2>${title}</h2><p class="sub">${subtitle}</p>${stamp}`,
+    shareTools,
+    '</div>',
+    '<div class="content calendar-main"><div class="tabs">',
     `<button data-month="11" class="${month === 11 ? 'on' : ''}" aria-pressed="${month === 11}">`,
     `${t('11월', 'November')}</button>`,
     `<button data-month="12" class="${month === 12 ? 'on' : ''}" aria-pressed="${month === 12}">`,
     `${t('12월', 'December')}</button></div>`,
     renderBox(state, ended ? 'ended' : role),
-    shareTools,
     callToAction,
     footer(state),
     `<div class="ad">${t('광고 영역', 'ADVERTISEMENT')}</div>`,
-    '</div></div>',
+    '</div>',
+    shareTrigger,
+    '</div>',
   ].join('');
 }
