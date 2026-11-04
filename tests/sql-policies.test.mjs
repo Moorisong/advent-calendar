@@ -28,6 +28,14 @@ test('메시지 수정과 삭제는 작성자만 가능', () => {
   assert.match(schema, /using \(sender_id = \(select auth.uid\(\)\)/);
 });
 
+test('계정별 5초 신규 작성 제한은 DB 트리거로 적용', () => {
+  assert.match(schema, /create trigger enforce_message_write_interval_on_insert/);
+  assert.match(schema, /pg_advisory_xact_lock/);
+  assert.match(schema, /interval '5 seconds'/);
+  assert.match(schema, /MESSAGE_RATE_LIMIT/);
+  assert.match(schema, /revoke all on function private.enforce_message_write_interval/);
+});
+
 test('미래 날짜 정보는 SQL 정책으로 차단', () => {
   assert.match(schema, /gift_date <= \(now\(\) at time zone calendar\.timezone\)::date/);
   assert.match(schema, /calendar\.owner_id = \(select auth\.uid\(\)\)/);
