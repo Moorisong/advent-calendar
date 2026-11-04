@@ -52,39 +52,39 @@
   .visitor-layout .visitor-mobile-action { display: none; }
 }
 
-.visitor-layout .visitor-guide {
-  padding: 18px 16px 20px;
-  border: 2px solid var(--brown);
-  background: var(--cream);
-  box-shadow: 3px 3px 0 #4b2d2526;
-  text-align: left;
-}
-
-.visitor-layout .visitor-guide h3 {
-  font-size: 17px;
-  line-height: 1.45;
-}
-
-.visitor-layout .visitor-guide p {
-  margin-top: 8px;
-  font-size: 12px;
-  line-height: 1.65;
-  color: #6b5147;
-}
-
-.visitor-layout .visitor-desktop-action { margin-top: 22px; }
+.visitor-layout .visitor-desktop-action { margin: 0; }
 
 .visitor-layout .visitor-desktop-action .secondary,
 .visitor-layout .visitor-mobile-action .secondary {
   width: 100%;
-  min-height: 48px;
+  min-height: 56px;
   margin: 0;
-  padding: 10px 14px;
-  border: 2px solid var(--brown);
-  background: transparent;
+  padding: 12px 16px;
+  border: 3px solid var(--brown);
+  background: var(--yellow);
   color: var(--brown);
-  box-shadow: none;
-  font-size: 13px;
+  box-shadow: 4px 4px 0 var(--brown);
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+.visitor-layout .visitor-desktop-action .secondary:hover,
+.visitor-layout .visitor-mobile-action .secondary:hover {
+  background: #f4d58b;
+}
+
+.visitor-layout .visitor-desktop-action .secondary:focus-visible,
+.visitor-layout .visitor-mobile-action .secondary:focus-visible {
+  outline: 3px solid var(--green);
+  outline-offset: 6px;
+}
+
+.visitor-layout .visitor-desktop-action .secondary:active,
+.visitor-layout .visitor-mobile-action .secondary:active {
+  transform: translate(3px, 3px);
+  box-shadow: 1px 1px 0 var(--brown);
 }
 
 @container (max-width:699px) {
