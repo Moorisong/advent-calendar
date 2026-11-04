@@ -55,7 +55,8 @@ export function renderCalendar(state, role = 'visitor', ended = false) {
     ? t('올해의 초콜릿 배달이 끝났어요.', 'This year’s chocolate deliveries have ended.')
     : role === 'owner'
       ? t('오늘의 서랍을 열어볼까?', 'Shall we open today’s drawer?')
-      : t('날짜를 골라 초콜릿과 메시지를 남겨줘!', 'Pick a date. Leave a chocolate and a note!');
+      : t('달력에서 날짜를 고르고 초콜릿을 선택해 메시지를 남겨줘. 그날이 되면 친구가 열어볼 수 있어!',
+        'Pick a date, choose a chocolate, and leave a note. Your friend can open it on that day!');
   const origin = typeof window === 'undefined' ? '' : window.location.origin;
   const publicUrl = `${origin}/c/${state.slug}`;
   const shareTools = role === 'owner'
@@ -78,13 +79,6 @@ export function renderCalendar(state, role = 'visitor', ended = false) {
     : btn(t('나도 캘린더 만들기', 'Make my own calendar'), 'create', true);
   const visitorGuide = role === 'owner' ? '' : [
     '<aside class="visitor-sidebar">',
-    '<section class="visitor-guide">',
-    `<h3>${t('친구에게 초콜릿 남기기', 'Leave a chocolate for your friend')}</h3>`,
-    `<p>${ended
-      ? t('올해의 초콜릿 배달이 끝났어요.', 'Chocolate deliveries are finished for this year.')
-      : t('달력에서 날짜를 고르고 초콜릿과 메시지를 남겨줘.',
-        'Choose a date on the calendar to leave a chocolate and a note.')}</p>`,
-    '</section>',
     `<div class="visitor-desktop-action">${callToAction}</div>`,
     '</aside>',
   ].join('');
