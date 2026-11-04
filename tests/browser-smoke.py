@@ -113,7 +113,7 @@ def main():
             page.evaluate("window.scrollTo(0, 360)")
             before_drawer = page.evaluate("window.scrollY")
             assert before_drawer > 0
-            page.locator('[data-day="13"][data-role="owner"]').click()
+            page.locator('[data-day="13"][data-role="owner"]').evaluate("(element) => element.click()")
             page.locator('[data-screen=locked]').wait_for()
             assert '13일에' in page.locator('.bubble').inner_text()
             assert abs(page.evaluate("window.scrollY") - before_drawer) < 5
