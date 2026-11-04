@@ -2,7 +2,7 @@ import { PROTECTED_SCREENS, SCREEN } from '../config/constants.js';
 import { findCalendar, findMyCalendar } from '../data/calendars.js';
 import { getMessages } from '../data/messages.js';
 import {
-  calendarDate, canReadDate, getInitialMonth, isSeasonEnded, todayInZone, validCalendarDate,
+  calendarDate, canReadDate, getInitialMonth, getSeasonYear, isSeasonEnded, todayInZone, validCalendarDate,
 } from '../utils/date.js';
 import { readLocal, writeLocal } from '../utils/storage.js';
 import { deviceTimeZone } from '../utils/timezones.js';
@@ -45,6 +45,7 @@ async function hydrateCalendar(route, version) {
     state.calendar = loaded;
     if (!route.date) {
       state.month = getInitialMonth(todayInZone(loaded.timezone));
+      state.year = getSeasonYear(todayInZone(loaded.timezone));
     }
   }
   return true;
@@ -94,8 +95,10 @@ export async function navigate(requested, { replace = false, scroll = true } = {
   state.error = '';
   state.notes = [];
   state.readIndex = 0;
+  state.deleteOpen = false;
   if (route.date) {
     state.month = Number(route.date.slice(5, 7));
+    state.year = Number(route.date.slice(0, 4));
     state.day = Number(route.date.slice(8, 10));
   }
   if (route.slug) {
@@ -189,7 +192,7 @@ export function openDrawer(day, role) {
   if (!Number.isInteger(day)) {
     return;
   }
-  const date = calendarDate(state.month, day);
+  const date = calendarDate(state.month, day, state.year);
   if (!validCalendarDate(date)) {
     return;
   }

@@ -15,8 +15,13 @@ export function todayInKorea(date = new Date()) {
   return todayInZone(APP.timeZone, date);
 }
 
-export function calendarDate(month, day) {
-  return [String(APP.year), String(month).padStart(2, '0'), String(day).padStart(2, '0')].join('-');
+export function getSeasonYear(today = todayInKorea()) {
+  const year = Number(today.slice(0, 4));
+  return Math.max(APP.year, Number(today.slice(5, 7)) >= 11 ? year : year - 1);
+}
+
+export function calendarDate(month, day, year = APP.year) {
+  return [String(year), String(month).padStart(2, '0'), String(day).padStart(2, '0')].join('-');
 }
 
 export function validCalendarDate(date) {
@@ -24,7 +29,7 @@ export function validCalendarDate(date) {
     return false;
   }
   const [year, month, day] = date.split('-').map(Number);
-  const matches = calendarDate(month, day) === date && year === APP.year;
+  const matches = calendarDate(month, day, year) === date && year >= APP.year;
   const november = month === APP.firstMonth && day >= APP.firstDay && day <= 30;
   const december = month === APP.lastMonth && day >= 1 && day <= APP.lastDay;
   return matches && (november || december);
@@ -35,15 +40,16 @@ export function canReadDate(date, today = todayInKorea()) {
 }
 
 export function canWriteDate(today = todayInKorea()) {
-  return today >= APP.startDate && today <= APP.endDate;
+  const year = Number(today.slice(0, 4));
+  return year >= APP.year && today >= `${year}-11-01` && today <= `${year}-12-25`;
 }
 
 export function isSeasonEnded(today = todayInKorea()) {
-  return today > APP.endDate;
+  return !canWriteDate(today);
 }
 
 export function getInitialMonth(today = todayInKorea()) {
-  return today.startsWith(`${APP.year}-${APP.lastMonth}`) ? APP.lastMonth : APP.firstMonth;
+  return today.startsWith(`${getSeasonYear(today)}-${APP.lastMonth}`) ? APP.lastMonth : APP.firstMonth;
 }
 
 export function drawerStatus(date, today = todayInKorea()) {
@@ -61,7 +67,7 @@ export function drawerStatus(date, today = todayInKorea()) {
 
 export function calendarDays(month) {
   if (month === APP.firstMonth) {
-    return Array.from({ length: 26 }, (_, index) => APP.firstDay + index);
+    return Array.from({ length: 30 }, (_, index) => APP.firstDay + index);
   }
   if (month === APP.lastMonth) {
     return Array.from({ length: APP.lastDay }, (_, index) => index + 1);

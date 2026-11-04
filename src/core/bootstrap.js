@@ -3,7 +3,7 @@ import { finishSignIn, getUser, subscribeToAuth } from '../data/auth.js';
 import { findMyCalendar } from '../data/calendars.js';
 import { installPixelFont } from '../ui/pixel-font.js';
 import { snow } from '../ui/sprites.js';
-import { todayInZone } from '../utils/date.js';
+import { getInitialMonth, getSeasonYear, todayInZone } from '../utils/date.js';
 import { deviceTimeZone } from '../utils/timezones.js';
 
 import { attachEvents } from './events.js';
@@ -96,6 +96,11 @@ export async function startApp() {
     const zone = state.calendar?.timezone ?? deviceTimeZone();
     const today = todayInZone(zone);
     if (state.today !== today) {
+      const newYear = getSeasonYear(today);
+      if (newYear !== getSeasonYear(state.today)) {
+        state.year = newYear;
+        state.month = getInitialMonth(today);
+      }
       void navigate(state.route, { replace: true, scroll: false });
     }
   }

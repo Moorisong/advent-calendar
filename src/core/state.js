@@ -1,5 +1,5 @@
 import { APP, CHOCOLATES, SCREEN } from '../config/constants.js';
-import { getInitialMonth, todayInZone } from '../utils/date.js';
+import { getInitialMonth, getSeasonYear, todayInZone } from '../utils/date.js';
 import { deviceTimeZone } from '../utils/timezones.js';
 import { readSession, writeSession } from '../utils/storage.js';
 
@@ -10,6 +10,7 @@ export const state = {
   calendar: null,
   myCalendar: null,
   month: getInitialMonth(todayInZone(deviceTimeZone())),
+  year: getSeasonYear(todayInZone(deviceTimeZone())),
   day: APP.firstDay,
   today: todayInZone(deviceTimeZone()),
   selected: 0,
@@ -21,6 +22,8 @@ export const state = {
   readIndex: 0,
   loading: false,
   writing: false,
+  deleteOpen: false,
+  deleting: false,
   signingIn: false,
   loginError: '',
   error: '',

@@ -27,7 +27,7 @@ export function footer(state) {
   const label = state.t('날짜는 캘린더 주인의 시간대 기준이에요.',
     'Dates follow the calendar owner’s time zone.');
   return [
-    `<footer class="fine">${APP.year}. 11. 05 — 12. 25<br>`,
+    `<footer class="fine">${state.year ?? APP.year}. 11. 01 — 12. 25<br>`,
     label,
     timezone ? ` · ${timezone}` : '',
     '</footer>',
