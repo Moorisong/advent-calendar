@@ -1,15 +1,18 @@
 import { APP } from '../config/constants.js';
 
-const KST_FORMATTER = new Intl.DateTimeFormat('en-US', {
-  timeZone: APP.timeZone,
-  year: 'numeric',
-  month: '2-digit',
-  day: '2-digit',
-});
+export function todayInZone(timeZone = APP.timeZone, date = new Date()) {
+  const formatter = new Intl.DateTimeFormat('en-US', {
+    timeZone,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  });
+  const parts = Object.fromEntries(formatter.formatToParts(date).map(({ type, value }) => [type, value]));
+  return `${parts.year}-${parts.month}-${parts.day}`;
+}
 
 export function todayInKorea(date = new Date()) {
-  const parts = Object.fromEntries(KST_FORMATTER.formatToParts(date).map(({ type, value }) => [type, value]));
-  return `${parts.year}-${parts.month}-${parts.day}`;
+  return todayInZone(APP.timeZone, date);
 }
 
 export function calendarDate(month, day) {
