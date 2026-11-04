@@ -76,13 +76,25 @@ export function renderCalendar(state, role = 'visitor', ended = false) {
     ? `<div class="owner-extra"><button class="new-calendar-button" data-action="new-calendar">`
       + `${t('새 캘린더 만들기', 'Create another calendar')}</button></div>`
     : btn(t('나도 캘린더 만들기', 'Make my own calendar'), 'create', true);
+  const visitorGuide = role === 'owner' ? '' : [
+    '<aside class="visitor-sidebar">',
+    '<section class="visitor-guide">',
+    `<h3>${t('친구에게 초콜릿 남기기', 'Leave a chocolate for your friend')}</h3>`,
+    `<p>${ended
+      ? t('올해의 초콜릿 배달이 끝났어요.', 'Chocolate deliveries are finished for this year.')
+      : t('달력에서 날짜를 고르고 초콜릿과 메시지를 남겨줘.',
+        'Choose a date on the calendar to leave a chocolate and a note.')}</p>`,
+    '</section>',
+    `<div class="visitor-desktop-action">${callToAction}</div>`,
+    '</aside>',
+  ].join('');
   const shareTrigger = role === 'owner'
     ? `<button class="mobile-share-trigger" type="button" data-action="open-share"`
       + ` aria-controls="owner-share" aria-expanded="false">`
       + `${t('친구에게 공유하기', 'Share with friends')}</button>`
     : '';
   return [
-    `<div class="calendar-layout ${role === 'owner' ? 'owner-layout' : ''}">`,
+    `<div class="calendar-layout ${role === 'owner' ? 'owner-layout' : 'visitor-layout'}">`,
     '<div class="content calendar-intro">',
     `<div class="kicker">${role === 'owner' ? 'YOUR CHOCOLATE POST OFFICE' : 'A LITTLE CHOCOLATE'}</div>`,
     '<h2 class="calendar-heading">',
@@ -96,12 +108,13 @@ export function renderCalendar(state, role = 'visitor', ended = false) {
     `<button data-month="12" class="${month === 12 ? 'on' : ''}" aria-pressed="${month === 12}">`,
     `${t('12월', 'December')}</button></div>`,
     renderBox(state, ended ? 'ended' : role),
-    role === 'owner' ? `<div class="mobile-new-calendar">${callToAction}</div>` : callToAction,
+    role === 'owner' ? `<div class="mobile-new-calendar">${callToAction}</div>`
+      : `<div class="visitor-mobile-action">${callToAction}</div>`,
     footer(state),
     `<div class="ad">${t('광고 영역', 'ADVERTISEMENT')}</div>`,
     '</div>',
     role === 'owner' ? '<aside class="owner-sidebar">' + shareTools
-      + `<div class="desktop-new-calendar">${callToAction}</div></aside>` : '',
+      + `<div class="desktop-new-calendar">${callToAction}</div></aside>` : visitorGuide,
     shareTrigger,
     '</div>',
   ].join('');
