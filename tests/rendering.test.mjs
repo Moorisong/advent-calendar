@@ -3,12 +3,14 @@ import test from 'node:test';
 
 import { renderBox, renderCalendar } from '../src/ui/calendar.js';
 import { renderRead, renderWrite } from '../src/ui/pages/messages.js';
+import { renderCreated } from '../src/ui/pages/intro.js';
 
 const t = (ko) => ko;
 const base = {
   t,
   lang: 'ko',
   nickname: '수진',
+  slug: 'abcdef1234567890',
   month: 12,
   day: 12,
   selected: 0,
@@ -55,4 +57,19 @@ test('랜딩 미리보기 서랍은 클릭 가능한 실제 캘린더로 오인�
   assert.equal((html.match(/<span class="drawer"/g) ?? []).length, 15);
   assert.doesNotMatch(html, /data-day=/);
   assert.doesNotMatch(html, /<button class="drawer/);
+});
+
+test('생성 완료 화면에서 중복 관리 링크 저장 영역 제거', () => {
+  const html = renderCreated(base);
+  assert.doesNotMatch(html, /data-action="private"|class="private"/);
+  assert.match(html, /data-action="copy"/);
+  assert.match(html, /data-action="share"/);
+  assert.match(html, /data-action="owner"/);
+});
+
+test('주인 화면에서 언제든 친구용 주소 복사 가능', () => {
+  const html = renderCalendar(base, 'owner');
+  assert.match(html, /data-action="copy"/);
+  assert.match(html, /data-action="share"/);
+  assert.match(html, /\/c\/abcdef1234567890/);
 });
