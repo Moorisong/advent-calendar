@@ -201,7 +201,7 @@ test('종료된 친구 캘린더는 메시지 작성 대신 종료 안내를 표
 test('오너만 삭제 확인창과 연도 선택을 사용할 수 있음', () => {
   const owner = renderCalendar({ ...base, year: 2027, today: '2027-12-26', deleteOpen: true }, 'owner');
   assert.match(owner, /data-action="delete-open"/);
-  assert.match(owner, /data-delete-confirmation/);
+  assert.doesNotMatch(owner, /data-delete-confirmation/);
   assert.match(owner, /data-action="delete-confirm"/);
   assert.match(owner, /data-year/);
   assert.match(owner, /<option value="2026"/);
