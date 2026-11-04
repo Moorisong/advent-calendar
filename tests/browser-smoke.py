@@ -144,7 +144,9 @@ def main():
             page.locator('[data-action=next]').click()
             assert '두 번째 선물!' in page.locator('.note').inner_text()
             # 주인과 다른 시간대를 선택한 신규 캘린더의 미래 서랍 잠금 검증.
-            page.goto(url + '/create')
+            page.get_by_role('button', name='서랍 닫기').click()
+            page.locator('[data-screen=owner]').wait_for()
+            page.locator('[data-action=new-calendar]').click()
             page.locator('[data-screen=create]').wait_for()
             page.locator('input[name=nickname]').fill('뉴욕친구')
             page.locator('select[name=timezone]').select_option('America/New_York')
