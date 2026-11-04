@@ -9,7 +9,9 @@ export function resolvePage(route, today, lastSent) {
   if (dated && !validCalendarDate(route.date)) {
     return { ...route, page: ownerDay ? SCREEN.owner : SCREEN.visitor, date: null };
   }
-  if (route.page === SCREEN.write && !canWriteDate(today)) {
+  if (route.page === SCREEN.write && (
+    !canWriteDate(today) || route.date.slice(0, 4) !== today.slice(0, 4)
+  )) {
     return { ...route, page: SCREEN.visitor, date: null };
   }
   if (route.page === SCREEN.sent) {

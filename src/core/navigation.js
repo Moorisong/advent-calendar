@@ -134,6 +134,9 @@ export async function navigate(requested, { replace = false, scroll = true } = {
   }
   const zone = state.calendar?.timezone ?? deviceTimeZone();
   state.today = todayInZone(zone);
+  if (route.page === SCREEN.visitor || route.page === SCREEN.tutorial) {
+    state.year = getSeasonYear(state.today);
+  }
   route = resolvePage(route, state.today, state.lastSent);
   if (route.slug && isOwnerScreen(route.page) && state.calendar?.owner_id !== state.user?.id) {
     showError(translate('내 캘린더가 아니에요.', 'You cannot open this owner calendar.'));

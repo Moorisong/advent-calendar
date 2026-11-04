@@ -49,7 +49,8 @@ export function isSeasonEnded(today = todayInKorea()) {
 }
 
 export function getInitialMonth(today = todayInKorea()) {
-  return today.startsWith(`${getSeasonYear(today)}-${APP.lastMonth}`) ? APP.lastMonth : APP.firstMonth;
+  const year = getSeasonYear(today);
+  return today >= `${year}-12-01` ? APP.lastMonth : APP.firstMonth;
 }
 
 export function drawerStatus(date, today = todayInKorea()) {
