@@ -49,6 +49,10 @@ async function handleAction(action) {
     await navigate(navigations[action]);
     return;
   }
+  if (action === 'open-share' || action === 'close-share') {
+    document.querySelector('.owner-layout')?.classList.toggle('share-open', action === 'open-share');
+    return;
+  }
   if (action === 'lang') {
     switchLanguage();
     render();
