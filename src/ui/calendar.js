@@ -48,9 +48,9 @@ export function renderBox(state, role = 'visitor', mini = false) {
 export function renderCalendar(state, role = 'visitor', ended = false) {
   const { t, month, lang, nickname } = state;
   const title = lang === 'ko'
-    ? `<span class="calendar-title-line">${escapeHtml(nickname)}의</span>`
+    ? `<span class="calendar-title-line"><span class="title-highlight">${escapeHtml(nickname)}</span>의</span>`
       + '<span class="calendar-title-line">초콜릿 캘린더</span>'
-    : `${escapeHtml(nickname)}’s chocolate calendar`;
+    : `<span class="title-highlight">${escapeHtml(nickname)}</span>’s chocolate calendar`;
   const subtitle = ended
     ? t('올해의 초콜릿 배달이 끝났어요.', 'This year’s chocolate deliveries have ended.')
     : role === 'owner'
