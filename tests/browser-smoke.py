@@ -149,6 +149,7 @@ def main():
             assert abs((visitor_header['x'] + visitor_header['width'] / 2)
                        - (visitor_calendar['x'] + visitor_calendar['width'] / 2)) < 15
             assert visitor_action['y'] > visitor_box['y'] + visitor_box['height']
+            assert abs(visitor_action['width'] - visitor_box['width']) < 2
             assert page.locator('.visitor-create-action .secondary').is_visible()
             visitor_button_style = page.locator('.visitor-create-action .secondary').evaluate(
                 "(el) => ({background: getComputedStyle(el).backgroundColor, "
