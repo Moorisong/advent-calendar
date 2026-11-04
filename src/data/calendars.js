@@ -1,8 +1,9 @@
 import { APP } from '../config/constants.js';
+import { validTimeZone } from '../utils/timezones.js';
 
 import { requireDatabase } from './client.js';
 
-const SELECT_COLUMNS = 'id,slug,nickname,owner_id';
+const SELECT_COLUMNS = 'id,slug,nickname,owner_id,timezone';
 
 export async function findCalendar(slug) {
   const { data, error } = await requireDatabase()
@@ -38,17 +39,20 @@ function generateSlug() {
   return crypto.randomUUID().replaceAll('-', '').slice(0, APP.calendarSlugLength);
 }
 
-export async function createCalendar(nickname, ownerId) {
+export async function createCalendar(nickname, ownerId, timezone = APP.timeZone) {
   const name = String(nickname).trim();
   if (!name || Array.from(name).length > APP.maximumNicknameLength) {
     throw new Error('INVALID_NICKNAME');
+  }
+  if (!validTimeZone(timezone)) {
+    throw new Error('INVALID_TIMEZONE');
   }
   const client = requireDatabase();
   for (let attempt = 0; attempt < 3; attempt += 1) {
     const slug = generateSlug();
     const { data, error } = await client
       .from('calendars')
-      .insert({ slug, nickname: name, owner_id: ownerId })
+      .insert({ slug, nickname: name, owner_id: ownerId, timezone })
       .select(SELECT_COLUMNS)
       .single();
     if (!error && data) {
