@@ -57,12 +57,6 @@ export function renderCreated(state) {
     `<div class="url">${escapeHtml(publicUrl)}</div>`,
     btn(t('친구용 링크 복사', 'Copy friend link'), 'copy'),
     btn(t('친구에게 공유', 'Share with friends'), 'share', true),
-    '<div class="private">',
-    `<h3>${t('나만의 관리 링크', 'Your private owner link')}</h3>`,
-    `<p>${t('주인 화면으로 가는 바로가기예요.<br>로그인한 계정에서만 확인할 수 있어요.',
-      'A shortcut to your owner calendar.<br>Only your signed-in account can access it.')}</p>`,
-    btn(t('관리 링크 저장', 'Save owner link'), 'private', true),
-    '</div>',
     `<button class="textbtn" data-action="owner">${t('내 캘린더로 가기', 'Go to my calendar')}</button>`,
     '</div>',
   ].join('');
