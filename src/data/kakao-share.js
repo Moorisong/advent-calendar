@@ -5,7 +5,7 @@ const SDK_INTEGRITY = 'sha384-BGX7Wb16GmRFagri4bLJV2DgipVZaU2AI812GZtHtHzzDQJnfH
 let loadingSdk = null;
 
 function loadKakaoSdk() {
-  if (window.Kakao?.Share?.sendDefault) {
+  if (window.Kakao?.init && window.Kakao?.isInitialized) {
     return Promise.resolve(window.Kakao);
   }
   if (loadingSdk) {
@@ -17,7 +17,7 @@ function loadKakaoSdk() {
     script.integrity = SDK_INTEGRITY;
     script.crossOrigin = 'anonymous';
     script.onload = () => {
-      if (window.Kakao?.Share?.sendDefault) {
+      if (window.Kakao?.init && window.Kakao?.isInitialized) {
         resolve(window.Kakao);
       } else {
         reject(new Error('KAKAO_SDK_UNAVAILABLE'));
@@ -39,6 +39,9 @@ export async function shareToKakao({ url, nickname, lang }) {
   const kakao = await loadKakaoSdk();
   if (!kakao.isInitialized()) {
     kakao.init(JAVASCRIPT_KEY);
+  }
+  if (typeof kakao.Share?.sendDefault !== 'function') {
+    throw new Error('KAKAO_SHARE_API_UNAVAILABLE');
   }
   const name = String(nickname ?? '').trim();
   const title = lang === 'ko'
