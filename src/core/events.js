@@ -2,6 +2,7 @@ import { APP, CHOCOLATES, SCREEN } from '../config/constants.js';
 import { logout, signIn } from '../data/auth.js';
 import { canWriteDate, todayInZone } from '../utils/date.js';
 import { writeLocal } from '../utils/storage.js';
+import { saveMessageDraft } from './message-draft.js';
 
 import {
   changeSelectedChocolate, removeMyMessage, removeOwnedCalendar, shareCalendar, submitCalendar, submitMessage,
@@ -173,6 +174,7 @@ function handleInput(event) {
   }
   if (event.target.name === 'message') {
     state.message = event.target.value.slice(0, APP.maximumMessageLength);
+    saveMessageDraft(state);
     const counter = document.getElementById('count');
     if (counter) {
       counter.textContent = String(state.message.length);
