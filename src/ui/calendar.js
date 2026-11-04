@@ -4,6 +4,7 @@ import { escapeHtml } from '../utils/format.js';
 
 import { btn, footer } from './chrome.js';
 import { scene } from './sprites.js';
+import { renderPublicLink, renderShareActions } from './share.js';
 
 const PREVIEW_DAYS = Object.freeze(Array.from({ length: 15 }, (_, index) => index + 1));
 
@@ -64,9 +65,8 @@ export function renderCalendar(state, role = 'visitor', ended = false) {
       '<div class="owner-share">',
       `<p class="sub">${t('언제든 친구들에게 캘린더를 공유할 수 있어요.',
         'You can share your calendar with friends anytime.')}</p>`,
-      `<div class="url">${escapeHtml(publicUrl)}</div>`,
-      btn(t('친구용 링크 복사', 'Copy friend link'), 'copy'),
-      btn(t('친구에게 공유', 'Share with friends'), 'share', true),
+      renderPublicLink(publicUrl),
+      renderShareActions(state),
       '</div>',
     ].join('')
     : '';
