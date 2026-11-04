@@ -53,6 +53,15 @@ test('메시지 본문과 닉네임에 HTML 출력 인젝션이 일어나지 않
   assert.doesNotMatch(input, /FOR <img src=x>/);
 });
 
+test('작성 중 메시지는 다시 그려도 유지하고 HTML을 이스케이프', () => {
+  const html = renderWrite({ ...base, message: '작성 중 <script>alert(1)</script>', selected: 2 });
+  assert.match(html, /작성 중 &lt;script&gt;alert\(1\)&lt;\/script&gt;/);
+  assert.match(html, /data-choco="2"/);
+  assert.match(html, /\/ 200/);
+  assert.doesNotMatch(html, /주인만 읽을 수 있어요/);
+  assert.doesNotMatch(html, /지난 날짜의 메시지는 바로 열려요/);
+});
+
 test('이미 작성한 날짜는 새 글 대신 수정 및 삭제를 표시', () => {
   const html = renderWrite({
     ...base,
