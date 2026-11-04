@@ -15,11 +15,13 @@ test('익명 작성자를 데이터베이스에 저장하지 않음', () => {
 });
 
 test('미래 날짜 정보는 SQL 정책으로 차단', () => {
-  assert.match(schema, /gift_date <= \(now\(\) at time zone 'Asia\/Seoul'\)::date/);
+  assert.match(schema, /gift_date <= \(now\(\) at time zone calendar\.timezone\)::date/);
   assert.match(schema, /calendar\.owner_id = \(select auth\.uid\(\)\)/);
+  assert.match(schema, /timezone text not null default 'Asia\/Seoul'/);
 });
 
 test('시즌 밖의 메시지 쓰기는 정책에서 차단', () => {
   assert.match(schema, /between date '2026-11-05' and date '2026-12-25'/);
   assert.match(schema, /to authenticated\s+with check/);
+  assert.match(schema, /at time zone calendar\.timezone/);
 });
