@@ -10,3 +10,32 @@ button:disabled {
 .url {
   overflow-wrap: anywhere;
 }
+.share-actions {
+  display: grid;
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.share-actions button {
+  width: 100%;
+}
+
+.kakao-share {
+  background: #fee500;
+  border: 2px solid #4b2b25;
+  box-shadow: 3px 3px 0 #4b2b25;
+  color: #3c1e1e;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  padding: 13px 18px;
+}
+
+.kakao-share:hover {
+  background: #ffeb43;
+}
+
+.kakao-share:focus-visible {
+  outline: 3px solid #4b2b25;
+  outline-offset: 3px;
+}
