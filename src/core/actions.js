@@ -89,11 +89,6 @@ export async function shareCalendar(action) {
     return;
   }
   const publicUrl = `${window.location.origin}/c/${slug}`;
-  const ownerUrl = `${publicUrl}/owner`;
-  if (action === 'private') {
-    await copyUrl(ownerUrl, translate('관리 링크를 복사했어요.', 'Owner link copied.'));
-    return;
-  }
   if (action === 'share' && navigator.share) {
     try {
       await navigator.share({ title: APP.title, url: publicUrl });
