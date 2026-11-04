@@ -102,5 +102,6 @@ test('한국어 캘린더 제목은 이름과 제목을 정확히 두 줄로 분
   const html = renderCalendar({ ...base, nickname: '똥현' }, 'owner');
   assert.match(html, /<span class="calendar-title-line">똥현의<\/span>/);
   assert.match(html, /<span class="calendar-title-line">초콜릿 캘린더<\/span>/);
-  assert.doesNotMatch(html, /초콜릿 캘린더의/);
+  assert.match(html, /class="calendar-heading-gift" aria-hidden="true"/);
+  assert.doesNotMatch(html, /title-highlight|초콜릿 캘린더의/);
 });
