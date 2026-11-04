@@ -105,3 +105,13 @@ test('한국어 캘린더 제목은 이름과 제목을 정확히 두 줄로 분
   assert.match(html, /class="calendar-heading-gift" aria-hidden="true"/);
   assert.doesNotMatch(html, /title-highlight|초콜릿 캘린더의/);
 });
+
+test('모바일 새 캘린더 버튼은 날짜 안내와 광고보다 먼저 표시', () => {
+  const html = renderCalendar(base, 'owner');
+  const mobileAction = html.indexOf('class="mobile-new-calendar"');
+  const ad = html.indexOf('class="ad"');
+  assert.ok(mobileAction > html.indexOf('class="content calendar-main"'));
+  assert.ok(mobileAction < ad);
+  assert.match(html, /class="desktop-new-calendar"/);
+  assert.equal((html.match(/data-action="new-calendar"/g) ?? []).length, 2);
+});
