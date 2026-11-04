@@ -39,3 +39,7 @@ button:disabled {
   outline: 3px solid #4b2b25;
   outline-offset: 3px;
 }
+
+.calendar-title-line {
+  display: block;
+}
