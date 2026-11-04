@@ -183,3 +183,74 @@ button:disabled {
   margin-top: 10px;
   line-height: 1.6;
 }
+
+/* Keep the URL readable and put its only copy action at the right edge. */
+.share-link {
+  gap: 0;
+  padding: 0 0 0 14px;
+}
+
+.share-link-url {
+  flex: 1;
+  padding: 13px 0;
+  font-size: 13px;
+}
+
+.share-copy-icon {
+  display: grid;
+  flex: 0 0 48px;
+  width: 48px;
+  min-height: 46px;
+  margin-left: 10px;
+  place-items: center;
+  border: 0;
+  border-left: 1px dashed #a88b6a;
+  background: #f4dbad;
+  color: var(--brown);
+  cursor: pointer;
+}
+
+.share-copy-icon:hover {
+  background: #ebcb91;
+}
+
+.share-copy-icon:focus-visible {
+  outline: 3px solid var(--brown);
+  outline-offset: -3px;
+}
+
+.share-utilities {
+  display: block;
+}
+
+.owner-extra {
+  margin: 24px 0 30px;
+}
+
+.owner-extra .new-calendar-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: min(100%, 360px);
+  min-height: 54px;
+  padding: 12px 18px;
+  border: 2px solid var(--brown);
+  background: #fff4de;
+  color: var(--brown);
+  box-shadow: 4px 4px 0 var(--brown);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.owner-extra .new-calendar-button:hover {
+  background: #f9e6bd;
+  transform: translateY(-1px);
+}
+
+.owner-extra .new-calendar-button:focus-visible {
+  outline: 3px solid var(--brown);
+  outline-offset: 5px;
+}
