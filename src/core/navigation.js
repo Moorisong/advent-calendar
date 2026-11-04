@@ -81,8 +81,12 @@ export async function navigate(requested, { replace = false, scroll = true } = {
   }
   if (route.slug) {
     state.loading = true;
-    state.route = { ...route, page: SCREEN.loading };
-    render();
+    // Keep the existing calendar mounted during same-calendar drawer transitions.
+    // Replacing it with the short loading screen clamps the browser scroll position.
+    if (state.calendar?.slug !== route.slug) {
+      state.route = { ...route, page: SCREEN.loading };
+      render();
+    }
     try {
       const found = await hydrateCalendar(route, version);
       if (!found || navigationVersion !== version) {
@@ -154,12 +158,12 @@ export async function navigate(requested, { replace = false, scroll = true } = {
 
 export function returnToCalendar() {
   const { slug } = state.route;
-  return navigate({ page: SCREEN.visitor, slug });
+  return navigate({ page: SCREEN.visitor, slug }, { scroll: false });
 }
 
 export function ownerCalendar() {
   const { slug } = state.route;
-  return navigate({ page: SCREEN.owner, slug });
+  return navigate({ page: SCREEN.owner, slug }, { scroll: false });
 }
 
 export function openDrawer(day, role) {
@@ -180,5 +184,5 @@ export function openDrawer(day, role) {
   const page = role === 'owner'
     ? canReadDate(date, state.today) ? SCREEN.read : SCREEN.locked
     : SCREEN.write;
-  return navigate({ page, slug, date });
+  return navigate({ page, slug, date }, { scroll: false });
 }
