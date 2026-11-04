@@ -4,6 +4,7 @@ import { escapeHtml } from '../../utils/format.js';
 import { renderBox } from '../calendar.js';
 import { btn, footer } from '../chrome.js';
 import { icon } from '../sprites.js';
+import { renderPublicLink, renderShareActions } from '../share.js';
 
 export function renderLanding(state) {
   const { t } = state;
@@ -54,9 +55,8 @@ export function renderCreated(state) {
     icon(3),
     `</div><h2>${t('작은 우체국, 준비 완료!', 'Your little post office is ready!')}</h2>`,
     `<p class="sub">${t('친구들에게 초콜릿을 부탁해봐.', 'Invite your friends to leave a little sweetness.')}</p>`,
-    `<div class="url">${escapeHtml(publicUrl)}</div>`,
-    btn(t('친구용 링크 복사', 'Copy friend link'), 'copy'),
-    btn(t('친구에게 공유', 'Share with friends'), 'share', true),
+    renderPublicLink(publicUrl),
+    renderShareActions(state),
     `<button class="textbtn" data-action="owner">${t('내 캘린더로 가기', 'Go to my calendar')}</button>`,
     '</div>',
   ].join('');
