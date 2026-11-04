@@ -313,3 +313,71 @@ button:disabled {
 .calendar-layout .drawer.today:focus-visible {
   outline-color: var(--red);
 }
+
+/* Empty drawer: compact sharing tools matching the owner calendar. */
+.empty-share-panel {
+  margin: 28px 0 24px;
+  padding: 20px 16px;
+  border: 2px solid var(--brown);
+  background: #fff4de;
+  box-shadow: 4px 4px 0 #4b2d2526;
+  text-align: left;
+}
+
+.empty-share-heading {
+  margin: 0 0 14px;
+  color: var(--brown);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.empty-share-panel .share-link {
+  margin: 0;
+}
+
+.empty-share-panel .share-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 14px 0 0;
+}
+
+.empty-share-panel .share-actions > button {
+  width: 100%;
+  min-width: 0;
+  min-height: 54px;
+  padding: 10px 6px;
+  border: 2px solid var(--brown);
+  border-radius: 0;
+  box-shadow: 3px 3px 0 var(--brown);
+  background: #fff4de;
+  color: var(--brown);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.4;
+  cursor: pointer;
+}
+
+.empty-share-panel .share-actions > button:hover {
+  background: #f9e6bd;
+}
+
+.empty-share-panel .share-actions > button:focus-visible {
+  outline: 3px solid var(--brown);
+  outline-offset: 5px;
+}
+
+@media (max-width: 380px) {
+  .empty-share-panel {
+    padding: 16px 10px;
+  }
+
+  .empty-share-panel .share-actions {
+    gap: 8px;
+  }
+
+  .empty-share-panel .share-actions > button {
+    font-size: 12px;
+  }
+}
