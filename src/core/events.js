@@ -46,7 +46,9 @@ async function handleAction(action) {
     if (state.route.page === SCREEN.tutorial && slug) {
       writeLocal(`tutorial:${slug}`, 'seen');
     }
-    await navigate(navigations[action]);
+    const closingDrawer = ['owner', 'visitor', 'tutorial-close'].includes(action)
+      && [SCREEN.locked, SCREEN.read, SCREEN.empty, SCREEN.write, SCREEN.tutorial].includes(state.route.page);
+    await navigate(navigations[action], { scroll: !closingDrawer });
     return;
   }
   if (action === 'open-share' || action === 'close-share') {
