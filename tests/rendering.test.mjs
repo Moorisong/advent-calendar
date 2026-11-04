@@ -79,13 +79,23 @@ test('주인 화면에서 언제든 친구용 주소 복사 가능', () => {
   assert.match(html, /\/c\/abcdef1234567890/);
 });
 
-test('한국어는 카카오톡 우선, 영어는 다른 앱 공유 우선', () => {
+test('언어와 무관하게 공유 방식은 같은 중요도로 나란히 표시', () => {
   const ko = renderCalendar(base, 'owner');
   const en = renderCalendar({ ...base, lang: 'en', t: (_, text) => text }, 'owner');
-  assert.ok(ko.indexOf('data-action="kakao-share"') < ko.indexOf('data-action="share"'));
-  assert.ok(en.indexOf('data-action="share"') < en.indexOf('data-action="kakao-share"'));
-  assert.match(ko, /data-action="copy"/);
-  assert.match(en, /data-action="copy"/);
+  for (const html of [ko, en]) {
+    assert.match(html, /data-action="kakao-share"/);
+    assert.match(html, /data-action="share"/);
+    assert.match(html, /data-action="copy"/);
+  }
+});
+
+test('주인 화면은 제목과 캘린더 및 공유 패널을 별도 영역으로 구성', () => {
+  const html = renderCalendar(base, 'owner');
+  assert.match(html, /class="calendar-layout owner-layout"/);
+  assert.match(html, /class="content calendar-main"/);
+  assert.match(html, /class="owner-sidebar"/);
+  assert.match(html, /data-action="open-share"/);
+  assert.ok(html.indexOf('class="content calendar-main"') < html.indexOf('class="owner-sidebar"'));
 });
 
 test('한국어 캘린더 제목은 이름과 제목을 정확히 두 줄로 분리', () => {
