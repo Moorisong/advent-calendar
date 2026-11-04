@@ -1,8 +1,5 @@
-import { escapeHtml } from '../utils/format.js';
-
 export function renderCalendarDeletion(state) {
   const { t } = state;
-  const word = t('삭제', 'DELETE');
   const warning = t(
     '캘린더와 모든 연도의 초콜릿·메시지가 영구 삭제돼. 복구할 수 없어.',
     'The calendar and every year of chocolates and messages will be erased permanently.',
@@ -19,14 +16,10 @@ export function renderCalendarDeletion(state) {
     `<h3 id="delete-title">${t('캘린더를 영구 삭제할까?', 'Permanently delete your calendar?')}</h3>`,
     `<p>${warning}</p>`,
     `<p>${linkWarning}</p>`,
-    `<label for="delete-confirmation">${t('확인하려면', 'Type')} <strong>${escapeHtml(word)}</strong>`
-      + ` ${t('입력', 'to confirm')}</label>`,
-    '<input id="delete-confirmation" data-delete-confirmation autocomplete="off" spellcheck="false"',
-    ` placeholder="${escapeHtml(word)}" ${state.deleting ? 'disabled' : ''}>`,
     '<div class="delete-actions">',
     `<button type="button" data-action="delete-close" ${state.deleting ? 'disabled' : ''}>`
       + `${t('취소', 'Cancel')}</button>`,
-    '<button type="button" data-action="delete-confirm" disabled>',
+    `<button type="button" data-action="delete-confirm" ${state.deleting ? 'disabled' : ''}>`,
     t('영구 삭제', 'Delete permanently'),
     '</button>',
     '</div></section></div>',
