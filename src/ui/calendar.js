@@ -70,7 +70,7 @@ export function renderCalendar(state, role = 'visitor', ended = false) {
     ].join('')
     : '';
   const callToAction = role === 'owner'
-    ? btn(t('새 캘린더 만들기', 'Create another calendar'), 'create', true)
+    ? btn(t('새 캘린더 만들기', 'Create another calendar'), 'new-calendar', true)
     : btn(t('나도 캘린더 만들기', 'Make my own calendar'), 'create', true);
   return [
     '<div class="calendar-layout">',
