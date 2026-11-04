@@ -95,6 +95,7 @@ def main():
             assert page.locator('[data-screen=owner] .new-calendar-button').is_visible()
             assert public_link in page.locator('[data-screen=owner] .share-link-url').inner_text()
             page.set_viewport_size({'width': 1280, 'height': 900})
+            page.locator('[data-month="12"]').click()
             header = page.locator('.owner-layout .calendar-intro').bounding_box()
             calendar = page.locator('.owner-layout .calendar-main').bounding_box()
             sidebar = page.locator('.owner-layout .owner-sidebar').bounding_box()
@@ -103,6 +104,7 @@ def main():
             assert sidebar['x'] > calendar['x']
             assert abs(sidebar['y'] - calendar['y']) < 15
             page.set_viewport_size({'width': 390, 'height': 844})
+            page.locator('[data-month="11"]').click()
             page.locator('[data-action=open-share]').click()
             page.locator('.owner-layout.share-open .owner-share').wait_for()
             page.locator('.share-close').click()
