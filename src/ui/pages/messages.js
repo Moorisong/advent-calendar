@@ -3,6 +3,7 @@ import { messageHtml, escapeHtml } from '../../utils/format.js';
 
 import { btn } from '../chrome.js';
 import { icon } from '../sprites.js';
+import { renderPublicLink, renderShareActions } from '../share.js';
 
 export function renderWrite(state) {
   const { t, lang, month, day, selected, nickname, myMessage } = state;
@@ -88,7 +89,11 @@ export function renderEmpty(state) {
     icon(3),
     `</div><h2>${t('아직 조용한 서랍이야', 'A quiet little drawer')}</h2>`,
     `<p class="sub">${t('친구들에게 캘린더를 살짝 알려줘볼까?', 'Let your friends know about your calendar.')}</p>`,
-    btn(t('친구에게 링크 공유', 'Share with friends'), 'share'),
+    '<div class="empty-share-panel">',
+    `<h3 class="empty-share-heading">${t('친구에게 캘린더 보내기', 'Send your calendar to friends')}</h3>`,
+    renderPublicLink(`${typeof window === 'undefined' ? '' : window.location.origin}/c/${state.slug}`),
+    renderShareActions(state),
+    '</div>',
     btn(t('서랍 닫기', 'Close drawer'), 'owner', true),
     '</div>',
   ].join('');
