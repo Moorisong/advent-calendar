@@ -38,6 +38,7 @@ test('11월 캘린더는 5일부터 30일까지', () => {
 test('주인 캘린더에 공유와 추가 생성 버튼이 존재', () => {
   const html = renderCalendar(base, 'owner');
   assert.match(html, /data-action="share"/);
+  assert.match(html, /data-action="kakao-share"/);
   assert.match(html, /data-action="new-calendar"/);
 });
 
@@ -67,6 +68,7 @@ test('생성 완료 화면에서 중복 관리 링크 저장 영역 제거', () 
   assert.doesNotMatch(html, /data-action="private"|class="private"/);
   assert.match(html, /data-action="copy"/);
   assert.match(html, /data-action="share"/);
+  assert.match(html, /data-action="kakao-share"/);
   assert.match(html, /data-action="owner"/);
 });
 
@@ -75,4 +77,13 @@ test('주인 화면에서 언제든 친구용 주소 복사 가능', () => {
   assert.match(html, /data-action="copy"/);
   assert.match(html, /data-action="share"/);
   assert.match(html, /\/c\/abcdef1234567890/);
+});
+
+test('한국어는 카카오톡 우선, 영어는 다른 앱 공유 우선', () => {
+  const ko = renderCalendar(base, 'owner');
+  const en = renderCalendar({ ...base, lang: 'en', t: (_, text) => text }, 'owner');
+  assert.ok(ko.indexOf('data-action="kakao-share"') < ko.indexOf('data-action="share"'));
+  assert.ok(en.indexOf('data-action="share"') < en.indexOf('data-action="kakao-share"'));
+  assert.match(ko, /data-action="copy"/);
+  assert.match(en, /data-action="copy"/);
 });
