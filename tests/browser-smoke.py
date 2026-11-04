@@ -130,13 +130,11 @@ def main():
             page.locator('[data-screen=visitor]').wait_for()
             page.set_viewport_size({'width': 1280, 'height': 900})
             visitor_header = page.locator('.visitor-layout .calendar-intro').bounding_box()
-            visitor_calendar = page.locator('.visitor-layout .calendar-main').bounding_box()
+            # .calendar-main uses display:contents on some viewports; measure the real calendar box.
+            visitor_calendar = page.locator('.visitor-layout .box').bounding_box()
             visitor_action = page.locator('.visitor-layout .visitor-create-action').bounding_box()
             visitor_box = page.locator('.visitor-layout .box').bounding_box()
-            assert visitor_header and visitor_calendar and visitor_action and visitor_box, (
-                f"header={visitor_header}, calendar={visitor_calendar}, action={visitor_action}, "
-                f"box={visitor_box}, screen={page.locator('[data-screen]').first.get_attribute('data-screen')}, "
-                f"html={page.locator('[data-screen=visitor]').inner_html()[:3000]}")
+            assert visitor_header and visitor_calendar and visitor_action and visitor_box
             assert visitor_header['y'] < visitor_calendar['y']
             assert abs((visitor_header['x'] + visitor_header['width'] / 2)
                        - (visitor_calendar['x'] + visitor_calendar['width'] / 2)) < 15
