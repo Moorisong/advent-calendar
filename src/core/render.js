@@ -34,7 +34,7 @@ export function render() {
   }
   const current = getViewState();
   document.documentElement.lang = current.lang;
-  document.title = 'Dear Choco — A Sweet Little Christmas';
+  document.title = APP.title;
   const frame = window.matchMedia('(max-width:650px)').matches ? 'mobile' : 'desktop';
   const page = current.page === SCREEN.visitor && isSeasonEnded(current.today) ? SCREEN.ended : current.page;
   const selected = PAGES[page] ?? renderError;
