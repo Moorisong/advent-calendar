@@ -132,13 +132,17 @@ export function renderRead(state) {
 }
 
 export function renderEmpty(state) {
-  const { t } = state;
+  const { t, month, day } = state;
+  const shortDate = state.lang === 'en'
+    ? `${['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'][month - 1]} ${day}`
+    : `${month}/${day}`;
   return [
-    '<div class="content empty"><div class="largeicon">',
-    icon(3),
-    '</div>',
-    `<div class="empty-drawer-date">${state.lang === 'en' ? `${['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'][state.month - 1]} ${state.day}` : `${state.month}/${state.day}`}</div>`,
+    `<div class="content drawer-message-list drawer-empty"><span class="stamp">${month} / ${day} · ${t('오늘의 서랍', 'TODAY’S DRAWER')}</span>`,
     renderDateHeading(state, t('아직 조용한 서랍이야', 'A quiet little drawer')),
+    '<div class="drawer-empty-gift">',
+    `<div class="largeicon" aria-hidden="true">${icon(3)}</div>`,
+    `<div class="empty-drawer-date">${shortDate}</div>`,
+    '</div>',
     `<p class="sub">${t('친구들에게 캘린더를 살짝 알려줘볼까?', 'Let your friends know about your calendar.')}</p>`,
     '<div class="empty-share-panel">',
     `<h3 class="empty-share-heading">${t('친구에게 캘린더 보내기', 'Send your calendar to friends')}</h3>`,
