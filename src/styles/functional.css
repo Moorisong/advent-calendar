@@ -480,3 +480,20 @@ button:disabled {
   .write-back { width: 34px; min-height: 40px; }
   .write-title-row h2 { font-size: clamp(20px, 5.7vw, 26px); }
 }
+
+/* Date navigation in the owner's message and empty-drawer views. */
+.owner-date-title .drawer-date-arrow[data-action="drawer-next"] {
+  grid-column: 3;
+  grid-row: 1;
+  justify-self: end;
+}
+.owner-date-title .drawer-date-arrow[data-action="drawer-prev"] {
+  justify-self: start;
+}
+.owner-date-title .drawer-date-arrow:disabled,
+.owner-date-title .drawer-date-arrow:disabled:hover {
+  opacity: .2;
+  cursor: default;
+  background: transparent;
+  box-shadow: none;
+}
