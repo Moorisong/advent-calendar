@@ -3,6 +3,7 @@ import { logout, signIn } from '../data/auth.js';
 import { canWriteDate, todayInZone } from '../utils/date.js';
 import { writeLocal } from '../utils/storage.js';
 import { timeZoneNow } from '../utils/timezone-clock.js';
+import { renderTimezoneResults } from '../ui/pages/intro.js';
 import { saveMessageDraft } from './message-draft.js';
 
 import {
@@ -182,11 +183,8 @@ async function handleClick(event) {
 function handleInput(event) {
   if (event.target.id === 'timezone-search') {
     state.timezoneQuery = event.target.value;
-    const caret = event.target.selectionStart;
-    render();
-    const input = document.getElementById('timezone-search');
-    input?.focus();
-    input?.setSelectionRange(caret, caret);
+    const results = document.querySelector('.timezone-results');
+    if (results) results.innerHTML = renderTimezoneResults(state.timezoneDraft, state.lang, state.timezoneQuery);
     return;
   }
   if (event.target.name === 'message') {
