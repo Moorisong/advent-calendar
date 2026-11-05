@@ -30,7 +30,7 @@ const lines = [
 // Add readable paragraph breaks to longer preview letters without changing their wording.
 function formatPreviewLetter(body) {
   if (body.length < 65) return body;
-  const sentences = body.match(/[^.!?]+[.!?]+(?:\\s*[🎄🎁💛💐🌱🧡💗🌟☔☕🥐🎶📱🌈✨🧤🍫🌷🥰💌🫶🌤️🎉🥹😂🍕🌙🎧🍪🚶‍♀️🌿🤫💧🙆]*)?|[^.!?]+$/gu);
+  const sentences = body.match(/[^.!?]+[.!?]+(?:\s*[🎄🎁💛💐🌱🧡💗🌟☔☕🥐🎶📱🌈✨🧤🍫🌷🥰💌🫶🌤️🎉🥹😂🍕🌙🎧🍪🚶‍♀️🌿🤫💧🙆]*)?|[^.!?]+$/gu);
   if (!sentences || sentences.length < 2) return body;
   const parts = sentences.map((sentence) => sentence.trim()).filter(Boolean);
   const groups = [];
