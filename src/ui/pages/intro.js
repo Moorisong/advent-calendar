@@ -1,6 +1,6 @@
 import { APP } from '../../config/constants.js';
 import { escapeHtml } from '../../utils/format.js';
-import { timeZoneGroups } from '../../utils/timezones.js';
+import { timeZoneGroups, timeZoneLabel, timeZoneNow, timeZoneOffset } from '../../utils/timezones.js';
 
 import { renderBox } from '../calendar.js';
 import { btn, footer } from '../chrome.js';
@@ -28,13 +28,19 @@ export function renderLanding(state) {
 
 export function renderCreate(state) {
   const { t, timezoneDraft } = state;
-  const zones = timeZoneGroups(timezoneDraft, state.lang).flatMap((group) => {
-    const options = group.options.map(({ value, label }) => {
-      const selected = value === timezoneDraft ? ' selected' : '';
-      return `<option value="${escapeHtml(value)}"${selected}>${escapeHtml(label === group.label ? label : `${group.label} - ${label}`)}</option>`;
-    });
-    return options;
-  }).join('');
+  const query = (state.timezoneQuery || '').trim().toLowerCase();
+  const zones = timeZoneGroups(timezoneDraft, state.lang).flatMap(group =>
+    group.options.map(option => ({
+      value: option.value,
+      label: option.label === group.label ? group.label : group.label + ' - ' + option.label,
+      search: (group.label + ' ' + option.label + ' ' + option.value + ' ' + timeZoneLabel(option.value, 'en') + ' ' + timeZoneLabel(option.value, 'ko')).toLowerCase(),
+    }))
+  );
+  const results = (query ? zones.filter(zone => zone.search.includes(query)) : zones.filter(zone => zone.value === timezoneDraft))
+    .slice(0, 40).map(zone =>
+      '<button type="button" class="timezone-result" data-zone="' + escapeHtml(zone.value) + '">' +
+      escapeHtml(zone.label) + ' <small>' + escapeHtml(timeZoneOffset(zone.value)) + '</small></button>'
+    ).join('');
   return [
     '<div class="content"><div class="sprig">',
     icon(3),
@@ -48,10 +54,18 @@ export function renderCreate(state) {
     ' autocomplete="off"></label>',
     `<p class="counter">${t('최대 12자', 'Up to 12 characters')}</p>`,
     '<div class="timezone-setting">',
-    `<label for="timezone">${t('캘린더 시간대', 'Calendar time zone')}</label>`,
-    `<select id="timezone" name="timezone" required>${zones}</select>`,
-    `<p class="fine">${t('기기 시간대가 기본값이에요. 변경할 수 있으며 서랍은 이 시간대의 자정에 열려요.',
-      'Your device time zone is the default. You can change it; drawers open at midnight.')}</p>`,
+    '<label>' + t('캘린더 시간 설정', 'Calendar time setting') + '</label>',
+    '<div class="timezone-clock"><span>' + t('현재 시간', 'Current time') + '</span>',
+    '<strong data-timezone-clock>' + escapeHtml(timeZoneNow(timezoneDraft, state.lang)) + '</strong>',
+    '<span>' + escapeHtml(timeZoneLabel(timezoneDraft, state.lang)) + ' · ' + escapeHtml(timeZoneOffset(timezoneDraft)) + '</span></div>',
+    '<p class="fine">' + t('이 시간이 맞다면 그대로 진행해 주세요. 서랍은 이 시간대의 자정에 열려요.', 'If this time is correct, continue. Drawers open at midnight in this zone.') + '</p>',
+    '<button type="button" class="timezone-change" data-action="timezone-toggle">' + t('시간이 달라요 · 변경하기', 'Wrong time? Change') + '</button>',
+    '<div class="timezone-search-panel"' + (state.timezoneSearchOpen ? '' : ' hidden') + '>',
+    '<label for="timezone-search">' + t('국가 또는 도시 검색', 'Search country or city') + '</label>',
+    '<input id="timezone-search" type="search" autocomplete="off" placeholder="' + t('예: 미국, 뉴욕, Tokyo', 'e.g. USA, New York, Tokyo') + '" value="' + escapeHtml(state.timezoneQuery || '') + '">',
+    '<div class="timezone-results">' + (results || '<p class="fine">' + t('검색 결과가 없어요.', 'No results.') + '</p>') + '</div>',
+    '</div>',
+    '<input type="hidden" name="timezone" value="' + escapeHtml(timezoneDraft) + '">',
     '</div>',
     btn(t('캘린더 만들기', 'Create calendar'), 'submit-create'),
     '</form>',
