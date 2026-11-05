@@ -4,9 +4,9 @@ import { validCalendarDate } from '../utils/date.js';
 import { requireDatabase } from './client.js';
 
 function validateMessage(date, type, body) {
-  const message = String(body).trim();
+  const message = String(body).replace(/\r\n?/g, '\n');
   const validType = Number.isInteger(type) && type >= 0 && type < CHOCOLATES.length;
-  if (!validCalendarDate(date) || !validType || !message || message.length > APP.maximumMessageLength) {
+  if (!validCalendarDate(date) || !validType || !message.trim() || message.length > APP.maximumMessageLength) {
     throw new Error('INVALID_MESSAGE');
   }
   return message;
