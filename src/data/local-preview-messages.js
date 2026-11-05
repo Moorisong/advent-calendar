@@ -37,7 +37,7 @@ function formatPreviewLetter(body) {
   for (let i = 0; i < parts.length; i += 2) {
     groups.push(parts.slice(i, i + 2).join(' '));
   }
-  return groups.join('\\n\\n');
+  return groups.join('\n\n');
 }
 // Stable randomized-looking samples so each refresh shows the same test data.
 // November 1–4 use counts drawn from 3, 15, and 9.
