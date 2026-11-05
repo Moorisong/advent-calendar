@@ -497,3 +497,6 @@ button:disabled {
   background: transparent;
   box-shadow: none;
 }
+
+/* Separate owner drawer close action from note pagination and sharing. */
+.drawer-close-spacing { margin-top: 28px; }
