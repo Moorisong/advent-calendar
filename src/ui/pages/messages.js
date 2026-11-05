@@ -94,7 +94,13 @@ export function renderSent(state) {
   ].join('');
 }
 
+let lastRenderedDrawerDate = null;
+
 export function renderRead(state) {
+  if (lastRenderedDrawerDate !== state.route.date) {
+    state.visibleNoteCount = 10;
+    lastRenderedDrawerDate = state.route.date;
+  }
   const { t, notes, month, day } = state;
   if (!notes.length) return renderEmpty(state);
   const visible = Math.min(notes.length, state.visibleNoteCount || 10);
