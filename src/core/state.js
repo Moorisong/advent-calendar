@@ -17,6 +17,8 @@ export const state = {
   message: '',
   nicknameDraft: '',
   timezoneDraft: deviceTimeZone(),
+  timezoneSearchOpen: false,
+  timezoneQuery: '',
   notes: [],
   myMessage: null,
   lastSent: null,
