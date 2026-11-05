@@ -1,6 +1,6 @@
 import { APP, CHOCOLATES, SCREEN } from '../config/constants.js';
 import { logout, signIn } from '../data/auth.js';
-import { canWriteDate, todayInZone } from '../utils/date.js';
+import { calendarDate, canLeaveGiftOnDate, todayInZone } from '../utils/date.js';
 import { writeLocal } from '../utils/storage.js';
 import { timeZoneNow } from '../utils/timezone-clock.js';
 import { renderTimezoneResults } from '../ui/pages/intro.js';
@@ -168,8 +168,10 @@ async function handleClick(event) {
   if (button.dataset.day !== undefined) {
     const day = Number(button.dataset.day);
     const role = button.dataset.role;
-    if (role === 'ended' || (role === 'visitor' && !canWriteDate(todayInZone(state.calendar?.timezone)))) {
-      toast(translate('지금은 초콜릿을 남길 수 없어요.', 'Chocolate deliveries are closed right now.'));
+    if (role === 'ended' || (role === 'visitor' && !canLeaveGiftOnDate(
+      calendarDate(state.month, day, state.year), todayInZone(state.calendar?.timezone)
+    ))) {
+      toast(translate('지난 날짜에는 초콜릿을 남길 수 없어요. 오늘부터 선택해 줘.', 'You can only leave chocolates for today or a future date.'));
       return;
     }
     await openDrawer(day, role);
