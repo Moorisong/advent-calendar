@@ -32,7 +32,6 @@ const lines = [
 const previewDays = {
   '2026-11-01': { count: 9, offset: 3 },
   '2026-11-02': { count: 3, offset: 17 },
-  '2026-11-03': { count: 15, offset: 8 },
   '2026-11-04': { count: 9, offset: 21 },
   '2026-11-05': { count: 30, offset: 0 },
 };
