@@ -77,8 +77,8 @@ export async function getMessages(calendarId, date) {
     .select('id,chocolate_type,body,created_at')
     .eq('calendar_id', calendarId)
     .eq('gift_date', date)
-    .order('created_at', { ascending: true })
-    .order('id', { ascending: true });
+    .order('created_at', { ascending: false })
+    .order('id', { ascending: false });
   if (error) {
     throw error;
   }
