@@ -1,7 +1,8 @@
 import { APP } from '../../config/constants.js';
 import { escapeHtml } from '../../utils/format.js';
-import { timeZoneGroups, timeZoneLabel, timeZoneNow, timeZoneOffset } from '../../utils/timezones.js';
+import { timeZoneGroups, timeZoneLabel } from '../../utils/timezones.js';
 
+import { timeZoneNow, timeZoneOffset } from '../../utils/timezone-clock.js';
 import { renderBox } from '../calendar.js';
 import { btn, footer } from '../chrome.js';
 import { icon } from '../sprites.js';
