@@ -20,15 +20,16 @@ export function renderBox(state, role = 'visitor', mini = false) {
     const todayLabel = status === 'today'
       ? `<small>${state.t('오늘', 'TODAY')}</small>`
       : '';
+    const unavailableLabel = state.t('지난 날짜에는 선물을 남길 수 없어요', 'Gifts cannot be left on past dates');
     const actionLabel = role === 'owner'
       ? state.t('서랍 열기', 'Open drawer')
       : state.t('초콜릿 남기기', 'Leave a chocolate');
-    const ariaLabel = `${state.month}${state.t('월 ', ' / ')}${day}${state.t('일', '')} · ${actionLabel}`;
+    const ariaLabel = `${state.month}${state.t('월 ', ' / ')}${day}${state.t('일', '')} · ${unavailable ? unavailableLabel : actionLabel}`;
     if (mini) {
       return `<span class="drawer" aria-hidden="true">${day}</span>`;
     }
     return [
-      `<button class="drawer ${drawerClass}${unavailable ? ' gift-unavailable' : ''}" data-day="${day}" data-role="${role}"${unavailable ? ' disabled' : ''}`,
+      `<button class="drawer ${drawerClass}${unavailable ? ' gift-unavailable' : ''}" data-day="${day}" data-role="${role}"${unavailable ? ` disabled title="${escapeHtml(unavailableLabel)}"` : ''}`,
       ` aria-label="${escapeHtml(ariaLabel)}">`,
       String(day),
       todayLabel,
@@ -108,6 +109,7 @@ export function renderCalendar(state, role = 'visitor', ended = false) {
     `<button data-month="12" class="${month === 12 ? 'on' : ''}" aria-pressed="${month === 12}">`,
     `${t('12월', 'December')}</button></div>`,
     renderBox(state, ended ? 'ended' : role),
+    role === 'visitor' && !ended ? `<p class="visitor-gift-hint">${t('지난 날짜에는 선물을 남길 수 없어요. 오늘부터 선택해 주세요.', 'Past dates are closed. Choose today or a future date to leave a gift.')}</p>` : '',
     role === 'visitor' ? `<div class="visitor-create-action">${callToAction}</div>` : '',
     footer(state),
     `<div class="ad">${t('광고 영역', 'ADVERTISEMENT')}</div>`,
