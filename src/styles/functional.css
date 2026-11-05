@@ -518,3 +518,33 @@ button:disabled {
   .drawer-note-card { padding: 16px; box-shadow: 3px 3px 0 var(--brown); }
   .drawer-note-list { gap: 14px; }
 }
+
+/* Identical date-navigation anchor in filled and quiet drawers. */
+.owner-date-title { min-height: 54px; }
+
+/* Quiet drawer content sits below the shared date navigation. */
+.drawer-empty-gift {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin: 36px auto 0;
+}
+.drawer-empty-gift .largeicon {
+  display: grid;
+  width: 92px;
+  height: 92px;
+  place-items: center;
+}
+.drawer-empty-gift .empty-drawer-date { margin: 4px 0 0; }
+.drawer-empty > .sub {
+  max-width: 340px;
+  margin: 22px auto 0;
+}
+.drawer-empty .empty-share-panel { margin-top: 30px; }
+
+@media (max-width: 420px) {
+  .owner-date-title { min-height: 60px; }
+  .drawer-empty-gift { margin-top: 28px; }
+  .drawer-empty > .sub { margin-top: 18px; }
+}
