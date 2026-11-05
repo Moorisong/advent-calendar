@@ -51,6 +51,12 @@ async function handleAction(action) {
     await navigate(navigations[action], { scroll: !closingDrawer });
     return;
   }
+  if (action === 'timezone-toggle') {
+    state.timezoneSearchOpen = !state.timezoneSearchOpen;
+    render();
+    if (state.timezoneSearchOpen) document.getElementById('timezone-search')?.focus();
+    return;
+  }
   if (action === 'delete-message') {
     if (window.confirm(translate('내 메시지를 삭제할까요?', 'Delete your note?'))) {
       await removeMyMessage();
@@ -134,6 +140,13 @@ async function handleClick(event) {
   if (!button || button.disabled) {
     return;
   }
+  if (button.dataset.zone) {
+    state.timezoneDraft = button.dataset.zone;
+    state.timezoneSearchOpen = false;
+    state.timezoneQuery = '';
+    render();
+    return;
+  }
   if (button.dataset.oauth) {
     await handleProvider(button.dataset.oauth);
     return;
@@ -166,6 +179,15 @@ async function handleClick(event) {
 }
 
 function handleInput(event) {
+  if (event.target.id === 'timezone-search') {
+    state.timezoneQuery = event.target.value;
+    const caret = event.target.selectionStart;
+    render();
+    const input = document.getElementById('timezone-search');
+    input?.focus();
+    input?.setSelectionRange(caret, caret);
+    return;
+  }
   if (event.target.name === 'message') {
     state.message = event.target.value.slice(0, APP.maximumMessageLength);
     saveMessageDraft(state);
