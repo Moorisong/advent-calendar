@@ -441,22 +441,32 @@ button:disabled {
   .landing-login-hint .mobile-only-break { display: block; }
 }
 
-/* Quiet back navigation above the visitor's gift form. */
+/* Compact navigation is aligned with the writing form, not floating over the title. */
+.write-navigation {
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+  margin: 0 0 14px;
+}
 .write-back {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 38px;
-  height: 38px;
-  margin: 0 0 16px;
-  padding: 0;
-  border: 1px solid transparent;
-  border-radius: 4px;
-  background: transparent;
+  gap: 7px;
+  width: auto;
+  min-height: 36px;
+  padding: 7px 11px 7px 8px;
+  border: 1px solid #bda48b;
+  border-radius: 2px;
+  background: #fff4de;
   box-shadow: none;
   color: var(--brown);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
   cursor: pointer;
 }
-.write-back:hover { background: #f4e4c9; border-color: #bfa78a; }
-.write-back:focus-visible { outline: 2px solid var(--brown); outline-offset: 2px; }
-.write-back svg { display: block; }
+.write-back:hover { background: #f4e4c9; border-color: var(--brown); }
+.write-back:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
+.write-back svg { display: block; flex-shrink: 0; }
