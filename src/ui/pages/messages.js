@@ -141,7 +141,7 @@ export function renderRead(state) {
     ].join('');
   }).join('');
   return [
-    `<div class="content drawer-message-list"><span class="stamp">${month} / ${day} · ${t('오늘의 서랍', 'TODAY’S DRAWER')}</span>`,
+    `<div class="content drawer-message-list"><span class="stamp">${month} / ${day}</span>`,
     renderDateHeading(state, t('너에게 도착한 마음', 'A little love for you')),
     `<p class="drawer-message-count">${t(`이 날짜에 도착한 선물 ${notes.length}개`, `${notes.length} gifts received on this date`)}</p>`,
     `<div class="drawer-note-list">${cards}</div>`,
@@ -159,7 +159,7 @@ export function renderEmpty(state) {
     ? `${['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'][month - 1]} ${day}`
     : `${month}/${day}`;
   return [
-    `<div class="content drawer-message-list drawer-empty"><span class="stamp">${month} / ${day} · ${t('오늘의 서랍', 'TODAY’S DRAWER')}</span>`,
+    `<div class="content drawer-message-list drawer-empty"><span class="stamp">${month} / ${day}</span>`,
     renderDateHeading(state, t('아직 조용한 서랍이야', 'A quiet little drawer')),
     '<div class="drawer-empty-gift">',
     `<div class="largeicon" aria-hidden="true">${icon(3)}</div>`,
