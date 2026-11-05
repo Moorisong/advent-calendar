@@ -401,3 +401,15 @@ button:disabled {
 .form label:has(> input[name="nickname"]) input {
   margin-top: 12px;
 }
+
+.timezone-clock { display:flex; flex-direction:column; align-items:center; gap:7px; padding:20px 12px; background:#fff4de; border:2px solid var(--brown); color:var(--brown); }
+.timezone-clock > span { font-size:12px; }
+.timezone-clock strong { font-size:28px; font-weight:900; }
+.timezone-change { width:100%; margin-top:10px; padding:12px; border:2px solid var(--brown); background:var(--cream); color:var(--brown); font:inherit; font-weight:800; cursor:pointer; }
+.timezone-search-panel { margin-top:14px; }
+.timezone-search-panel[hidden] { display:none; }
+.timezone-search-panel input { box-sizing:border-box; width:100%; padding:12px; border:2px solid var(--brown); background:var(--cream); color:var(--brown); font:inherit; }
+.timezone-results { max-height:260px; overflow-y:auto; border:1px solid #b49c7e; }
+.timezone-result { display:flex; width:100%; justify-content:space-between; align-items:center; gap:12px; padding:12px; border:0; border-bottom:1px solid #e0cdb0; background:var(--cream); color:var(--brown); font:inherit; text-align:left; cursor:pointer; }
+.timezone-result:hover,.timezone-result:focus-visible { background:#f4dbad; }
+.timezone-result small { flex-shrink:0; opacity:.75; }
