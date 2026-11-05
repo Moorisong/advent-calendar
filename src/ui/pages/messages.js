@@ -131,7 +131,7 @@ export function renderEmpty(state) {
     renderPublicLink(`${typeof window === 'undefined' ? '' : window.location.origin}/c/${state.slug}`),
     renderShareActions(state),
     '</div>',
-    btn(t('서랍 닫기', 'Close drawer'), 'owner', true),
+    `<div class="drawer-close-spacing">${btn(t('서랍 닫기', 'Close drawer'), 'owner', true)}</div>`,
     '</div>',
   ].join('');
 }
