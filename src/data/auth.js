@@ -7,7 +7,10 @@ export async function getUser() {
   if (!db) {
     return null;
   }
-  const { data, error } = await db.auth.getUser();
+  const { data, error } = await Promise.race([
+    db.auth.getUser(),
+    new Promise((_, reject) => setTimeout(() => reject(new Error('AUTH_TIMEOUT')), 12000)),
+  ]);
   if (error) {
     return null;
   }
