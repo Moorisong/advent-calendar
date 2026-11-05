@@ -1,5 +1,6 @@
 import { APP, CHOCOLATES } from '../../config/constants.js';
 import { messageHtml, escapeHtml } from '../../utils/format.js';
+import { adjacentReadableDate } from '../../utils/date.js';
 
 import { btn } from '../chrome.js';
 import { icon } from '../sprites.js';
@@ -13,6 +14,27 @@ function renderBackHeading(t, heading, action) {
     '<svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>',
     '</button>',
     `<h2>${heading}</h2>`,
+    '</div>',
+  ].join('');
+}
+
+function renderDateHeading(state, heading) {
+  const { t, route, today } = state;
+  const previous = adjacentReadableDate(route.date, -1, today);
+  const next = adjacentReadableDate(route.date, 1, today);
+  const arrow = (direction, target, label) => [
+    `<button type="button" class="write-back drawer-date-arrow" data-action="drawer-${direction}"`,
+    ` aria-label="${label}" title="${label}"${target ? '' : ' disabled'}>`,
+    direction === 'prev'
+      ? '<svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>'
+      : '<svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>',
+    '</button>',
+  ].join('');
+  return [
+    '<div class="write-title-row owner-date-title">',
+    arrow('prev', previous, t('이전 날짜', 'Previous date')),
+    `<h2>${heading}</h2>`,
+    arrow('next', next, t('다음 날짜', 'Next date')),
     '</div>',
   ].join('');
 }
@@ -81,7 +103,7 @@ export function renderRead(state) {
   const type = Number(note.chocolate_type);
   return [
     `<div class="content"><span class="stamp">${month} / ${day} · ${t('오늘의 서랍', 'TODAY’S DRAWER')}</span>`,
-    renderBackHeading(t, t('너에게 도착한 마음', 'A little love for you'), 'owner'),
+    renderDateHeading(state, t('너에게 도착한 마음', 'A little love for you')),
     `<div class="largeicon">${icon(type)}</div>`,
     `<div class="note">${messageHtml(note.body)}`,
     `<div class="from">${t('익명의 친구가', 'From an anonymous friend')}</div></div>`,
@@ -102,7 +124,7 @@ export function renderEmpty(state) {
     icon(3),
     '</div>',
     `<div class="empty-drawer-date">${state.lang === 'en' ? `${['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'][state.month - 1]} ${state.day}` : `${state.month}/${state.day}`}</div>`,
-    renderBackHeading(t, t('아직 조용한 서랍이야', 'A quiet little drawer'), 'owner'),
+    renderDateHeading(state, t('아직 조용한 서랍이야', 'A quiet little drawer')),
     `<p class="sub">${t('친구들에게 캘린더를 살짝 알려줘볼까?', 'Let your friends know about your calendar.')}</p>`,
     '<div class="empty-share-panel">',
     `<h3 class="empty-share-heading">${t('친구에게 캘린더 보내기', 'Send your calendar to friends')}</h3>`,
