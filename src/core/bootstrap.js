@@ -38,7 +38,10 @@ async function resolveAccountRoute(route) {
   if (route.page !== SCREEN.landing && route.page !== SCREEN.create) {
     return route;
   }
-  state.myCalendar = await findMyCalendar(state.user.id);
+  state.myCalendar = await Promise.race([
+    findMyCalendar(state.user.id),
+    new Promise((_, reject) => setTimeout(() => reject(new Error('CALENDAR_LOOKUP_TIMEOUT')), 12000)),
+  ]);
   if (state.myCalendar) {
     return { page: SCREEN.owner, slug: state.myCalendar.slug };
   }
