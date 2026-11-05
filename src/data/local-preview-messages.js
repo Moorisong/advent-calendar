@@ -1,4 +1,4 @@
-// Local-only preview data for the specified owner's November 5 drawer.
+// Local-only preview data for the specified owner's November drawers.
 // No database records are created and production builds never include these notes.
 const lines = [
   '🎁', '힘내! 💛', '오늘도 응원해 😊', '🍫 달콤한 하루 보내!',
@@ -27,6 +27,18 @@ const lines = [
   '오늘 이 초콜릿이 도착했다는 건 누군가가 너를 떠올리며 시간을 내어 메시지를 썼다는 뜻이야. 세상에는 바쁘고 정신없는 일들이 많지만, 그 와중에도 너를 생각하는 마음이 있다는 걸 기억해 줘. 네 하루가 조금 더 따뜻해지길 바라. 🎁🍫🌷',
   '달력의 작은 칸 하나에 이렇게 긴 마음을 담아도 될까? 😆 올해 너와 나눈 이야기, 함께 웃었던 순간, 힘들 때 서로 건넨 위로가 모두 소중했어. 앞으로도 즐거운 일만 있지는 않겠지만, 그때마다 우리가 서로에게 작은 힘이 될 수 있으면 좋겠다. 추운 날씨에 감기 조심하고, 밥 꼭 챙겨 먹고, 오늘도 네 편이 있다는 걸 잊지 마. 🥰🎄💌'
 ];
+// Add readable paragraph breaks to longer preview letters without changing their wording.
+function formatPreviewLetter(body) {
+  if (body.length < 65) return body;
+  const sentences = body.match(/[^.!?]+[.!?]+(?:\\s*[🎄🎁💛💐🌱🧡💗🌟☔☕🥐🎶📱🌈✨🧤🍫🌷🥰💌🫶🌤️🎉🥹😂🍕🌙🎧🍪🚶‍♀️🌿🤫💧🙆]*)?|[^.!?]+$/gu);
+  if (!sentences || sentences.length < 2) return body;
+  const parts = sentences.map((sentence) => sentence.trim()).filter(Boolean);
+  const groups = [];
+  for (let i = 0; i < parts.length; i += 2) {
+    groups.push(parts.slice(i, i + 2).join(' '));
+  }
+  return groups.join('\\n\\n');
+}
 // Stable randomized-looking samples so each refresh shows the same test data.
 // November 1–4 use counts drawn from 3, 15, and 9.
 const previewDays = {
@@ -45,7 +57,7 @@ export function localPreviewMessages(slug, date) {
     return {
       id: `local-preview-${date}-${index + 1}`,
       chocolate_type: (sampleIndex + index) % 6,
-      body: lines[sampleIndex],
+      body: formatPreviewLetter(lines[sampleIndex]),
       gift_date: date,
       created_at: new Date(2026, 10, Number(date.slice(-2)), 12, index).toISOString(),
     };
