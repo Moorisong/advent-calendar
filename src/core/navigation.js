@@ -74,7 +74,10 @@ export async function navigate(requested, { replace = false, scroll = true } = {
   }
   if (route.page === SCREEN.create && state.user) {
     try {
-      const existing = await findMyCalendar(state.user.id);
+      const existing = await Promise.race([
+        findMyCalendar(state.user.id),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('CALENDAR_LOOKUP_TIMEOUT')), 12000)),
+      ]);
       if (navigationVersion !== version) {
         return;
       }
