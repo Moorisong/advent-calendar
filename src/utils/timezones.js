@@ -85,7 +85,7 @@ export function searchTimeZoneGroups(selected, lang, search) {
   if (!query) return groups.filter(group => group.options.some(option => option.value === selected));
   const en = new Intl.DisplayNames(['en'], { type: 'region' });
   const ko = new Intl.DisplayNames(['ko'], { type: 'region' });
-  const starts = (text) => String(text).toLocaleLowerCase().split(/[\\s/_-]+/).some(word => word.startsWith(query));
+  const starts = (text) => String(text).toLocaleLowerCase().split(/[\s/_-]+/).some(word => word.startsWith(query));
   return groups.map(group => ({
     ...group,
     options: group.options.filter(option => {
