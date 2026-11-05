@@ -27,11 +27,10 @@ export function renderLanding(state) {
   ].join('');
 }
 
-export function renderCreate(state) {
-  const { t, timezoneDraft } = state;
-  const query = (state.timezoneQuery || '').trim().toLowerCase();
-  const resultLang = state.lang === 'en' || (query && /^[a-z]/i.test(query)) ? 'en' : 'ko';
-  const zones = (state.timezoneSearchOpen ? searchTimeZoneGroups(timezoneDraft, resultLang, query) : []).flatMap(group =>
+export function renderTimezoneResults(timezoneDraft, lang, queryText) {
+  const query = String(queryText || '').trim().toLowerCase();
+  const resultLang = lang === 'en' || (query && /^[a-z]/i.test(query)) ? 'en' : 'ko';
+  const zones = (searchTimeZoneGroups(timezoneDraft, resultLang, query)).flatMap(group =>
     group.options.map(option => ({
       value: option.value,
       label: option.label === group.label ? group.label : group.label + ' - ' + option.label,
@@ -43,6 +42,12 @@ export function renderCreate(state) {
       '<button type="button" class="timezone-result" data-zone="' + escapeHtml(zone.value) + '">' +
       escapeHtml(zone.label) + ' <small>' + escapeHtml(timeZoneOffset(zone.value)) + '</small></button>'
     ).join('');
+  return results;
+}
+
+export function renderCreate(state) {
+  const { t, timezoneDraft } = state;
+  const results = state.timezoneSearchOpen ? renderTimezoneResults(timezoneDraft, state.lang, state.timezoneQuery) : '';
   return [
     '<div class="content"><div class="sprig">',
     icon(3),
