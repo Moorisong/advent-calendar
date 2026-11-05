@@ -19,9 +19,11 @@ export function renderWrite(state) {
   }).join('');
   return [
     '<div class="content">',
-    `<button type="button" class="write-back" data-action="visitor" aria-label="${t('캘린더로 돌아가기', 'Back to calendar')}" title="${t('캘린더로 돌아가기', 'Back to calendar')}">`,
-    '<svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square" stroke-linejoin="miter"><path d="m14 5-7 7 7 7"/></svg>',
-    '</button>',
+    '<nav class="write-navigation" aria-label="Calendar navigation">',
+    `<button type="button" class="write-back" data-action="visitor" aria-label="${t('캘린더로 돌아가기', 'Back to calendar')}">`,
+    '<svg aria-hidden="true" viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5m7-7-7 7 7 7"/></svg>',
+    `<span>${t('캘린더로', 'Back to calendar')}</span>`,
+    '</button></nav>',
     `<div class="kicker">FOR ${escapeHtml(nickname.toUpperCase())}</div>`,
     `<h2>${month}${t('월 ', ' / ')}${day}${t('일의 작은 선물', ' · A little gift')}</h2>`,
     `<p class="sub">${t('초콜릿 하나에 마음을 담아줘.', 'Pick a chocolate. Add a little heart.')}</p>`,
