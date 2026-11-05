@@ -72,7 +72,7 @@ export async function navigate(requested, { replace = false, scroll = true } = {
   if (route.page === SCREEN.login && state.user) {
     route = { page: SCREEN.landing, slug: null, date: null };
   }
-  if (route.page === SCREEN.create && state.user) {
+  if (route.page === SCREEN.create && state.user && state.myCalendar === undefined) {
     try {
       const existing = await Promise.race([
         findMyCalendar(state.user.id),
