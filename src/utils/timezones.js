@@ -80,18 +80,19 @@ export function timeZoneLabel(zone, lang = 'ko') {
 
 const COUNTRY_SEARCH_ALIASES = { US: ['usa', 'u.s.a', 'us', 'america', 'united states', '미국'], GB: ['uk', 'britain', 'great britain', '영국'], KR: ['korea', 'south korea', '대한민국', '한국'], JP: ['japan', '일본'], AU: ['australia', '호주'], CA: ['canada', '캐나다'] };
 export function searchTimeZoneGroups(selected, lang, search) {
-  const query = String(search || '').trim().toLocaleLowerCase();
+  const normalizeSearch = (value) => String(value ?? '').normalize('NFKC').toLocaleLowerCase('en').trim();
+  const query = normalizeSearch(search);
   const groups = timeZoneGroups(selected, lang);
   if (!query) return groups.filter(group => group.options.some(option => option.value === selected));
   const en = new Intl.DisplayNames(['en'], { type: 'region' });
   const ko = new Intl.DisplayNames(['ko'], { type: 'region' });
-  const starts = (text) => String(text).toLocaleLowerCase().split(/[\s/_-]+/).some(word => word.startsWith(query));
+  const starts = (text) => normalizeSearch(text).split(/[\s/_-]+/).some(word => word.startsWith(query));
   return groups.map(group => ({
     ...group,
     options: group.options.filter(option => {
       const country = zoneCountry(option.value);
       const aliases = COUNTRY_SEARCH_ALIASES[country] || [];
-      const countryMatch = [en.of(country), ko.of(country), country, ...aliases].some(name => name.toLocaleLowerCase() === query || starts(name));
+      const countryMatch = [en.of(country), ko.of(country), country, ...aliases].some(name => normalizeSearch(name) === query || starts(name));
       const cityMatch = [zoneCity(option.value, 'ko'), zoneCity(option.value, 'en'), option.value.split('/').at(-1)].some(starts);
       return countryMatch || cityMatch;
     }),
