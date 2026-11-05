@@ -27,14 +27,28 @@ const lines = [
   '오늘 이 초콜릿이 도착했다는 건 누군가가 너를 떠올리며 시간을 내어 메시지를 썼다는 뜻이야. 세상에는 바쁘고 정신없는 일들이 많지만, 그 와중에도 너를 생각하는 마음이 있다는 걸 기억해 줘. 네 하루가 조금 더 따뜻해지길 바라. 🎁🍫🌷',
   '달력의 작은 칸 하나에 이렇게 긴 마음을 담아도 될까? 😆 올해 너와 나눈 이야기, 함께 웃었던 순간, 힘들 때 서로 건넨 위로가 모두 소중했어. 앞으로도 즐거운 일만 있지는 않겠지만, 그때마다 우리가 서로에게 작은 힘이 될 수 있으면 좋겠다. 추운 날씨에 감기 조심하고, 밥 꼭 챙겨 먹고, 오늘도 네 편이 있다는 걸 잊지 마. 🥰🎄💌'
 ];
+// Stable randomized-looking samples so each refresh shows the same test data.
+// November 1–4 use counts drawn from 3, 15, and 9.
+const previewDays = {
+  '2026-11-01': { count: 9, offset: 3 },
+  '2026-11-02': { count: 3, offset: 17 },
+  '2026-11-03': { count: 15, offset: 8 },
+  '2026-11-04': { count: 9, offset: 21 },
+  '2026-11-05': { count: 30, offset: 0 },
+};
 export function localPreviewMessages(slug, date) {
   if (!import.meta.env.DEV || window.location.hostname !== 'localhost'
-    || slug !== '68a7d8be6e6a4370' || date !== '2026-11-05') return [];
-  return lines.map((body, index) => ({
-    id: `local-preview-${index + 1}`,
-    chocolate_type: (index * 7 + 3) % 6,
-    body,
-    gift_date: date,
-    created_at: new Date(2026, 10, 5, 12, index).toISOString(),
-  }));
+    || slug !== '68a7d8be6e6a4370') return [];
+  const day = previewDays[date];
+  if (!day) return [];
+  return Array.from({ length: day.count }, (_, index) => {
+    const sampleIndex = (day.offset + index * 7) % lines.length;
+    return {
+      id: `local-preview-${date}-${index + 1}`,
+      chocolate_type: (sampleIndex + index) % 6,
+      body: lines[sampleIndex],
+      gift_date: date,
+      created_at: new Date(2026, 10, Number(date.slice(-2)), 12, index).toISOString(),
+    };
+  });
 }
