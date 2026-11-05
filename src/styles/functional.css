@@ -509,7 +509,7 @@ button:disabled {
 .drawer-note-chocolate { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; }
 .drawer-note-chocolate svg { width: 34px; height: 34px; flex-shrink: 0; }
 .drawer-note-number { color: var(--brown); opacity: .6; font-size: 12px; white-space: nowrap; }
-.drawer-note-body { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.75; }
+.drawer-note-body { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.8; text-align: justify; text-justify: inter-character; text-align-last: left; word-break: normal; }
 .drawer-note-from { text-align: right; color: var(--green); font-size: 12px; margin-top: 20px; }
 .drawer-load-more { display: flex; justify-content: center; align-items: center; gap: 14px; width: 100%; margin-top: 24px; padding: 16px; background: var(--cream); color: var(--brown); border: 2px solid var(--brown); box-shadow: 4px 4px 0 var(--brown); font: inherit; font-weight: 700; cursor: pointer; }
 .drawer-load-more:hover { background: #f4e4c9; }
@@ -570,7 +570,7 @@ button:disabled {
   width: 100%;
   min-height: 48px;
   padding: 10px 16px;
-  background: var(--green);
+  background: var(--red);
   color: var(--cream);
   font-size: 14px;
 }
