@@ -97,7 +97,7 @@ export function renderSent(state) {
 export function renderRead(state) {
   const { t, notes, month, day } = state;
   if (!notes.length) return renderEmpty(state);
-  const visible = Math.min(notes.length, (state.readIndex + 1) * 10);
+  const visible = Math.min(notes.length, state.visibleNoteCount || 10);
   const cards = notes.slice(0, visible).map((note, index) => {
     const type = Number(note.chocolate_type);
     const name = CHOCOLATES[type]?.[state.lang] ?? '';
