@@ -1,5 +1,5 @@
 import { SCREEN } from '../config/constants.js';
-import { canReadDate, canWriteDate, validCalendarDate } from '../utils/date.js';
+import { canLeaveGiftOnDate, canReadDate, validCalendarDate } from '../utils/date.js';
 
 const OWNER_DAY_SCREENS = new Set([SCREEN.read, SCREEN.empty, SCREEN.locked]);
 
@@ -10,7 +10,7 @@ export function resolvePage(route, today, lastSent) {
     return { ...route, page: ownerDay ? SCREEN.owner : SCREEN.visitor, date: null };
   }
   if (route.page === SCREEN.write && (
-    !canWriteDate(today) || route.date.slice(0, 4) !== today.slice(0, 4)
+    !canLeaveGiftOnDate(route.date, today)
   )) {
     return { ...route, page: SCREEN.visitor, date: null };
   }
