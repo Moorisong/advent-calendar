@@ -30,11 +30,11 @@ export function renderLanding(state) {
 export function renderCreate(state) {
   const { t, timezoneDraft } = state;
   const query = (state.timezoneQuery || '').trim().toLowerCase();
-  const zones = timeZoneGroups(timezoneDraft, state.lang).flatMap(group =>
+  const zones = (state.timezoneSearchOpen ? timeZoneGroups(timezoneDraft, state.lang) : []).flatMap(group =>
     group.options.map(option => ({
       value: option.value,
       label: option.label === group.label ? group.label : group.label + ' - ' + option.label,
-      search: (group.label + ' ' + option.label + ' ' + option.value + ' ' + timeZoneLabel(option.value, 'en') + ' ' + timeZoneLabel(option.value, 'ko')).toLowerCase(),
+      search: (group.label + ' ' + option.label + ' ' + option.value + ' ' + option.value.replaceAll('_', ' ')).toLowerCase(),
     }))
   );
   const results = (query ? zones.filter(zone => zone.search.includes(query)) : zones.filter(zone => zone.value === timezoneDraft))
