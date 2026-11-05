@@ -80,3 +80,10 @@ export function calendarDays(month) {
   }
   return [];
 }
+
+export function adjacentReadableDate(date, direction, today = todayInKorea()) {
+  if (!validCalendarDate(date) || ![1, -1].includes(direction)) return null;
+  const [year, month, day] = date.split('-').map(Number);
+  const next = new Date(Date.UTC(year, month - 1, day + direction)).toISOString().slice(0, 10);
+  return canReadDate(next, today) && next.slice(0, 4) === date.slice(0, 4) ? next : null;
+}
