@@ -441,32 +441,42 @@ button:disabled {
   .landing-login-hint .mobile-only-break { display: block; }
 }
 
-/* Compact navigation is aligned with the writing form, not floating over the title. */
-.write-navigation {
-  display: flex;
-  justify-content: flex-start;
+/* Back control belongs to the heading, not in its own floating row. */
+.write-title-row {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) 44px;
+  align-items: center;
   width: 100%;
-  margin: 0 0 14px;
+  margin: 12px 0;
+}
+.write-title-row h2 {
+  grid-column: 2;
+  grid-row: 1;
+  margin: 0;
+  text-align: center;
+  text-wrap: balance;
 }
 .write-back {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-  width: auto;
-  min-height: 36px;
-  padding: 7px 11px 7px 8px;
-  border: 1px solid #bda48b;
-  border-radius: 2px;
-  background: #fff4de;
+  display: inline-grid;
+  grid-column: 1;
+  grid-row: 1;
+  place-items: center;
+  width: 40px;
+  min-height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
   box-shadow: none;
   color: var(--brown);
-  font: inherit;
-  font-size: 12px;
-  font-weight: 700;
-  white-space: nowrap;
   cursor: pointer;
+  transition: background-color 150ms ease;
 }
-.write-back:hover { background: #f4e4c9; border-color: var(--brown); }
-.write-back:focus-visible { outline: 2px solid var(--green); outline-offset: 3px; }
-.write-back svg { display: block; flex-shrink: 0; }
+.write-back:hover { background: #4b2d2510; }
+.write-back:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+.write-back svg { display: block; }
+@media (max-width: 420px) {
+  .write-title-row { grid-template-columns: 34px minmax(0, 1fr) 34px; }
+  .write-back { width: 34px; min-height: 40px; }
+  .write-title-row h2 { font-size: clamp(20px, 5.7vw, 26px); }
+}
