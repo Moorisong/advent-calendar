@@ -30,7 +30,8 @@ export function renderLanding(state) {
 export function renderCreate(state) {
   const { t, timezoneDraft } = state;
   const query = (state.timezoneQuery || '').trim().toLowerCase();
-  const zones = (state.timezoneSearchOpen ? searchTimeZoneGroups(timezoneDraft, state.lang, query) : []).flatMap(group =>
+  const resultLang = state.lang === 'en' || (query && /^[a-z]/i.test(query)) ? 'en' : 'ko';
+  const zones = (state.timezoneSearchOpen ? searchTimeZoneGroups(timezoneDraft, resultLang, query) : []).flatMap(group =>
     group.options.map(option => ({
       value: option.value,
       label: option.label === group.label ? group.label : group.label + ' - ' + option.label,
