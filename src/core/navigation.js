@@ -203,7 +203,9 @@ export async function navigate(requested, { replace = false, scroll = true } = {
   }
   state.route = route;
   updateHistory(route, replace);
-  if (route.slug && route.page === SCREEN.visitor && !isSeasonEnded(state.today)) {
+  if (route.slug && route.page === SCREEN.visitor
+    && state.calendar?.owner_id !== state.user?.id
+    && !isSeasonEnded(state.today)) {
     const tutorialKey = `tutorial:${route.slug}`;
     const visited = readLocal(tutorialKey) === 'seen';
     if (!visited) {
