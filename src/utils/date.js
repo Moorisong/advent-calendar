@@ -44,6 +44,11 @@ export function canWriteDate(today = todayInKorea()) {
   return year >= APP.year && today >= `${year}-11-01` && today <= `${year}-12-25`;
 }
 
+export function canLeaveGiftOnDate(date, today = todayInKorea()) {
+  return canWriteDate(today) && validCalendarDate(date)
+    && date >= today && date.slice(0, 4) === today.slice(0, 4);
+}
+
 export function isSeasonEnded(today = todayInKorea()) {
   return !canWriteDate(today);
 }
