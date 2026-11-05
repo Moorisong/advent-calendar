@@ -35,7 +35,7 @@ async function resolveAccountRoute(route) {
   if (!state.user) {
     return route;
   }
-  if (route.page !== SCREEN.landing && route.page !== SCREEN.create) {
+  if (route.page !== SCREEN.landing) {
     return route;
   }
   state.myCalendar = await Promise.race([
