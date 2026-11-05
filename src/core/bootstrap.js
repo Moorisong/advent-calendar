@@ -88,7 +88,14 @@ export async function startApp() {
   const initial = readRoute();
   const restored = await restoreSession(initial);
   subscribeToAuth(handleSessionChange);
-  await navigate(restored, { replace: true, scroll: false });
+  try {
+    await navigate(restored, { replace: true, scroll: false });
+  } catch (error) {
+    console.error('Initial navigation failed:', error);
+    state.route = { page: SCREEN.error, slug: null, date: null };
+    state.error = translate('화면을 불러오지 못했어요. 새로고침해 주세요.', 'Could not load the page. Please refresh.');
+    render();
+  }
   window.addEventListener('popstate', () => {
     void navigate(readRoute(), { replace: true, scroll: false });
   });
