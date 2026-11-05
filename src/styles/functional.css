@@ -1,5 +1,5 @@
 button:disabled {
-  cursor: progress;
+  cursor: not-allowed;
   opacity: 0.68;
 }
 
@@ -413,3 +413,23 @@ button:disabled {
 .timezone-result { display:flex; width:100%; justify-content:space-between; align-items:center; gap:12px; padding:12px; border:0; border-bottom:1px solid #e0cdb0; background:var(--cream); color:var(--brown); font:inherit; text-align:left; cursor:pointer; }
 .timezone-result:hover,.timezone-result:focus-visible { background:#f4dbad; }
 .timezone-result small { flex-shrink:0; opacity:.75; }
+
+/* Visitor dates that are already over are closed, not loading. */
+.calendar-layout .drawer.gift-unavailable,
+.calendar-layout .drawer.gift-unavailable:hover,
+.calendar-layout .drawer.gift-unavailable:active {
+  cursor: not-allowed;
+  opacity: .5;
+  filter: grayscale(.45);
+  transform: none;
+  box-shadow: none;
+}
+.visitor-gift-hint {
+  margin: 14px auto 4px;
+  max-width: 620px;
+  text-align: center;
+  color: var(--brown);
+  font-size: 13px;
+  line-height: 1.6;
+  opacity: .8;
+}
