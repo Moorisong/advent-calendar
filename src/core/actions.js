@@ -2,7 +2,7 @@ import { APP, SCREEN } from '../config/constants.js';
 import { createCalendar, deleteCalendar, findMyCalendar } from '../data/calendars.js';
 import { shareToKakao } from '../data/kakao-share.js';
 import { deleteMessage, getMyMessage, updateMessage, writeMessage } from '../data/messages.js';
-import { canWriteDate, getInitialMonth, todayInZone } from '../utils/date.js';
+import { canLeaveGiftOnDate, getInitialMonth, todayInZone } from '../utils/date.js';
 import { validTimeZone } from '../utils/timezones.js';
 
 import { navigate } from './navigation.js';
@@ -67,8 +67,8 @@ export async function submitMessage(form) {
     return;
   }
   const today = todayInZone(state.calendar.timezone);
-  if (!canWriteDate(today)) {
-    toast(translate('지금은 초콜릿을 남길 수 없어요.', 'Chocolate deliveries are closed right now.'));
+  if (!canLeaveGiftOnDate(state.route.date, today)) {
+    toast(translate('오늘부터 미래 날짜에만 초콜릿을 남길 수 있어요.', 'Chocolates can only be left for today or a future date.'));
     return;
   }
   const input = form.elements.namedItem('message');
