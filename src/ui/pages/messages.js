@@ -112,7 +112,7 @@ export function renderRead(state) {
     `<span>${readIndex + 1} / ${notes.length}</span>`,
     '<button data-action="next" aria-label="Next note">→</button>',
     '</div>',
-    btn(t('서랍 닫기', 'Close drawer'), 'owner', true),
+    `<div class="drawer-close-spacing">${btn(t('서랍 닫기', 'Close drawer'), 'owner', true)}</div>`,
     '</div>',
   ].join('');
 }
