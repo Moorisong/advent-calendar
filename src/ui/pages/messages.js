@@ -5,6 +5,18 @@ import { btn } from '../chrome.js';
 import { icon } from '../sprites.js';
 import { renderPublicLink, renderShareActions } from '../share.js';
 
+function renderBackHeading(t, heading, action) {
+  const backLabel = t('캘린더로 돌아가기', 'Back to calendar');
+  return [
+    '<div class="write-title-row">',
+    `<button type="button" class="write-back" data-action="${action}" aria-label="${backLabel}" title="${backLabel}">`,
+    '<svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>',
+    '</button>',
+    `<h2>${heading}</h2>`,
+    '</div>',
+  ].join('');
+}
+
 export function renderWrite(state) {
   const { t, lang, month, day, selected, nickname, myMessage } = state;
   const options = CHOCOLATES.map((choice, index) => {
@@ -20,12 +32,7 @@ export function renderWrite(state) {
   return [
     '<div class="content">',
     `<div class="kicker">FOR ${escapeHtml(nickname.toUpperCase())}</div>`,
-    '<div class="write-title-row">',
-    `<button type="button" class="write-back" data-action="visitor" aria-label="${t('캘린더로 돌아가기', 'Back to calendar')}" title="${t('캘린더로 돌아가기', 'Back to calendar')}">`,
-    '<svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>',
-    '</button>',
-    `<h2>${month}${t('월 ', ' / ')}${day}${t('일의 작은 선물', ' · A little gift')}</h2>`,
-    '</div>',
+    renderBackHeading(t, `${month}${t('월 ', ' / ')}${day}${t('일의 작은 선물', ' · A little gift')}`, 'visitor'),
     `<p class="sub">${t('초콜릿 하나에 마음을 담아줘.', 'Pick a chocolate. Add a little heart.')}</p>`,
     '<form class="form" data-write>',
     `<label>${t('초콜릿 고르기', 'Choose a chocolate')}</label>`,
@@ -74,7 +81,7 @@ export function renderRead(state) {
   const type = Number(note.chocolate_type);
   return [
     `<div class="content"><span class="stamp">${month} / ${day} · ${t('오늘의 서랍', 'TODAY’S DRAWER')}</span>`,
-    `<h2>${t('너에게 도착한 마음', 'A little love for you')}</h2>`,
+    renderBackHeading(t, t('너에게 도착한 마음', 'A little love for you'), 'owner'),
     `<div class="largeicon">${icon(type)}</div>`,
     `<div class="note">${messageHtml(note.body)}`,
     `<div class="from">${t('익명의 친구가', 'From an anonymous friend')}</div></div>`,
@@ -95,7 +102,7 @@ export function renderEmpty(state) {
     icon(3),
     '</div>',
     `<div class="empty-drawer-date">${state.lang === 'en' ? `${['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'][state.month - 1]} ${state.day}` : `${state.month}/${state.day}`}</div>`,
-    `<h2>${t('아직 조용한 서랍이야', 'A quiet little drawer')}</h2>`,
+    renderBackHeading(t, t('아직 조용한 서랍이야', 'A quiet little drawer'), 'owner'),
     `<p class="sub">${t('친구들에게 캘린더를 살짝 알려줘볼까?', 'Let your friends know about your calendar.')}</p>`,
     '<div class="empty-share-panel">',
     `<h3 class="empty-share-heading">${t('친구에게 캘린더 보내기', 'Send your calendar to friends')}</h3>`,
