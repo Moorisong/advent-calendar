@@ -95,23 +95,31 @@ export function renderSent(state) {
 }
 
 export function renderRead(state) {
-  const { t, notes, readIndex, month, day } = state;
-  const note = notes[readIndex];
-  if (!note) {
-    return renderEmpty(state);
-  }
-  const type = Number(note.chocolate_type);
+  const { t, notes, month, day } = state;
+  if (!notes.length) return renderEmpty(state);
+  const visible = Math.min(notes.length, state.visibleNoteCount || 10);
+  const cards = notes.slice(0, visible).map((note, index) => {
+    const type = Number(note.chocolate_type);
+    const name = CHOCOLATES[type]?.[state.lang] ?? '';
+    return [
+      '<article class="drawer-note-card">',
+      '<div class="drawer-note-top">',
+      `<span class="drawer-note-chocolate">${icon(type)}<span>${escapeHtml(name)}</span></span>`,
+      `<span class="drawer-note-number">${index + 1} / ${notes.length}</span>`,
+      '</div>',
+      `<div class="drawer-note-body">${messageHtml(note.body)}</div>`,
+      `<div class="drawer-note-from">${t('익명의 친구가', 'From an anonymous friend')}</div>`,
+      '</article>',
+    ].join('');
+  }).join('');
   return [
-    `<div class="content"><span class="stamp">${month} / ${day} · ${t('오늘의 서랍', 'TODAY’S DRAWER')}</span>`,
+    `<div class="content drawer-message-list"><span class="stamp">${month} / ${day} · ${t('오늘의 서랍', 'TODAY’S DRAWER')}</span>`,
     renderDateHeading(state, t('너에게 도착한 마음', 'A little love for you')),
-    `<div class="largeicon">${icon(type)}</div>`,
-    `<div class="note">${messageHtml(note.body)}`,
-    `<div class="from">${t('익명의 친구가', 'From an anonymous friend')}</div></div>`,
-    '<div class="paging">',
-    '<button data-action="prev" aria-label="Previous note">←</button>',
-    `<span>${readIndex + 1} / ${notes.length}</span>`,
-    '<button data-action="next" aria-label="Next note">→</button>',
-    '</div>',
+    `<p class="drawer-message-count">${t(`이 날짜에 도착한 선물 ${notes.length}개`, `${notes.length} gifts received on this date`)}</p>`,
+    `<div class="drawer-note-list">${cards}</div>`,
+    visible < notes.length
+      ? `<button type="button" class="drawer-load-more" data-action="notes-more">${t('메시지 10개 더 보기', 'Show 10 more messages')} <span>${visible} / ${notes.length}</span></button>`
+      : '',
     `<div class="drawer-close-spacing">${btn(t('서랍 닫기', 'Close drawer'), 'owner', true)}</div>`,
     '</div>',
   ].join('');
