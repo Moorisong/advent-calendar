@@ -2,6 +2,7 @@ import { APP, CHOCOLATES, SCREEN } from '../config/constants.js';
 import { logout, signIn } from '../data/auth.js';
 import { canWriteDate, todayInZone } from '../utils/date.js';
 import { writeLocal } from '../utils/storage.js';
+import { timeZoneNow } from '../utils/timezone-clock.js';
 import { saveMessageDraft } from './message-draft.js';
 
 import {
@@ -218,6 +219,10 @@ async function handleSubmit(event) {
 }
 
 export function attachEvents() {
+  window.setInterval(() => {
+    const clock = document.querySelector('[data-timezone-clock]');
+    if (clock) clock.textContent = timeZoneNow(state.timezoneDraft, state.lang);
+  }, 15000);
   document.addEventListener('change', (event) => {
     if (event.target.matches('[data-year]')) {
       const year = Number(event.target.value);
