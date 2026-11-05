@@ -1,5 +1,5 @@
 import { APP } from '../config/constants.js';
-import { calendarDate, calendarDays, canWriteDate, drawerStatus } from '../utils/date.js';
+import { calendarDate, calendarDays, canLeaveGiftOnDate, canWriteDate, drawerStatus } from '../utils/date.js';
 import { escapeHtml } from '../utils/format.js';
 
 import { btn, footer } from './chrome.js';
@@ -15,6 +15,7 @@ export function renderBox(state, role = 'visitor', mini = false) {
   const drawers = days.map((day) => {
     const date = calendarDate(state.month, day, state.year ?? APP.year);
     const status = mini ? '' : drawerStatus(date, state.today);
+    const unavailable = !mini && role === 'visitor' && !canLeaveGiftOnDate(date, state.today);
     const drawerClass = status === 'future' || status === 'invalid' ? '' : status;
     const todayLabel = status === 'today'
       ? `<small>${state.t('오늘', 'TODAY')}</small>`
@@ -27,7 +28,7 @@ export function renderBox(state, role = 'visitor', mini = false) {
       return `<span class="drawer" aria-hidden="true">${day}</span>`;
     }
     return [
-      `<button class="drawer ${drawerClass}" data-day="${day}" data-role="${role}"`,
+      `<button class="drawer ${drawerClass}${unavailable ? ' gift-unavailable' : ''}" data-day="${day}" data-role="${role}"${unavailable ? ' disabled' : ''}`,
       ` aria-label="${escapeHtml(ariaLabel)}">`,
       String(day),
       todayLabel,
