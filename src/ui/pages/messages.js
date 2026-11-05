@@ -94,6 +94,27 @@ export function renderSent(state) {
   ].join('');
 }
 
+function renderDrawerClose(state) {
+  return '<div class="drawer-fixed-close"><div class="drawer-fixed-close-inner">'
+    + btn(state.t('서랍 닫기', 'Close drawer'), 'owner', true) + '</div></div>';
+}
+
+function noteTimestamp(note, state) {
+  if (!note.created_at) return '';
+  const date = new Date(note.created_at);
+  if (Number.isNaN(date.getTime())) return '';
+  try {
+    const value = new Intl.DateTimeFormat(state.lang === 'ko' ? 'ko-KR' : 'en-US', {
+      timeZone: state.calendar?.timezone || 'Asia/Seoul',
+      hour: 'numeric', minute: '2-digit', hour12: state.lang !== 'ko',
+    }).format(date);
+    return '<time class="drawer-note-time" datetime="' + escapeHtml(date.toISOString())
+      + '">' + escapeHtml(value) + '</time>';
+  } catch {
+    return '';
+  }
+}
+
 let lastRenderedDrawerDate = null;
 
 export function renderRead(state) {
@@ -103,8 +124,9 @@ export function renderRead(state) {
   }
   const { t, notes, month, day } = state;
   if (!notes.length) return renderEmpty(state);
-  const visible = Math.min(notes.length, state.visibleNoteCount || 10);
-  const cards = notes.slice(0, visible).map((note, index) => {
+  const sortedNotes = [...notes].sort((a, b) => (Date.parse(b.created_at) - Date.parse(a.created_at)) || String(b.id).localeCompare(String(a.id)));
+  const visible = Math.min(sortedNotes.length, state.visibleNoteCount || 10);
+  const cards = sortedNotes.slice(0, visible).map((note, index) => {
     const type = Number(note.chocolate_type);
     const name = CHOCOLATES[type]?.[state.lang] ?? '';
     return [
@@ -114,7 +136,7 @@ export function renderRead(state) {
       `<span class="drawer-note-number">${index + 1} / ${notes.length}</span>`,
       '</div>',
       `<div class="drawer-note-body">${messageHtml(note.body)}</div>`,
-      `<div class="drawer-note-from">${t('익명의 친구가', 'From an anonymous friend')}</div>`,
+      `<div class="drawer-note-meta"><span class="drawer-note-from">${t('익명의 친구가', 'From an anonymous friend')}</span>${noteTimestamp(note, state)}</div>`,
       '</article>',
     ].join('');
   }).join('');
@@ -126,7 +148,7 @@ export function renderRead(state) {
     visible < notes.length
       ? `<button type="button" class="drawer-load-more" data-action="notes-more">${t('메시지 10개 더 보기', 'Show 10 more messages')} <span>${visible} / ${notes.length}</span></button>`
       : '',
-    `<div class="drawer-close-spacing">${btn(t('서랍 닫기', 'Close drawer'), 'owner', true)}</div>`,
+    renderDrawerClose(state),
     '</div>',
   ].join('');
 }
@@ -149,7 +171,7 @@ export function renderEmpty(state) {
     renderPublicLink(`${typeof window === 'undefined' ? '' : window.location.origin}/c/${state.slug}`),
     renderShareActions(state),
     '</div>',
-    `<div class="drawer-close-spacing">${btn(t('서랍 닫기', 'Close drawer'), 'owner', true)}</div>`,
+    renderDrawerClose(state),
     '</div>',
   ].join('');
 }
