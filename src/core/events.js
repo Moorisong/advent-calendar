@@ -137,10 +137,12 @@ async function handleAction(action) {
     await shareCalendar(action);
     return;
   }
-  if (action === 'prev' || action === 'next') {
-    const delta = action === 'next' ? 1 : -1;
-    state.readIndex = (state.readIndex + delta + state.notes.length) % state.notes.length;
+  if (action === 'notes-more' && state.route.page === SCREEN.read) {
+    state.visibleNoteCount = Math.min(state.notes.length, (state.visibleNoteCount || 10) + 10);
+    const list = document.querySelector('.drawer-note-list');
+    const scrollY = window.scrollY;
     render();
+    window.scrollTo(0, scrollY);
     return;
   }
   if (action === 'send' || action === 'submit-create') {
