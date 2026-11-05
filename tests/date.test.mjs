@@ -80,6 +80,34 @@ test('시간대는 저장값을 유지하면서 언어별 국가 및 도시를 �
   assert.equal(timeZoneLabel('Pacific/Fiji', 'en'), 'Fiji');
 });
 
+test('접속 기기 시간대의 국가가 항상 맨 위이며 그 도시가 기본 선택된다', () => {
+  for (const [zone, country] of [
+    ['America/New_York', '미국'],
+    ['America/Los_Angeles', '미국'],
+    ['Europe/London', '영국'],
+    ['Asia/Tokyo', '일본'],
+    ['Asia/Seoul', '대한민국'],
+  ]) {
+    const groups = timeZoneGroups(zone, 'ko');
+    assert.equal(groups[0].label, country);
+    assert.equal(groups[0].options[0].value, zone);
+  }
+});
+
+test('IANA 국가별 시간대에 캐나다, 러시아, 호주 및 인도네시아 복수 도시 포함', () => {
+  const groups = timeZoneGroups('America/Toronto', 'en');
+  for (const [country, zones] of [
+    ['Canada', ['America/Toronto', 'America/Vancouver', 'America/Edmonton']],
+    ['Russia', ['Europe/Moscow', 'Asia/Vladivostok']],
+    ['Australia', ['Australia/Sydney', 'Australia/Adelaide', 'Australia/Darwin']],
+    ['Indonesia', ['Asia/Jakarta', 'Asia/Makassar', 'Asia/Jayapura']],
+  ]) {
+    const found = groups.find(group => group.label === country);
+    assert.ok(found, country);
+    for (const zone of zones) assert.ok(found.options.some(option => option.value === zone), zone);
+  }
+});
+
 test('시간대 선택은 국가별 그룹이며 미국 도시가 한 그룹에 모인다', () => {
   const groups = timeZoneGroups('Asia/Seoul', 'ko');
   const korea = groups.find((group) => group.label === '대한민국');
