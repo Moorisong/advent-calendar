@@ -1,6 +1,6 @@
 import { APP } from '../../config/constants.js';
 import { escapeHtml } from '../../utils/format.js';
-import { timeZoneGroups, timeZoneLabel } from '../../utils/timezones.js';
+import { searchTimeZoneGroups, timeZoneLabel } from '../../utils/timezones.js';
 
 import { timeZoneNow, timeZoneOffset } from '../../utils/timezone-clock.js';
 import { renderBox } from '../calendar.js';
@@ -30,14 +30,14 @@ export function renderLanding(state) {
 export function renderCreate(state) {
   const { t, timezoneDraft } = state;
   const query = (state.timezoneQuery || '').trim().toLowerCase();
-  const zones = (state.timezoneSearchOpen ? timeZoneGroups(timezoneDraft, state.lang) : []).flatMap(group =>
+  const zones = (state.timezoneSearchOpen ? searchTimeZoneGroups(timezoneDraft, state.lang, query) : []).flatMap(group =>
     group.options.map(option => ({
       value: option.value,
       label: option.label === group.label ? group.label : group.label + ' - ' + option.label,
       search: (group.label + ' ' + option.label + ' ' + option.value + ' ' + option.value.replaceAll('_', ' ')).toLowerCase(),
     }))
   );
-  const results = (query ? zones.filter(zone => zone.search.includes(query)) : zones.filter(zone => zone.value === timezoneDraft))
+  const results = zones
     .slice(0, 40).map(zone =>
       '<button type="button" class="timezone-result" data-zone="' + escapeHtml(zone.value) + '">' +
       escapeHtml(zone.label) + ' <small>' + escapeHtml(timeZoneOffset(zone.value)) + '</small></button>'
