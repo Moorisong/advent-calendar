@@ -433,3 +433,10 @@ button:disabled {
   line-height: 1.6;
   opacity: .8;
 }
+
+/* Keep the landing login hint readable on narrow screens. */
+.mobile-only-break { display: none; }
+@media (max-width: 640px) {
+  .landing-login-hint { text-align: center; line-height: 1.65; overflow-wrap: keep-all; word-break: keep-all; }
+  .landing-login-hint .mobile-only-break { display: block; }
+}
