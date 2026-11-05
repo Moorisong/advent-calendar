@@ -2,7 +2,7 @@ import { PROTECTED_SCREENS, SCREEN } from '../config/constants.js';
 import { findCalendar, findMyCalendar } from '../data/calendars.js';
 import { getMessages, getMyMessage } from '../data/messages.js';
 import {
-  calendarDate, canReadDate, getInitialMonth, getSeasonYear, isSeasonEnded, todayInZone, validCalendarDate,
+  calendarDate, canLeaveGiftOnDate, canReadDate, getInitialMonth, getSeasonYear, isSeasonEnded, todayInZone, validCalendarDate,
 } from '../utils/date.js';
 import { readLocal, writeLocal } from '../utils/storage.js';
 import { draftKey } from './message-draft.js';
@@ -242,6 +242,9 @@ export function openDrawer(day, role) {
     return;
   }
   if (role === 'ended') {
+    return;
+  }
+  if (role !== 'owner' && !canLeaveGiftOnDate(date, todayInZone(state.calendar?.timezone))) {
     return;
   }
   const page = role === 'owner'
