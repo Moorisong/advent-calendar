@@ -1,6 +1,6 @@
 import { APP, CHOCOLATES, SCREEN } from '../config/constants.js';
 import { logout, signIn } from '../data/auth.js';
-import { calendarDate, canLeaveGiftOnDate, todayInZone } from '../utils/date.js';
+import { adjacentReadableDate, calendarDate, canLeaveGiftOnDate, todayInZone } from '../utils/date.js';
 import { writeLocal } from '../utils/storage.js';
 import { timeZoneNow } from '../utils/timezone-clock.js';
 import { renderTimezoneResults } from '../ui/pages/intro.js';
@@ -51,6 +51,18 @@ async function handleAction(action) {
     const closingDrawer = ['owner', 'visitor', 'tutorial-close'].includes(action)
       && [SCREEN.locked, SCREEN.read, SCREEN.empty, SCREEN.write, SCREEN.tutorial].includes(state.route.page);
     await navigate(navigations[action], { scroll: !closingDrawer });
+    return;
+  }
+  if (action === 'drawer-prev' || action === 'drawer-next') {
+    if (![SCREEN.read, SCREEN.empty].includes(state.route.page)
+      || state.calendar?.owner_id !== state.user?.id) return;
+    const direction = action === 'drawer-next' ? 1 : -1;
+    const date = adjacentReadableDate(
+      state.route.date, direction, todayInZone(state.calendar.timezone),
+    );
+    if (date) {
+      await navigate({ page: SCREEN.read, slug, date }, { scroll: false });
+    }
     return;
   }
   if (action === 'timezone-toggle') {
