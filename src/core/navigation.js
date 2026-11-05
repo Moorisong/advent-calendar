@@ -1,6 +1,7 @@
 import { PROTECTED_SCREENS, SCREEN } from '../config/constants.js';
 import { findCalendar, findMyCalendar } from '../data/calendars.js';
 import { getMessages, getMyMessage } from '../data/messages.js';
+import { localPreviewMessages } from '../data/local-preview-messages.js';
 import {
   calendarDate, canLeaveGiftOnDate, canReadDate, getInitialMonth, getSeasonYear, isSeasonEnded, todayInZone, validCalendarDate,
 } from '../utils/date.js';
@@ -185,6 +186,7 @@ export async function navigate(requested, { replace = false, scroll = true } = {
   if (route.page === SCREEN.read) {
     try {
       state.notes = await getMessages(state.calendar.id, route.date);
+      state.notes = [...state.notes, ...localPreviewMessages(route.slug, route.date)];
       if (navigationVersion !== version) {
         return;
       }
