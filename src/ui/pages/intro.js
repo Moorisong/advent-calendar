@@ -18,7 +18,7 @@ export function renderLanding(state) {
     `<p class="sub">${t('나만의 달력을 만들고 친구들에게 공유해봐.',
       'Create your calendar. Let friends fill it with anonymous notes.')}</p>`,
     btn(t('시작하기', 'Get Started'), 'create'),
-    `<p class="fine">${t('처음이신가요? 이미 캘린더가 있나요? 로그인하면 이어서 이용할 수 있어요.', 'New here or already have a calendar? Sign in to continue.')}</p>`,
+    `<p class="fine landing-login-hint">${t('처음이신가요? 이미 캘린더가 있나요?<br class="mobile-only-break"> 로그인하면 이어서 이용할 수 있어요.', 'New here or already have a calendar?<br class="mobile-only-break"> Sign in to continue.')}</p>`,
     '</div><div class="content">',
     renderBox(state, 'visitor', true),
     `<div class="sprig"><i class="star"></i>${icon(0)}<i class="star"></i></div>`,
