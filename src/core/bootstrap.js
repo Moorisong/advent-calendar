@@ -24,8 +24,9 @@ function handleSessionChange(event, user) {
       render();
     }
   } else if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
+    const changed = state.user?.id !== user?.id;
     state.user = user;
-    if (state.route.page !== SCREEN.callback) {
+    if (changed && state.route.page !== SCREEN.callback && state.route.page !== SCREEN.loading) {
       render();
     }
   }
