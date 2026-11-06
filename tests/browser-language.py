@@ -73,7 +73,13 @@ def main():
                         2026, 11, 6, 8, 30, tzinfo=timezone(timedelta(hours=9))
                     ))
                     page.goto(base + '/c/abcdef1234567890/read?date=2026-11-05')
-                    page.locator('[data-screen=read]').wait_for()
+                    try:
+                        page.locator('[data-screen=read]').wait_for(timeout=10000)
+                    except Exception:
+                        print('Actual screen:', page.locator('[data-screen]').get_attribute('data-screen'))
+                        print('Visible content:', page.locator('#root').inner_text()[:700])
+                        print('Page errors:', errors)
+                        raise
                     assert_language(page, 'ko')
                     assert '안녕! Hello!' in page.locator('.drawer-note-body').inner_text()
                     page.locator('[data-action=lang]').click()
