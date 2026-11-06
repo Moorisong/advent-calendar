@@ -1,10 +1,11 @@
 import { APP, CHOCOLATES, SCREEN } from '../config/constants.js';
 import { getInitialMonth, getSeasonYear, todayInZone } from '../utils/date.js';
 import { deviceTimeZone } from '../utils/timezones.js';
-import { readSession, writeSession } from '../utils/storage.js';
+import { initialLanguage } from '../utils/language.js';
+import { writeLocal, writeSession } from '../utils/storage.js';
 
 export const state = {
-  lang: readSession('lang') === 'en' ? 'en' : 'ko',
+  lang: initialLanguage(),
   route: { page: SCREEN.loading, slug: null, date: null },
   user: null,
   calendar: null,
@@ -40,6 +41,7 @@ export function translate(ko, en) {
 
 export function switchLanguage() {
   state.lang = state.lang === 'ko' ? 'en' : 'ko';
+  writeLocal('lang', state.lang);
   writeSession('lang', state.lang);
 }
 
