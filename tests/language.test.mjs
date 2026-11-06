@@ -61,6 +61,25 @@ test('첫 방문 언어는 브라우저 설정에 따라 자동으로 선택', (
   }
 });
 
+test('브라우저 언어 목록의 첫 유효 언어를 사용하고 첫 언어가 미지원이면 영어', () => {
+  for (const [languages, expected] of [
+    [['ko-KR', 'en-US'], 'ko'],
+    [['en-US', 'ko-KR'], 'en'],
+    [['ja-JP', 'ko-KR'], 'en'],
+    [['', 'ko-KR'], 'ko'],
+  ]) {
+    const env = mockEnvironment({ locale: 'en-US' });
+    try {
+      Object.defineProperty(globalThis, 'navigator', {
+        configurable: true, value: { language: 'en-US', languages },
+      });
+      assert.equal(initialLanguage(), expected);
+    } finally {
+      env.restore();
+    }
+  }
+});
+
 test('직접 선택한 언어는 브라우저 언어보다 우선하고 재방문에도 유지', async () => {
   const env = mockEnvironment({ locale: 'ko-KR' });
   try {
