@@ -1,4 +1,4 @@
-"""Browser checks for language detection, persistence and untranslated user content."""
+"""Browser checks for language detection and persistence across navigation."""
 import importlib.util
 import pathlib
 import threading
@@ -61,7 +61,7 @@ def main():
                 context.close()
             browser.close()
         server.shutdown()
-    print('Language browser checks passed: locale, override, reload, routes, message content')
+    print('Language browser checks passed: locale, override, reload, routes')
 
 
 if __name__ == '__main__':
