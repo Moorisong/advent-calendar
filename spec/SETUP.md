@@ -12,7 +12,8 @@ Supabase 대시보드에서 **새 프로젝트**를 만든 다음 다음 사항�
 3. `Authentication → URL Configuration`에서 실제 서비스 도메인을 Site URL로 지정합니다.
 4. 아래 프론트엔드 콜백을 `Redirect URLs` 허용 목록에 넣습니다.
    - 로컬: `http://localhost:5173/auth/callback`
-   - 서비스: `https://YOUR_DOMAIN/auth/callback`
+   - 테스트: `https://test-advent-calendar.harooo.co.kr/auth/callback`
+   - 실서버: `https://advent-calendar.harooo.co.kr/auth/callback`
 5. Vite 개발 서버 또는 배포 환경에 `.env.local`의 공개 설정을 넣습니다.
 
 ### 프론트엔드 환경변수
@@ -41,14 +42,15 @@ Google Client Secret은 `.env.local`의 `VITE_*`에 입력하지 않습니다.
 2. 닉네임·프로필 사진 동의를 허용하고 이메일 권한은 요청하지 않습니다.
 3. Kakao 로그인 Redirect URI는 앱의 콜백으로 등록합니다.
    - 로컬: `http://localhost:5173/auth/callback`
-   - 서비스: `https://YOUR_DOMAIN/auth/callback`
+   - 테스트: `https://test-advent-calendar.harooo.co.kr/auth/callback`
+   - 실서버: `https://advent-calendar.harooo.co.kr/auth/callback`
 4. 공개 REST API 키를 클라이언트 `.env.local`의 `VITE_KAKAO_REST_API_KEY`에 넣습니다.
 5. `supabase/functions/kakao-token/index.ts` Edge Function을 배포하고
    해당 함수에 아래 서버 측 Secret을 설정합니다.
    - `KAKAO_REST_API_KEY`: 카카오 REST API 키
    - `KAKAO_CLIENT_SECRET`: 카카오 Client Secret
    - `KAKAO_ALLOWED_ORIGINS`: 허용할 앱 Origin을 쉼표로 구분
-     (로컬: `http://localhost:5173`; 배포 시에는 실제 HTTPS Origin 추가)
+     (`http://localhost:5173,https://test-advent-calendar.harooo.co.kr,https://advent-calendar.harooo.co.kr`)
 6. Supabase Kakao Provider에서 **Allow users without an email**을 활성화합니다.
 7. 프론트엔드는 카카오 `id_token`을 `signInWithIdToken`에 전달해 Supabase 세션을 만듭니다.
 

@@ -15,6 +15,10 @@ npm run dev
 
 검증: `npm run lint`, `npm test`, `npm run build`.
 
+배포(내부망 `in` / 외부망 `out` 자동 감지):
+- 테스트 배포 (`https://test-advent-calendar.harooo.co.kr/`): `npm run deploy:test` (또는 `./scripts/deploy-test.sh`)
+- 실제 서비스 배포 (`https://advent-calendar.harooo.co.kr/`): `npm run deploy:prod` (또는 `./scripts/deploy-prod.sh`)
+
 **중요:** Advent 전용 Supabase 프로젝트에는 2026-11-03에 초기 DB 스키마를 적용했습니다.
 다른 프로젝트에 배포할 때는 스키마, Google OAuth, 카카오 OIDC 및 환경변수 설정이 필요합니다.
 세팅 상세는 [설정 가이드](spec/SETUP.md)를 확인하세요.
