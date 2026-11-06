@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 
 import { APP } from '../src/config/constants.js';
+import { renderRead } from '../src/ui/pages/messages.js';
 import { initialLanguage, languageForLocale } from '../src/utils/language.js';
 
 function memoryStorage(entries = {}) {
@@ -117,5 +118,22 @@ test('잘못된 저장 값이나 차단된 저장소에서도 안전하게 영�
     assert.equal(initialLanguage(), 'en');
   } finally {
     blocked.restore();
+  }
+});
+
+test('주인과 방문자의 UI 언어가 달라도 작성된 메시지 원문은 유지', () => {
+  const note = {
+    id: 'note-1', chocolate_type: 1, body: '안녕! Hello!',
+    created_at: '2026-11-05T03:00:00Z',
+  };
+  for (const lang of ['ko', 'en']) {
+    const html = renderRead({
+      lang, t: (ko, en) => lang === 'ko' ? ko : en,
+      month: 11, day: 5, today: '2026-11-06',
+      route: { date: '2026-11-05' }, notes: [note],
+      calendar: { timezone: 'Asia/Seoul' },
+    });
+    assert.match(html, /class="drawer-note-body">안녕! Hello!<\/div>/);
+    assert.match(html, lang === 'ko' ? /익명의 친구가/ : /From an anonymous friend/);
   }
 });
