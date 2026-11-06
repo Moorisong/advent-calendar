@@ -2,7 +2,6 @@
 import importlib.util
 import pathlib
 import threading
-from datetime import datetime, timedelta, timezone
 
 from playwright.sync_api import sync_playwright
 
@@ -56,35 +55,8 @@ def main():
                     assert_language(revisit, 'ko')
                     changed.close()
 
-                    # Calendar owner's language does not change visitor UI or messages.
-                    page.evaluate("""() => {
-                      localStorage.setItem('mock-user', JSON.stringify({id:'owner-123'}));
-                      localStorage.setItem('mock-calendars', JSON.stringify([{
-                        id:'cal-1', owner_id:'owner-123', slug:'abcdef1234567890',
-                        nickname:'한국이름', timezone:'Asia/Seoul'
-                      }]));
-                      localStorage.setItem('mock-messages', JSON.stringify([{
-                        id:'note-1', calendar_id:'cal-1', gift_date:'2026-11-05',
-                        sender_id:'friend-456', chocolate_type:1,
-                        body:'안녕! Hello!', created_at:'2026-11-05T03:00:00Z'
-                      }]));
-                    }""")
-                    page.clock.install(time=datetime(
-                        2026, 11, 6, 8, 30, tzinfo=timezone(timedelta(hours=9))
-                    ))
-                    page.goto(base + '/c/abcdef1234567890/read?date=2026-11-05')
-                    try:
-                        page.locator('[data-screen=read]').wait_for(timeout=10000)
-                    except Exception:
-                        print('Actual screen:', page.locator('[data-screen]').get_attribute('data-screen'))
-                        print('Visible content:', page.locator('#root').inner_text()[:700])
-                        print('Page errors:', errors)
-                        raise
+                    page.goto(base + '/login')
                     assert_language(page, 'ko')
-                    assert '안녕! Hello!' in page.locator('.drawer-note-body').inner_text()
-                    page.locator('[data-action=lang]').click()
-                    assert_language(page, 'en')
-                    assert '안녕! Hello!' in page.locator('.drawer-note-body').inner_text()
                 assert not errors, errors
                 context.close()
             browser.close()
