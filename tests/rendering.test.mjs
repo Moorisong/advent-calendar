@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 
 import { renderBox, renderCalendar } from '../src/ui/calendar.js';
+import { head } from '../src/ui/chrome.js';
 import { renderEmpty, renderRead, renderWrite } from '../src/ui/pages/messages.js';
 import { renderCreated } from '../src/ui/pages/intro.js';
 
@@ -19,6 +20,21 @@ const base = {
   readIndex: 0,
   message: '',
 };
+
+
+test('공통 헤더의 로고 전체가 언어와 로그인 상태에 관계없이 홈 링크로 동작', () => {
+  for (const lang of ['ko', 'en']) {
+    for (const user of [null, { id: 'test-user' }]) {
+      const html = head({
+        lang, user,
+        t: (ko, en) => lang === 'ko' ? ko : en,
+      });
+      assert.match(html, /<a class="brand" href="\/" data-action="landing"/);
+      assert.match(html, /advent-calendar\.exe<\/a>/);
+      assert.match(html, /aria-label="(?:메인페이지로 이동|Go to home page)"/);
+    }
+  }
+});
 
 test('12월 캘린더 25개 서랍은 미래 메시지 수를 노출하지 않음', () => {
   const html = renderBox(base, 'owner');
