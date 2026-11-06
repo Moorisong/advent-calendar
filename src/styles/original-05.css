@@ -64,6 +64,18 @@
   display: none;
 }
 
+/* The complete gift icon + wordmark links to the main page. */
+.apphead .brand {
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+.apphead .brand:hover { opacity: .85; }
+.apphead .brand:focus-visible {
+  outline: 3px solid var(--yellow);
+  outline-offset: 4px;
+}
+
 .language {
   border: 3px solid var(--brown);
   background: var(--cream);
