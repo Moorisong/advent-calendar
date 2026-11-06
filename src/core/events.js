@@ -152,6 +152,14 @@ async function handleAction(action) {
 }
 
 async function handleClick(event) {
+  const homeLink = event.target.closest('a.brand[data-action="landing"]');
+  if (homeLink && !event.defaultPrevented && event.button === 0
+    && !event.metaKey && !event.ctrlKey && !event.shiftKey && !event.altKey) {
+    event.preventDefault();
+    clearIntent();
+    await navigate({ page: SCREEN.landing });
+    return;
+  }
   const button = event.target.closest('button');
   if (!button || button.disabled) {
     return;
