@@ -21,7 +21,6 @@ const base = {
   message: '',
 };
 
-
 test('공통 헤더의 로고 전체가 언어와 로그인 상태에 관계없이 홈 링크로 동작', () => {
   for (const lang of ['ko', 'en']) {
     for (const user of [null, { id: 'test-user' }]) {
