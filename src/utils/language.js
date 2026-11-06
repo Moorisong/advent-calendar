@@ -19,5 +19,8 @@ export function initialLanguage() {
   }
 
   const browser = globalThis.navigator;
-  return languageForLocale(browser?.languages?.[0] || browser?.language);
+  const browserLocale = browser?.languages?.find(
+    (locale) => typeof locale === 'string' && locale.trim(),
+  ) || browser?.language;
+  return languageForLocale(browserLocale);
 }
