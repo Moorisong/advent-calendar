@@ -589,3 +589,15 @@ button:disabled {
   font-weight: 400;
   white-space: nowrap;
 }
+
+/* The complete gift icon + wordmark is a home link on every page. */
+.apphead .brand {
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+.apphead .brand:hover { opacity: .85; }
+.apphead .brand:focus-visible {
+  outline: 3px solid var(--yellow);
+  outline-offset: 4px;
+}
