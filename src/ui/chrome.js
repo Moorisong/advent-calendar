@@ -15,7 +15,7 @@ export function head(state) {
     : '';
   return [
     '<header class="apphead">',
-    `<div class="brand">${icon(3)} advent-calendar.exe</div>`,
+    `<a class="brand" href="/" data-action="landing" aria-label="${state.t('메인페이지로 이동', 'Go to home page')}">${icon(3)} advent-calendar.exe</a>`,
     '<div class="head-actions">',
     logout,
     `<button class="language" data-action="lang" aria-label="Change language">`,
